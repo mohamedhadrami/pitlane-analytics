@@ -61,7 +61,8 @@ export const calculateLapTime = (carApiData: CarDataParams[]): CarDataParams[] =
     return carDataWithLapTime;
 };
 
-export const getWindDirection = (angle: number) => {
+export const getWindDirection = (angle: number | undefined) => {
+    if (!angle) return null;
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW', 'N'];
     const index = Math.round(angle / 45);
     return directions[index];

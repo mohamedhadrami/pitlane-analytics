@@ -36,7 +36,8 @@ export const parseISODateAndTime = (time: string, gmt_offset: string = "00:00:00
     return date.toLocaleString("en-US", options);
 };
 
-export const parseISOTimeFull = (time: string, gmt_offset: string = "00:00:00") => {
+export const parseISOTimeFull = (time: string | undefined, gmt_offset: string = "00:00:00") => {
+    if (!time) return null;
     const date = new Date(time);
     
     // Extract hours, minutes, and seconds from GMT offset string
@@ -77,8 +78,8 @@ export const isValidColor = (str: string) => {
 
 /* IMAGE URLS*/
 
-export const trackImage = (cityName: string, countryName: string) => {
-    let name = countryName;
+export const trackImage = (cityName: string | undefined, countryName: string | undefined) => {
+    let name: string | undefined = countryName;
     if (name === "UK") name = "Great Britain";
     else if (name === "UAE") name = "Abu Dhabi";
     else if (name === "USA" || name === "United States" && cityName !== "Austin") name = cityName;
@@ -102,7 +103,7 @@ export function driverImage(firstNameOrName: string, lastName?: string): string 
         return `https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/${parsedName[0]}/${parsedName}01_${firstName}_${lastName}/${parsedName}01.png.transform/1col/image.png`;
     }
 
-    let words = firstNameOrName.split(" ");
+    let words = firstNameOrName?.split(" ");
     if (words[0] === "ZHOU") words = [words[1], words[0]];
     const initials = words.map((word) => word.slice(0, 3).toUpperCase());
     const parsedName = initials.join("");

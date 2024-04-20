@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# Pitlane Analytics
+Welcome to the Pitlane Analytics! This web app provides telemetry, schedule, standings, results, and historical data for Formula 1 enthusiasts. Below you'll find information on how to build, run, and contribute to this project.
+
 
 ## Getting Started
+### Prerequisites
 
-First, run the development server:
+Before you begin, ensure you have the following installed:
+
+* Node.js (version >= 20.11.1)
+* npm (version >= 10.2.4) or yarn (version >= 1.x)
+
+### Installation
+
+1. Clone this repository to your local machine:
+
+```bash
+git clone https://github.com/mohamedhadrami/pitlane-analytics
+```
+
+2. Navigate to the project directory:
+
+```bash
+cd pitlane-analytics
+```
+
+3. Install dependencies:
+
+```bash
+npm install
+# or
+yarn
+```
+
+### Running the App
+To run the app locally, use the following command:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will start the development server. Open http://localhost:3000 in your browser to view the app.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
+The project structure follows typical Next.js conventions. Here's a brief overview:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```shell
+pitlane-analytics
+├── components/         # React components
+├── interfaces/         # Interfaces
+├── pages/              # Next.js pages
+├── public/             # Static assets
+├── services/           # F1 APIs
+├── styles/             # CSS styles
+├── utils/              # files with utility functions
+└── ...
+```
 
-## Learn More
+## Usage
+Describe how users can interact with your web app. Provide examples or screenshots if necessary.
 
-To learn more about Next.js, take a look at the following resources:
+## Contributing
+Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* Fork the repository
+*Create a new branch (git checkout -b feature/your-feature)
+* Make your changes
+* Commit your changes (git commit -am 'Add new feature')
+* Push to the branch (git push origin feature/your-feature)
+* Create a pull request
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Acknowledgements
 
-## Deploy on Vercel
+* OpenF1 API
+* F1Tempo
+* Monaco
+* F1 Dash
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Legal Notice
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+This web app is a personal project created for education purposes and is unofficial. It is not affliated with, endorsed by, or in any way associated with Formula 1, its organizers, teams, sponsors, or any related entities. All trademarks, logo, and copyrights mentioned with this web app are the property of their respective owners.
