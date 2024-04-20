@@ -10,24 +10,22 @@ const CustomNavbar: React.FC = () => {
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
-  const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
-  ];
+  const menuItems = {
+    "Schedule": "/schedule",
+    "Championship": "/championship",
+    "Live": "/dashboard",
+    "Telemetry": "/telemetry",
+    "Archive": "/archive",
+    "Log Out": "/",
+  };
 
   return (
     <Navbar
       isBordered
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
+      isBlurred={true}
+      className="bg-[#e10600]/75"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
@@ -39,39 +37,32 @@ const CustomNavbar: React.FC = () => {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden sm:flex gap-4" justify="end">
         <NavbarBrand>
           <p className="font-bold text-inherit">Pitlane Analytics</p>
         </NavbarBrand>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
-        </NavbarItem>
-        <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
-          </Link>
+          <Link color="foreground" href="/schedule">Schedule</Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Integrations
-          </Link>
+          <Link color="foreground" href="/championship">Championship</Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/dashboard">Live</Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/telemetry">Telemetry</Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link color="foreground" href="/archive">Archive</Link>
         </NavbarItem>
       </NavbarContent>
 
       <NavbarMenu>
-        {menuItems.map((item, index) => (
-          <NavbarMenuItem key={`${item}-${index}`}>
-            <Link
-              className="w-full"
-              color={
-                index === 2 ? "warning" : index === menuItems.length - 1 ? "danger" : "foreground"
-              }
-              href="#"
-              size="lg"
-            >
-              {item}
+        {Object.entries(menuItems).map(([label, href], index) => (
+          <NavbarMenuItem key={`${label}-${index}`}>
+            <Link href={href} color={index === 2 ? "warning" : index === Object.keys(menuItems).length - 1 ? "danger" : "foreground"} size="lg">
+                {label}
             </Link>
           </NavbarMenuItem>
         ))}
