@@ -20,8 +20,8 @@ const Dashboard: React.FC = () => {
     const [stints, setStints] = useState<StintParams[]>([]);
     const [laps, setLaps] = useState<LapParams[]>([]);
 
-    const meeting_test = 1219;
-    const session_test = 9165;
+    const meeting_test = 1233;
+    const session_test = 9668;
 
     const fetchMeetingData = async () => {
         const params = {
@@ -90,7 +90,7 @@ const Dashboard: React.FC = () => {
     }, [])
 
     const isBanner: boolean = true;
-    const isLive: boolean = false;
+    const isLive: boolean = true;
     const isRace: boolean = true;
     const isRadio: boolean = true;
 

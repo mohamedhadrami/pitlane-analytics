@@ -21,7 +21,9 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
 
     const driverData = (driver_number: number) => {
         const driver = drivers?.find(driver => driver.driver_number === driver_number);
-        return [driver?.first_name, driver?.last_name]
+        console.log(driver)
+        if (driver) return [driver?.first_name, driver?.last_name]
+        else return [undefined, undefined]
     }
 
     return (
@@ -50,10 +52,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
                                         className="w-5 mr-3" />
                                 )}
                                 {event.driver_number && drivers && (
-                                    <img
-                                        src={driverImage(driverData(event.driver_number)[0], driverData(event.driver_number)[1])}
-                                        alt={`driver-${event.driver_number}`}
-                                        className="w-6 rounded-full" />
+                                    <div>h</div>
                                 )}
                                 <p className="m-0">{event.message}</p>
                             </th>
@@ -66,3 +65,11 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
 };
 
 export default RaceControl;
+
+/**
+ <img
+    src={driverImage(driverData(event.driver_number)[0], driverData(event.driver_number)[1])}
+    alt={`driver-${event.driver_number}`}
+    className="w-6 rounded-full" />
+                                
+ */

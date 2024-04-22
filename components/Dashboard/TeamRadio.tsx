@@ -36,7 +36,7 @@ const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffs
     return (
         <tr className="flex items-center h-[50px] font-extralight">
             <th className="text-[#999] text-left w-[80px] font-extralight w-1/5">{parseISOTimeFull(radio.date, gmtOffset)}</th>
-            <th style={{ backgroundColor: `#${driver?.team_colour}` }} className={`flex test-left h-auto w-[100px] px-2 rounded-full bg-[#${driver?.team_colour}]`}>
+            <th style={{ backgroundColor: `#${driver?.team_colour}` }} className={`flex text-left h-auto w-[100px] px-2 rounded-full bg-[#${driver?.team_colour}]`}>
                 <img
                     src={driverImage(driver?.first_name, driver?.last_name)}
                     alt={`${driver?.first_name} ${driver?.last_name}`}
