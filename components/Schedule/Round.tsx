@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { fetchRaceResults } from "../../services/ergastApi";
-import styles from "../../styles/round.module.css";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { MeetingParams } from "../../interfaces/openF1";
 import { fetchMeeting } from "../../services/openF1Api";
@@ -23,7 +22,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
       <h3 key={`${results.round}-results-title`}>Race Results</h3>
       <div
         key={`${results.round}-results-container`}
-        className={styles.resultsContainer}
+      //className={styles.resultsContainer}
       >
         <div>
           <img
@@ -31,7 +30,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
               results[1].Driver.givenName,
               results[1].Driver.familyName
             )}
-            className={styles.driverImage}
+            //className={styles.driverImage}
           />
           <p key={`${results.round}-2`}>2. {results[1].Driver.code}</p>
         </div>
@@ -41,8 +40,8 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
               results[0].Driver.givenName,
               results[0].Driver.familyName
             )}
-            style={{width: '125px', height:'125px'}}
-            className={styles.driverImage}
+            style={{ width: '125px', height: '125px' }}
+          //className={styles.driverImage}
           />
           <p key={`${results.round}-1`}>1. {results[0].Driver.code}</p>
         </div>
@@ -52,7 +51,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
               results[2].Driver.givenName,
               results[2].Driver.familyName
             )}
-            className={styles.driverImage}
+          //className={styles.driverImage}
           />
           <p key={`${results.round}-3`}>3. {results[2].Driver.code}</p>
         </div>
@@ -128,11 +127,13 @@ const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
 
   return (
     <div
-      className={styles.roundCard}
+      //className={styles.roundCard}
       key={`${raceData.round}-container`}
       onClick={handleCardClick}
     >
-      <div className={styles.topRow}>
+      <div
+      //className={styles.topRow}
+      >
         <p key={`${raceData.date}`}>{raceDates}</p>
         <img src={flagData?.png} style={{ width: "50px", height: "auto", borderRadius: "4px" }} />
       </div>
@@ -142,13 +143,15 @@ const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
       >{`Round ${raceData.round} - ${raceData.raceName}`}</h2>
 
       <p style={{ textAlign: "center" }}>{meeting?.meeting_official_name}</p>
-      <div className={styles.topRow}>
+      <div
+      //className={styles.topRow}
+      >
         <p key={`${raceData.Circuit.Location.locality}`}>
           {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
         </p>
         <p>{raceData.Circuit.circuitName}</p>
       </div>
-      <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} className={styles.trackImage} />
+      <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} className=""/*{styles.trackImage}*/ />
 
       {results && <ResultsContainer results={results} />}
     </div>

@@ -4,7 +4,6 @@ import { fetchCountryFlagByName } from "../../services/countryApi";
 import { fetchRaceResults } from "../../services/ergastApi";
 import { fetchMeeting } from "../../services/openF1Api";
 import { trackImage } from "../../utils/helpers";
-import styles from "../../styles/round.module.css";
 
 function formatDateRange(startDate: string, endDate: string) {
     const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
@@ -84,11 +83,13 @@ const CurrentRound: React.FC<{ raceData: any }> = ({ raceData }) => {
 
     return (
         <div
-            className={styles.currentRoundCard}
+            //className={styles.currentRoundCard}
             key={`${raceData.round}-container`}
             onClick={handleCardClick}
         >
-            <div className={styles.topRow}>
+            <div
+            //className={styles.topRow}
+            >
                 <p key={`${raceData.date}`}>{raceDates}</p>
                 <h2 key={`${raceData.round}-title`}>
                     {`Round ${raceData.round} - ${raceData.raceName}`}
@@ -97,13 +98,15 @@ const CurrentRound: React.FC<{ raceData: any }> = ({ raceData }) => {
             </div>
 
             <p style={{ textAlign: "center" }}>{meeting?.meeting_official_name}</p>
-            <div className={styles.topRow}>
+            <div
+            //className={styles.topRow}
+            >
                 <p key={`${raceData.Circuit.Location.locality}`}>
                     {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
                 </p>
                 <p>{raceData.Circuit.circuitName}</p>
             </div>
-            <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} className={styles.trackImage} />
+            <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} className=""/*{styles.trackImage}*/ />
         </div>
     );
 };
