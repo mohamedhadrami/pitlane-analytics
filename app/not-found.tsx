@@ -15,7 +15,7 @@ export default function NotFound() {
                 src="/checkered-wave-flag.png"
                 width={500}
                 height={500}
-                alt="Picture of the author"
+                alt="logo"
             />
             <Button radius="sm" className="bg-gradient-to-tr from-[#e10600] to-black-500 text-white shadow-lg">
                 <Link href="/">Return Home</Link>
