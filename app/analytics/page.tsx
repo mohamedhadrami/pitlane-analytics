@@ -3,7 +3,7 @@
 const Page: React.FC = () => {
     return (
         <>
-        <div>hello</div>
+        <div>Coming soon! will show head to heads and stats for the current season</div>
         </>
     )
 }
