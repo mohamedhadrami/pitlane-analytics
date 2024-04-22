@@ -13,7 +13,9 @@ const Page: React.FC = () => {
 
     const [selectedYear, setSelectedYear] = useState<number>();
     const [selectedMeeting, setSelectedMeeting] = useState<MeetingParams>();
+    const [selectedMeetingKey, setSelectedMeetingKey] = useState<number>();
     const [selectedSession, setSelectedSession] = useState<SessionParams>();
+    const [selectedSessionKey, setSelectedSessionKey] = useState<number>();
 
 
     // TODO: change this
@@ -42,13 +44,17 @@ const Page: React.FC = () => {
         const fetchData = async () => {
             const params: SessionParams = {
                 year: selectedYear,
-                meeting_key: selectedMeeting?.meeting_key
+                meeting_key: selectedMeetingKey
             }
             const res = await fetchSession(params);
             setSessions(res);
         }
-        if (selectedMeeting) fetchData();
-    }, [selectedMeeting]);
+        if (selectedMeetingKey) {
+            fetchData();
+            const meeting = meetings?.find(v => v.meeting_key === selectedMeetingKey);
+            setSelectedMeeting(meeting)
+        }
+    }, [selectedMeetingKey]);
 
     useEffect(() => {
 
@@ -62,8 +68,8 @@ const Page: React.FC = () => {
                 meetings={meetings}
                 sessions={sessions}
                 setSelectedYear={setSelectedYear}
-                setSelectedMeeting={setSelectedMeeting}
-                setSelectedSession={setSelectedSession}
+                setSelectedMeetingKey={setSelectedMeetingKey}
+                setSelectedSessionKey={setSelectedSessionKey}
                 selectedYear={selectedYear}
                 selectedMeeting={selectedMeeting}
                 selectedSession={selectedSession}

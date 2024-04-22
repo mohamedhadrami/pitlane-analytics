@@ -3,17 +3,16 @@
 "use client"
 
 import React, {useEffect} from "react";
-import Selector from "./selector";
+import Selector from "./Selector";
 import { MeetingParams, SessionParams } from "@/interfaces/openF1";
-import { fetchMeeting } from "@/services/openF1Api";
 
 interface SessionSelectorsProps {
     years: number[],
     meetings: MeetingParams[],
     sessions: SessionParams[],
     setSelectedYear: (value: any) => void,
-    setSelectedMeeting: (value: any) => void,
-    setSelectedSession: (value: any) => void,
+    setSelectedMeetingKey: (value: any) => void,
+    setSelectedSessionKey: (value: any) => void,
     selectedYear: number | undefined,
     selectedMeeting: MeetingParams | undefined,
     selectedSession: SessionParams | undefined,
@@ -24,18 +23,12 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
     meetings,
     sessions,
     setSelectedYear,
-    setSelectedMeeting,
-    setSelectedSession,
+    setSelectedMeetingKey,
+    setSelectedSessionKey,
     selectedYear,
     selectedMeeting,
     selectedSession
 }) => {
-    const [selectedKeys, setSelectedKeys] = React.useState(new Set(["text"]));
-
-    const selectedValue = React.useMemo(
-        () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
-        [selectedKeys]
-    );
 
     const selections = {
         "year": {
@@ -47,27 +40,49 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
         "meeting": {
             "values": meetings,
             "selectedValue": selectedMeeting,
-            "setValue": setSelectedMeeting,
-            "disabled": false,//meetings.length == 0 ? true : false,
+            //"setValue": setSelectedMeeting,
+            "disabled": meetings.length == 0 ? true : false,
         },
         "session": {
             "values": sessions,
             "selectedValue": selectedSession,
-            "setValue": setSelectedSession,
-            "disabled": false,//sessions.length == 0 ? true : false,
+            //"setValue": setSelectedSession,
+            "disabled": sessions.length == 0 ? true : false,
+        }
+    }
+
+    const setValue = (value: any, label: any) => {
+        switch (label) {
+            case "year":
+                setSelectedYear(value)
+                break;
+            case "meeting":
+                const meeting = meetings?.find(v => v.meeting_official_name === value);
+                setSelectedMeetingKey(meeting?.meeting_key);
+                break;
+            case "session":
+                const session = sessions?.find(v => v.session_name === value);
+                setSelectedSessionKey(session?.session_key)
+                break;
+            default:
+                break;
         }
     }
 
     useEffect(() => {
-        console.log(`Year selected:`, selectedYear)
+        //console.log(`Year selected:`, selectedYear)
     }, [selectedYear])
 
     useEffect(() => {
-        console.log(`Meeting selected: ${selectedMeeting}`)
+        //console.log(`Meeting selected: ${selectedMeeting}`)
     }, [selectedMeeting])
+    
+    useEffect(() => {
+        console.log(sessions)
+    }, [sessions])
 
     useEffect(() => {
-        console.log(`Session selected: ${selectedSession}`)
+        //console.log(`Session selected: ${selectedSession}`)
     }, [selectedSession])
 
     return (
@@ -78,7 +93,7 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
                         id={key}
                         label={key}
                         values={selections[key].values}
-                        onChange={selections[key].setValue}
+                        onChange={setValue}
                         value={selections[key].selectedValue}
                         disabled={selections[key].disabled}
                     />

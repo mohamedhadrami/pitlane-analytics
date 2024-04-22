@@ -8,7 +8,7 @@ interface SelectorProps {
     id: string;
     label: string;
     values: any[] | null;
-    onChange: (value: any) => void;
+    onChange: (value: any, name: any) => void;
     value: any;
     disabled?: boolean;
 }
@@ -44,10 +44,10 @@ const Selector: React.FC<SelectorProps> = ({
 }) => {
 
     const handleChange = (e: any) => {
-        const value = [...e][0]
-        onChange(value)
+        let chosenValue = [...e][0];
+        onChange(chosenValue, label);
     };
-
+    
     const organizedValues = organizeValues(label, values);
 
     return (
