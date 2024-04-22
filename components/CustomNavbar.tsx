@@ -4,6 +4,7 @@
 import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, Button, NavbarMenu, Link, NavbarMenuItem } from "@nextui-org/react";
 import { Menu } from "lucide-react";
 import { useState } from "react";
+import Image from 'next/image';
 
 
 const CustomNavbar: React.FC = () => {
@@ -32,14 +33,26 @@ const CustomNavbar: React.FC = () => {
       </NavbarContent>
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
-        <NavbarBrand>
+        <NavbarBrand className="space-x-4">
           <p className="font-bold text-inherit">Pitlane Analytics</p>
+          <Image
+            src="/checkered-wave-flag.png"
+            width={50}
+            height={50}
+            alt="logo"
+          />
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="end">
-        <NavbarBrand>
+        <NavbarBrand className="space-x-4">
           <p className="font-bold text-inherit">Pitlane Analytics</p>
+          <Image
+            src="/checkered-wave-flag.png"
+            width={50}
+            height={50}
+            alt="logo"
+          />
         </NavbarBrand>
         <NavbarItem>
           <Link color="foreground" href="/schedule">Schedule</Link>
@@ -62,7 +75,7 @@ const CustomNavbar: React.FC = () => {
         {Object.entries(menuItems).map(([label, href], index) => (
           <NavbarMenuItem key={`${label}-${index}`}>
             <Link href={href} color={index === 2 ? "warning" : index === Object.keys(menuItems).length - 1 ? "danger" : "foreground"} size="lg">
-                {label}
+              {label}
             </Link>
           </NavbarMenuItem>
         ))}
