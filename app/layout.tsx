@@ -23,7 +23,7 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
-        <footer className="m-2">
+        <footer className="m-2 text-center mt-5">
           <hr />
           <p className="m-3">
             Powered by <a href="https://openf1.org/">OpenF1 API</a> and <a href="https://ergast.com/mrd/">Ergast API</a>
