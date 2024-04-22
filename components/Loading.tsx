@@ -5,7 +5,7 @@ import { Triangle } from "react-loader-spinner";
 
 const Loading: React.FC = () => {
   return (
-    <div className="loading-overlay">
+    <div className="loading-overlay flex flex-col justify-center items-center h-[calc(100vh-150px)]">
       <div className="loading-spinner">
         <Triangle
           visible={true}
