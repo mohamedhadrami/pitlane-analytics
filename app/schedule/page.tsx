@@ -2,8 +2,8 @@
 
 "use client"
 
-import CurrentRound from "@/components/Schedule/CurrentRound";
-import Round from "@/components/Schedule/Round";
+import CurrentRound from "@/app/schedule/CurrentRound";
+import Round from "@/app/schedule/Round";
 import { fetchCurrentSeason } from "@/services/ergastApi";
 import { useState, useEffect } from "react";
 import Loading from "../../components/Loading";

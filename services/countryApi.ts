@@ -11,7 +11,7 @@ const fetchRestCountryApi = async (endpoint: string) => {
     }
 }
 
-export const fetchCountryFlagByName = async (country: string) => {
+export const fetchCountryFlagByName = async (country: string | undefined) => {
     const endpoint = `/name/${country}`;
     const data = await fetchRestCountryApi(endpoint);
     const flagData = data[0]?.flags;

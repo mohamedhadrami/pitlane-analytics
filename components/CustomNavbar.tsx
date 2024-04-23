@@ -26,7 +26,7 @@ const CustomNavbar: React.FC = () => {
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
       isBlurred={true}
-      className="bg-[#e10600]/75"
+      className="bg-[#e10600]/75 w-full"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />

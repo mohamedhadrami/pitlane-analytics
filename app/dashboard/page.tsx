@@ -5,10 +5,10 @@ import React, { useEffect, useState } from "react";
 import { DriverParams, MeetingParams, RaceControlParams, SessionParams, StintParams, TeamRadioParams, WeatherParams, LapParams } from "../../interfaces/openF1";
 import { fetchDrivers, fetchLaps, fetchMeeting, fetchPosition, fetchRaceControl, fetchSession, fetchStint, fetchTeamRadio, fetchWeather } from "../../services/openF1Api";
 import { Grid } from "@mui/material";
-import TopBanner from "../../components/Dashboard/TopBanner";
-import LiveTiming from "../../components/Dashboard/LiveTiming";
-import RaceControl from "../../components/Dashboard/RaceControl";
-import TeamRadios from "../../components/Dashboard/TeamRadio";
+import TopBanner from "./TopBanner";
+import LiveTiming from "./LiveTiming";
+import RaceControl from "./RaceControl";
+import TeamRadios from "./TeamRadio";
 
 const Dashboard: React.FC = () => {
     const [meeting, setMeeting] = useState<MeetingParams>();
