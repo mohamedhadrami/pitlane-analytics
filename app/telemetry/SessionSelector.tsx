@@ -2,7 +2,7 @@
 
 "use client"
 
-import React, {useEffect} from "react";
+import React from "react";
 import Selector from "./Selector";
 import { MeetingParams, SessionParams } from "@/interfaces/openF1";
 
@@ -33,21 +33,31 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
     const selections = {
         "year": {
             "values": years,
-            "selectedValue": selectedYear,
-            "setValue": setSelectedYear,
             "disabled": years.length == 0 ? true : false,
         },
         "meeting": {
             "values": meetings,
-            "selectedValue": selectedMeeting,
-            //"setValue": setSelectedMeeting,
             "disabled": meetings.length == 0 ? true : false,
         },
         "session": {
             "values": sessions,
-            "selectedValue": selectedSession,
-            //"setValue": setSelectedSession,
             "disabled": sessions.length == 0 ? true : false,
+        }
+    }
+
+    const getValue = (label: any) => {
+        switch (label) {
+            case "year":
+                if (!selectedYear) return `Select a year`;
+                return selectedYear;
+            case "meeting":
+                if (!selectedMeeting) return `Select a race`;
+                return selectedMeeting?.meeting_name;
+            case "session":
+                if (!selectedSession) return `Select a session`;
+                return selectedSession?.session_name;
+            default:
+                break;
         }
     }
 
@@ -69,32 +79,16 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
         }
     }
 
-    useEffect(() => {
-        //console.log(`Year selected:`, selectedYear)
-    }, [selectedYear])
-
-    useEffect(() => {
-        //console.log(`Meeting selected: ${selectedMeeting}`)
-    }, [selectedMeeting])
-    
-    useEffect(() => {
-        console.log(sessions)
-    }, [sessions])
-
-    useEffect(() => {
-        //console.log(`Session selected: ${selectedSession}`)
-    }, [selectedSession])
-
     return (
         <div className="flex justify-center">
-            <div className="md:flex place-content-between w-full md:w-1/2 space-x-4 px-5">
+            <div className="flex md:flex place-content-between w-full md:w-1/2 space-x-4 px-5">
                 {Object.keys(selections).map((key) => (
                     <Selector
                         id={key}
                         label={key}
                         values={selections[key].values}
                         onChange={setValue}
-                        value={selections[key].selectedValue}
+                        displayValue={getValue}
                         disabled={selections[key].disabled}
                     />
                 ))}
@@ -104,14 +98,3 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
 }
 
 export default SessionSelector;
-
-/*
-                    <Selector 
-                        id={""}
-                        label={""}
-                        values={null}
-                        onChange={setSelectedKeys}
-                        value={undefined}
-                        disabled={false}
-                    />
-*/

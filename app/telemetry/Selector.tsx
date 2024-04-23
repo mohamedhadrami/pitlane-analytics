@@ -9,13 +9,14 @@ interface SelectorProps {
     label: string;
     values: any[] | null;
     onChange: (value: any, name: any) => void;
-    value: any;
+    displayValue: (label: any) => void;
     disabled?: boolean;
 }
 
-const organizeValues = (label: string, values: any[] | null) => {
+const organizeValues = (label: string, values: any[] | null, isDisabled: boolean) => {
     let verifiedValues: any[] = [];
     if (values == null) return values;
+    if (isDisabled) return values;
     switch (label) {
         case "year":
             verifiedValues = values;
@@ -39,7 +40,7 @@ const Selector: React.FC<SelectorProps> = ({
     label,
     values,
     onChange,
-    value,
+    displayValue,
     disabled = false,
 }) => {
 
@@ -48,7 +49,7 @@ const Selector: React.FC<SelectorProps> = ({
         onChange(chosenValue, label);
     };
     
-    const organizedValues = organizeValues(label, values);
+    const organizedValues = organizeValues(label, values, disabled);
 
     return (
         <>
@@ -61,17 +62,17 @@ const Selector: React.FC<SelectorProps> = ({
                         color="primary"
                         className="capitalize rounded-small"
                     >
-                        {value ? value : `Select a ${label}`}
+                        {label ? displayValue(label) : ''}
                     </Button>
                 </DropdownTrigger>
                 {values && values.length > 0 && (
                     <DropdownMenu
-                        aria-label="Year selection"
+                        aria-label={`${label} selection`}
                         variant="solid"
                         color="primary"
                         disallowEmptySelection
                         selectionMode="single"
-                        selectedKeys={value}
+                        selectedKeys={displayValue(label)}
                         onSelectionChange={handleChange}
                     >
                         {organizedValues.map((value) => (
