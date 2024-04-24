@@ -83,7 +83,7 @@ const CurrentRound: React.FC<{ raceData: any }> = ({ raceData }) => {
 
     return (
         <div
-            //className={styles.currentRoundCard}
+            className="w-full"
             key={`${raceData.round}-container`}
             onClick={handleCardClick}
         >

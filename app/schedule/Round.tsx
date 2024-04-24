@@ -6,6 +6,8 @@ import { fetchCountryFlagByName } from "../../services/countryApi";
 import { MeetingParams } from "../../interfaces/openF1";
 import { fetchMeeting } from "../../services/openF1Api";
 import { driverImage, trackImage } from "../../utils/helpers";
+import { Divider, Spacer } from "@nextui-org/react";
+import { Minus } from "lucide-react";
 
 function formatDateRange(startDate: string, endDate: string) {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
@@ -16,53 +18,10 @@ function formatDateRange(startDate: string, endDate: string) {
   return (startMonthDay + (startMonthDay === endMonthDay ? "" : ` - ${endMonthDay}`));
 }
 
-const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
-  return (
-    <>
-      <h3 key={`${results.round}-results-title`}>Race Results</h3>
-      <div
-        key={`${results.round}-results-container`}
-      //className={styles.resultsContainer}
-      >
-        <div>
-          <img
-            src={driverImage(
-              results[1].Driver.givenName,
-              results[1].Driver.familyName
-            )}
-            //className={styles.driverImage}
-          />
-          <p key={`${results.round}-2`}>2. {results[1].Driver.code}</p>
-        </div>
-        <div>
-          <img
-            src={driverImage(
-              results[0].Driver.givenName,
-              results[0].Driver.familyName
-            )}
-            style={{ width: '125px', height: '125px' }}
-          //className={styles.driverImage}
-          />
-          <p key={`${results.round}-1`}>1. {results[0].Driver.code}</p>
-        </div>
-        <div>
-          <img
-            src={driverImage(
-              results[2].Driver.givenName,
-              results[2].Driver.familyName
-            )}
-          //className={styles.driverImage}
-          />
-          <p key={`${results.round}-3`}>3. {results[2].Driver.code}</p>
-        </div>
-      </div>
-    </>
-  );
-};
 
 const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
   const [results, setResults] = useState<any>(null);
-  const [meeting, setMeeting] = useState<MeetingParams>(null);
+  const [meeting, setMeeting] = useState<MeetingParams>();
   const [raceDates, setRaceDates] = useState<any>(null);
   const [flagData, setFlagData] = useState<any>(null);
 
@@ -127,31 +86,32 @@ const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
 
   return (
     <div
-      //className={styles.roundCard}
+      className="bg-zinc-800 lg:w-3xl rounded-lg p-5"
       key={`${raceData.round}-container`}
       onClick={handleCardClick}
     >
-      <div
-      //className={styles.topRow}
-      >
-        <p key={`${raceData.date}`}>{raceDates}</p>
-        <img src={flagData?.png} style={{ width: "50px", height: "auto", borderRadius: "4px" }} />
+      <div className="flex flex-row items-center justify-between">
+        <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
+        <img src={flagData?.png} className="w-12 h-auto rounded" />
       </div>
+      <span key={`${raceData.round}-title`} className="flex justify-center">
+        <span className="font-extralight">{`Round ${raceData.round}`}</span>
+        <Spacer x={1} /><Minus className="font-thin"/><Spacer x={1} />
+        <span className="font-light">{raceData.raceName}</span>
+      </span>
+      <p className="text-center font-small">{meeting?.meeting_official_name}</p>
 
-      <h2
-        key={`${raceData.round}-title`}
-      >{`Round ${raceData.round} - ${raceData.raceName}`}</h2>
+      <Divider className="my-3" />
 
-      <p style={{ textAlign: "center" }}>{meeting?.meeting_official_name}</p>
-      <div
-      //className={styles.topRow}
-      >
+      <div className="flex flex-row items-center justify-between">
         <p key={`${raceData.Circuit.Location.locality}`}>
           {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
         </p>
         <p>{raceData.Circuit.circuitName}</p>
       </div>
-      <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} className=""/*{styles.trackImage}*/ />
+      <div className="flex justify-center">
+        <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} />
+      </div>
 
       {results && <ResultsContainer results={results} />}
     </div>
@@ -159,3 +119,68 @@ const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
 };
 
 export default Round;
+
+
+
+
+const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
+  const driverClasses = "flex flex-col items-center gap-2"
+  const driverImageClasses = "rounded-full"
+
+  return (
+    <div>
+      <Divider className="my-3" />
+      <h3 key={`${results.round}-results-title`} className="text-center font-light text-lg m-3">Race Results</h3>
+      <div key={`${results.round}-results-container`} className="flex flex-row justify-center gap-5">
+        <div className={driverClasses}>
+          <img
+            src={driverImage(
+              results[1].Driver.givenName,
+              results[1].Driver.familyName
+            )}
+            className={driverImageClasses}
+          />
+          <span key={`${results.round}-2`} className="flex items-center">
+            <span className="font-extralight">2</span>
+            <Spacer x={2} />
+            <Divider orientation="vertical" className="h-5" />
+            <Spacer x={2} />
+            <span className="font-bold">{results[1].Driver.code}</span>
+          </span>
+        </div>
+        <div className={driverClasses}>
+          <img
+            src={driverImage(
+              results[0].Driver.givenName,
+              results[0].Driver.familyName
+            )}
+            className={`${driverImageClasses} w-32`}
+          />
+          <span key={`${results.round}-2`} className="flex items-center">
+            <span className="font-extralight">1</span>
+            <Spacer x={2} />
+            <Divider orientation="vertical" className="h-5" />
+            <Spacer x={2} />
+            <span className="font-bold">{results[0].Driver.code}</span>
+          </span>
+        </div>
+        <div className={driverClasses}>
+          <img
+            src={driverImage(
+              results[2].Driver.givenName,
+              results[2].Driver.familyName
+            )}
+            className={driverImageClasses}
+          />
+          <span key={`${results.round}-2`} className="flex items-center">
+            <span className="font-extralight">2</span>
+            <Spacer x={2} />
+            <Divider orientation="vertical" className="h-5" />
+            <Spacer x={2} />
+            <span className="font-bold">{results[2].Driver.code}</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};

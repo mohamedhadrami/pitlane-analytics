@@ -31,7 +31,7 @@ const Page: React.FC = () => {
         for (let i = 0; i < races.length; i++) {
             const raceDate = new Date(races[i].date + " " + races[i].time);
             if (raceDate > currentDate) {
-                setNextRaceIndex(i); // Set the index of the next race
+                setNextRaceIndex(i);
                 break;
             }
         }
@@ -39,23 +39,25 @@ const Page: React.FC = () => {
 
     return (
         <>
-            <h1 key="schedule-title">Schedule</h1>
-            {data ? (
-                <div className="" key="schedule-container">
-                    {data?.MRData.RaceTable.Races.map((round: any, index: number) => (
-                        // Render the CurrentRound component if it's the next race, otherwise render the Round component
-                        nextRaceIndex === index ? (
-                            <CurrentRound raceData={round} key={`race-comp-${round.round}`} />
-                        ) : (
-                            <Round raceData={round} key={`race-comp-${round.round}`} />
-                        )
-                    ))}
+            <h1 key="schedule-title" className="text-3xl font-light p-5 text-center">Schedule</h1>
+            <div className="flex justify-center">
+                <div className="grid gap-5 md:grid-cols-2 max-w-screen-xl place-content-center p-7" key="schedule-container">
+                    {data ? (
+                        data?.MRData.RaceTable.Races.map((round: any, index: number) => (
+                            nextRaceIndex === index ? (
+                                <CurrentRound raceData={round} key={`race-comp-${round.round}`} />
+                            ) : (
+                                <Round raceData={round} key={`race-comp-${round.round}`} />
+                            )
+                        ))
+                    ) : (
+                        <Loading />
+                    )}
                 </div>
-            ) : (
-                <Loading />
-            )}
+            </div>
         </>
-    )
+    );
+
 }
 
 export default Page;
