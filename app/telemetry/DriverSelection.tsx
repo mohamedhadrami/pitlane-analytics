@@ -3,8 +3,7 @@
 import { DriverParams } from "@/interfaces/openF1";
 import { driverImage, isValidColor } from "@/utils/helpers";
 import React, { useEffect } from "react";
-import styled from "@emotion/styled";
-import { Image } from "@nextui-org/react";
+import styled from "styled-components";
 
 interface DriverSelectionProps {
     drivers: DriverParams[],
