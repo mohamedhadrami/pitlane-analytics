@@ -2,38 +2,24 @@
 
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import styles from "../../styles/championships.module.css";
 import { fetchCountryNameByCode } from "../../services/countryApi";
 import { DriverParams } from "../../interfaces/openF1";
-import { fetchDrivers } from "../../services/openF1Api";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { Image, Divider, Spacer } from "@nextui-org/react";
 import {
   driverImage,
   flagImage,
   isValidColor,
+  logoImage,
   numberImage,
+  teamNameConvertor,
 } from "../../utils/helpers";
 
 const DriverImage = styled.img<{ borderColor: string }>`
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  margin-bottom: 10px;
   border: 1px solid ${(props) => props.borderColor};
 `;
 
 const CardContainer = styled.div<{ borderColor: string }>`
-  background-color: #282828;
-  border-radius: 8px; /* Add border-radius for rounded corners */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 1);
-  padding: 20px;
-  width: 300px;
-  display: flex;
-  justify-content: space-between;
-  position: relative;
-  transition: box-shadow 0.3s, border-color 0.3s;
-  border: 1px solid transparent;
-
   &:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     border-color: ${(props) => props.borderColor};
@@ -41,15 +27,21 @@ const CardContainer = styled.div<{ borderColor: string }>`
 
   &:hover ${DriverImage} {
     ${(props) => `background-color: ${props.borderColor};`}
-    transition: background-color ease 1s
+    transition: background-color ease 0.5s
   }
 `;
 
-const DriverChampionshipCard: React.FC<{ driver: any }> = ({ driver }) => {
-  const [driverData, setDriverData] = useState<DriverParams | null>(null);
-  const [countryName, setCountryName] = useState<string | null>(null);
-  const [teamColor, setTeamColor] = useState<string | null>(null);
-  const [openDialog, setOpenDialog] = useState<boolean>(false);
+const DriverChampionshipCard: React.FC<{
+  driver: any;
+  drivers: DriverParams[];
+  year: string;
+}> = ({ driver, drivers, year }) => {
+  const [driverData, setDriverData] = useState<DriverParams>();
+  const [countryName, setCountryName] = useState<string>("");
+  const [teamColor, setTeamColor] = useState<string>("");
+  const [numberUrl, setNumberUrl] = useState<string>("");
+  const [logoUrl, setLogoUrl] = useState<string>("");
+  const [flagUrl, setFlagUrl] = useState<string>("");
 
   const router = useRouter();
 
@@ -57,63 +49,85 @@ const DriverChampionshipCard: React.FC<{ driver: any }> = ({ driver }) => {
     router.push(`/driver/${driver.Driver.code}`);
   };
 
-  const handleDialog = () => {
-    setOpenDialog(!openDialog);
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      if (drivers) {
+        const apiDriverData: DriverParams | undefined = drivers.find(v => v.name_acronym === driver.Driver.code);
+        setDriverData(apiDriverData);
+        if (apiDriverData != undefined) {
+          const name = await fetchCountryNameByCode(apiDriverData?.country_code);
+          setCountryName(name);
+          setTeamColor(
+            isValidColor(`#${apiDriverData?.team_colour}`)
+              ? `#${apiDriverData?.team_colour}`
+              : "#FFFFFF"
+          );
+        }
+        setNumberUrl(numberImage(driver.Driver.givenName, driver.Driver.familyName))
+        const correctedTeamName = teamNameConvertor(driver.Constructors[0].name)
+          ?.replace(/\s+/g, "-")
+          .toLowerCase();
+        setLogoUrl(logoImage(year, correctedTeamName))
+      }
+    };
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    const fetchDataFromApi = async () => {
-      const params: DriverParams = {
-        name_acronym: driver.Driver.code,
-      };
-      const apiData = await fetchDrivers(params);
-      setDriverData(apiData.pop());
-
-      const name = await fetchCountryNameByCode(apiData[0]?.country_code);
-      setCountryName(name);
-
-      setTeamColor(
-        isValidColor(`#${apiData.pop().team_colour}`)
-          ? `#${apiData.pop().team_colour}`
-          : "#FFFFFF"
-      );
-    };
-
-    fetchDataFromApi();
-  }, [driver]);
+    setFlagUrl(flagImage(countryName))
+  }, [countryName])
 
   return (
     <>
-      <CardContainer borderColor={teamColor || "#fff"} onClick={handleDialog}>
-        <div className={styles.leftSide}>
-          <div className={styles.position}>{driver.position}</div>
-          <p>{`${driver.Driver.givenName} ${driver.Driver.familyName}`}</p>
-          <DriverImage
-            src={driverImage(driver.Driver.givenName, driver.Driver.familyName)}
-            alt={`${driver.Driver.givenName} ${driver.Driver.familyName}`}
-            borderColor={teamColor}
-          />
-        </div>
-        <div className={styles.rightSide}>
-          <div className={styles.point}>
-            {driver.points} {driver.points === "1" ? "Point" : "Points"}
+      {driver && flagUrl && (
+        <CardContainer
+          className="bg-zinc-800 rounded-lg p-3 min-w-80 shadow-md transition duration-300 border border-transparent"
+          borderColor={teamColor || "#fff"}
+          onClick={handleDriverSelect}
+        >
+          <div className="flex p-2">
+            <span className="text-3xl font-bold">{driver.position}</span>
+            <span className="flex items-center text-lg ml-auto">
+              <span className="font-medium">{driver.points}</span>
+              <Spacer x={1} />
+              <span className="font-thin">{driver.points === "1" ? "Point" : "Points"}</span>
+            </span>
           </div>
-          <p>
-            <img
-              src={flagImage(countryName)}
-              alt={`${driver.Driver.nationality} flag`}
-              className={styles.flagImage}
-            />
-          </p>
-          <p>{driver.Constructors[0].name}</p>
-          <img
-            src={numberImage(driver.Driver.givenName, driver.Driver.familyName)}
-            alt="Driver Number"
-            className={styles.driverNumber}
-          />
-        </div>
-      </CardContainer>
-      Dialog here
+          <Divider className="" />
+          <div className="flex flex-col p-2">
+            <div className="flex flex-row items-center justify-between">
+              <span>{`${driver.Driver.givenName} ${driver.Driver.familyName}`}</span>
+              <Image
+                className="rounded-md mt-2"
+                width={40}
+                src={flagUrl}
+                alt={`${driver.Driver.nationality} flag`}/>
+            </div>
+            <div className="flex flex-row items-center justify-between">
+              <span>{driver.Constructors[0].name}</span>
+              <Image
+                className="mt-2"
+                width={40}
+                src={logoUrl}
+                alt={`${driver.Constructors[0].name} logo`} />
+            </div>
+          </div>
+          {/*<Divider className="" /> */}
+          <div className="flex flex-row items-center justify-between p-2">
+            <DriverImage
+              className="w-24 h-24 rounded-full"
+              src={driverImage(driver.Driver.givenName, driver.Driver.familyName)}
+              alt={`${driver.Driver.givenName} ${driver.Driver.familyName}`}
+              borderColor={teamColor} />
+            <div className="flex items-center">
+              <Image
+                className="inline-block align-middle"
+                src={numberUrl}
+                alt="Driver Number" />
+            </div>
+          </div>
+        </CardContainer>
+      )}
     </>
   );
 };
