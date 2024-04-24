@@ -75,6 +75,20 @@ export const isValidColor = (str: string) => {
     return true;
 }
 
+export const teamNameConvertor = (name: string) => {
+    switch (name) {
+      case "Red Bull":
+        return "Red Bull Racing";
+      case "Sauber":
+        return "Kick Sauber";
+      case "RB F1 Team":
+        return "RB";
+      case "Alpine F1 Team":
+        return "Alpine";
+      default:
+        return name;
+    }
+  }
 
 /* IMAGE URLS*/
 
@@ -86,7 +100,7 @@ export const trackImage = (cityName: string | undefined, countryName: string | u
     return `https://media.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/${name}.png.transform/2col/image.png`;
 };
 
-export const flagImage = (countryName: string) => {
+export const flagImage = (countryName: string | undefined) => {
     return `https://media.formula1.com/d_default_fallback_image.png/content/dam/fom-website/flags/${countryName}.jpg.transform/1col/image.jpg`;
 }
 
