@@ -1,11 +1,12 @@
 
 "use client"
 
-import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, Button, NavbarMenu, Link, NavbarMenuItem } from "@nextui-org/react";
+import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, Button, NavbarMenu, Link, NavbarMenuItem, Spacer } from "@nextui-org/react";
 import { Menu } from "lucide-react";
 import { useState } from "react";
 import Image from 'next/image';
 
+const titleClasses = "font-light text-lg"
 
 const CustomNavbar: React.FC = () => {
 
@@ -34,39 +35,45 @@ const CustomNavbar: React.FC = () => {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand className="space-x-4">
-          <p className="font-bold text-inherit">Pitlane Analytics</p>
-          <Image
-            src="/checkered-wave-flag.png"
-            width={50}
-            height={50}
-            alt="logo"
-          />
+        <Link href="/" color="foreground">
+            <Image
+              src="/checkered-wave-flag.png"
+              width={50}
+              height={50}
+              alt="logo"
+            />
+            <Spacer x={4} />
+            <p className={titleClasses}>Pitlane Analytics</p>
+          </Link>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="end">
         <NavbarBrand className="space-x-4">
-          <p className="font-bold text-inherit">Pitlane Analytics</p>
-          <Image
-            src="/checkered-wave-flag.png"
-            width={50}
-            height={50}
-            alt="logo"
-          />
+          <Link href="/" color="foreground">
+            <p className={titleClasses}>Pitlane Analytics</p>
+            <Spacer x={4} />
+            <Image
+              src="/checkered-wave-flag.png"
+              width={50}
+              height={50}
+              alt="logo"
+            />
+          </Link>
         </NavbarBrand>
-        <NavbarItem>
+        <NavbarItem className="font-extralight">
           <Link color="foreground" href="/schedule">Schedule</Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="font-extralight">
           <Link color="foreground" href="/championship">Championship</Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="font-extralight">
           <Link color="foreground" href="/dashboard">Live</Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="font-extralight">
           <Link color="foreground" href="/telemetry">Telemetry</Link>
         </NavbarItem>
-        <NavbarItem>
+        <NavbarItem className="font-extralight">
           <Link color="foreground" href="/archive">Archive</Link>
         </NavbarItem>
       </NavbarContent>
