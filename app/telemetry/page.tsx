@@ -6,9 +6,12 @@ import { DriverParams, MeetingParams, SessionParams, WeatherParams } from "@/int
 import { fetchDrivers, fetchMeeting, fetchSession, fetchWeather } from "@/services/openF1Api";
 import SessionStats from "./SessionStats";
 import DriverSelection from "./DriverSelection";
+import { useSearchParams } from "next/navigation";
 
 
 const Page: React.FC = () => {
+    const searchParams = useSearchParams();
+
     const [years, setYears] = useState<number[]>([]);
     const [meetings, setMeetings] = useState<MeetingParams[]>([]);
     const [sessions, setSessions] = useState<SessionParams[]>([]);
@@ -27,15 +30,25 @@ const Page: React.FC = () => {
     const [selectedDrivers, setSelectedDrivers] = useState<DriverParams[]>([])
 
 
-    // TODO: change this
+    useEffect(() => {
+        if (searchParams) {
+            const queryYear = searchParams.get("year");
+            const queryMeeting = searchParams.get("meeting");
+            const querySession = searchParams.get("session");
+            if (queryYear) setSelectedYear(parseInt(queryYear))
+            if (queryMeeting) setSelectedMeetingKey(parseInt(queryMeeting))
+            if (querySession) setSelectedSessionKey(parseInt(querySession))
+        }
+    }, [searchParams])
+
+
     useEffect(() => {
         const currentYear = new Date().getFullYear();
-        const endYear = 2023;
-        const yearArray: number[] = [];
-        for (let year = currentYear; year >= endYear; year--) {
-            yearArray.push(year);
-        }
-        setYears(yearArray);
+        const availableYears = Array.from(
+            { length: currentYear - 2017 },
+            (_, index) => currentYear - index
+        );
+        setYears(availableYears);
     }, []);
 
     useEffect(() => {
@@ -47,7 +60,7 @@ const Page: React.FC = () => {
             setMeetings(res);
         }
         if (selectedYear) fetchData();
-    }, [selectedYear]);
+    }, [selectedYear, years]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -63,7 +76,7 @@ const Page: React.FC = () => {
             const meeting = meetings?.find(v => v.meeting_key === selectedMeetingKey);
             setSelectedMeeting(meeting)
         }
-    }, [selectedMeetingKey]);
+    }, [selectedMeetingKey, meetings]);
 
     useEffect(() => {
         const fetchWeatherData = async () => {
@@ -90,7 +103,7 @@ const Page: React.FC = () => {
             fetchWeatherData();
             fetchDriverData();
         }
-    }, [selectedSessionKey]);
+    }, [selectedSessionKey, sessions]);
 
     const toggleDriverSelect = (driver: DriverParams) => {
         let updatedDrivers = selectedDrivers;
