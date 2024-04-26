@@ -11,7 +11,7 @@ const fetchRestCountryApi = async (endpoint: string) => {
     }
 }
 
-export const fetchCountryFlagByName = async (country: string | undefined) => {
+export const fetchCountryFlagByName = async (country: string) => {
     const endpoint = `/name/${country}`;
     const data = await fetchRestCountryApi(endpoint);
     const flagData = data[0]?.flags;
@@ -33,7 +33,8 @@ export const fetchCountryFlagByDemonym = async (demonym: string) => {
 }
 
 export const fetchCountryNameByCode = async (country_code: string) => {
-    const endpoint = `/alpha/${country_code}`;
+    let endpoint = `/alpha/${country_code}`;
+    if (country_code == undefined) endpoint = "USA"
     const data = await fetchRestCountryApi(endpoint);
     const name = data[0]?.name.common;
     return name;
