@@ -24,12 +24,17 @@ const CardContainer = styled.div<{ borderColor: string }>`
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     border-color: ${(props) => props.borderColor};
   }
-
+  border-color: #111;
+  ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
+  
   &:hover ${DriverImage} {
-    ${(props) => `background-color: ${props.borderColor};`}
-    transition: background-color ease 0.5s
+    ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
+    ${(props) => `--tw-gradient-to: #111 var(--tw-gradient-to-position);`}
   }
 `;
+
+// ${(props) => `--tw-gradient-to: ${props.borderColor} var(--tw-gradient-to-position);`}
+// ${(props) => `background-color: ${props.borderColor};`}
 
 const DriverChampionshipCard: React.FC<{
   driver: any;
@@ -81,7 +86,7 @@ const DriverChampionshipCard: React.FC<{
     <>
       {driver && flagUrl && (
         <CardContainer
-          className="bg-zinc-800 rounded-lg p-3 min-w-80 shadow-md transition duration-300 border border-transparent"
+          className="bg-gradient-to-br from-zinc-800 to-zinc-800 border-[#111] rounded-lg p-3 min-w-80 shadow-md transition duration-300 border border-transparent"
           borderColor={teamColor || "#fff"}
           onClick={handleDriverSelect}
         >
@@ -101,7 +106,7 @@ const DriverChampionshipCard: React.FC<{
                 className="rounded-md mt-2"
                 width={40}
                 src={flagUrl}
-                alt={`${driver.Driver.nationality} flag`}/>
+                alt={`${driver.Driver.nationality} flag`} />
             </div>
             <div className="flex flex-row items-center justify-between">
               <span>{driver.Constructors[0].name}</span>
@@ -115,7 +120,7 @@ const DriverChampionshipCard: React.FC<{
           {/*<Divider className="" /> */}
           <div className="flex flex-row items-center justify-between p-2">
             <DriverImage
-              className="w-24 h-24 rounded-full"
+              className="w-24 h-24 rounded-full bg-gradient-to-t from-transparent to-transparent"
               src={driverImage(driver.Driver.givenName, driver.Driver.familyName)}
               alt={`${driver.Driver.givenName} ${driver.Driver.familyName}`}
               borderColor={teamColor} />
