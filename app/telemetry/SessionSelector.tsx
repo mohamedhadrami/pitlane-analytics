@@ -85,6 +85,7 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
                 {Object.keys(selections).map((key) => (
                     <Selector
                         id={key}
+                        key={`${key}-dropdown`}
                         label={key}
                         values={selections[key].values}
                         onChange={setValue}

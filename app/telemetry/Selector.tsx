@@ -70,12 +70,11 @@ const Selector: React.FC<SelectorProps> = ({
                         aria-label={`${label} selection`}
                         variant="solid"
                         color="primary"
-                        disallowEmptySelection
                         selectionMode="single"
                         selectedKeys={displayValue(label)}
                         onSelectionChange={handleChange}
                     >
-                        {organizedValues.map((value) => (
+                        {organizedValues?.map((value) => (
                             <DropdownItem key={value}>{value}</DropdownItem>
                         ))}
                     </DropdownMenu>
