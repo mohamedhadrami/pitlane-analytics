@@ -38,6 +38,7 @@ const CustomNavbar: React.FC = () => {
         <Link href="/" color="foreground">
             <Image
               src="/checkered-wave-flag.png"
+              style={{width: "50px", height: "auto"}}
               width={50}
               height={50}
               alt="logo"
@@ -55,6 +56,7 @@ const CustomNavbar: React.FC = () => {
             <Spacer x={4} />
             <Image
               src="/checkered-wave-flag.png"
+              style={{width: "50px", height: "auto"}}
               width={50}
               height={50}
               alt="logo"
