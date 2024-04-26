@@ -22,16 +22,16 @@ export interface DateRangeParams {
  * @param throttle	Percentage of maximum engine power being used.
  */
 export interface CarDataParams {
-    brake?: number,
-    date?: string,
-    driver_number?: number,
-    drs?: number,
-    meeting_key?: number,
-    n_gear?: number,
-    rpm?: number,
-    session_key?: number,
-    speed?: number,
-    throttle?: number,
+    brake?: number;
+    date?: string;
+    driver_number?: number;
+    drs?: number;
+    meeting_key?: number;
+    n_gear?: number;
+    rpm?: number;
+    session_key?: number;
+    speed?: number;
+    throttle?: number;
 }
 
 export const drsStatus: Record<number, string> = {
@@ -63,18 +63,18 @@ export const drsStatus: Record<number, string> = {
  * @param team_name	Name of the driver's team.
  */
 export interface DriverParams {
-    broadcast_name?: string,
-    country_code?: string,
-    driver_number?: number,
-    first_name?: string,
-    full_name?: string,
-    headshot_url?: string,
-    last_name?: string,
-    meeting_key?: number | string,
-    name_acronym?: string,
-    session_key?: number | string,
-    team_colour?: string,
-    team_name?: string,
+    broadcast_name?: string;
+    country_code?: string;
+    driver_number?: number;
+    first_name?: string;
+    full_name?: string;
+    headshot_url?: string;
+    last_name?: string;
+    meeting_key?: number | string;
+    name_acronym?: string;
+    session_key?: number | string;
+    team_colour?: string;
+    team_name?: string;
 }
 
 /**
@@ -86,12 +86,12 @@ export interface DriverParams {
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export interface IntervalParams {
-    date?: string,
-    driver_number?: number,
-    gap_to_leader?: number,
-    interval?: number,
-    meeting_key?: number | string,
-    session_key?: number | string,
+    date?: string;
+    driver_number?: number;
+    gap_to_leader?: number;
+    interval?: number;
+    meeting_key?: number | string;
+    session_key?: number | string;
 }
 
 /**
@@ -113,22 +113,22 @@ export interface IntervalParams {
  * @param st_speed	The speed of the car, in km/h, at the speed trap, which is a specific point on the track where the highest speeds are usually recorded.
  */
 export interface LapParams {
-    date_start?: string,
-    driver_number?: number,
-    duration_sector_1?: number,
-    duration_sector_2?: number,
-    duration_sector_3?: number,
-    i1_speed?: number,
-    i2_speed?: number,
-    is_pit_out_lap?: boolean,
-    lap_duration?: number,
-    lap_number?: number,
-    meeting_key?: number | string,
-    segments_sector_1?: [],
-    segments_sector_2?: [],
-    segments_sector_3?: [],
-    session_key?: number | string,
-    st_speed?: number,
+    date_start?: string;
+    driver_number?: number;
+    duration_sector_1?: number;
+    duration_sector_2?: number;
+    duration_sector_3?: number;
+    i1_speed?: number;
+    i2_speed?: number;
+    is_pit_out_lap?: boolean;
+    lap_duration?: number;
+    lap_number?: number;
+    meeting_key?: number | string;
+    segments_sector_1?: [];
+    segments_sector_2?: [];
+    segments_sector_3?: [];
+    session_key?: number | string;
+    st_speed?: number;
 }
 
 export const segmentColor: Record<number, string> = {
@@ -154,13 +154,13 @@ export const segmentColor: Record<number, string> = {
  * @param z	The 'z' value in a 3D Cartesian coordinate system representing the current approximate location of the car on the track.
  */
 export interface LocationParams {
-    date?: string,
-    driver_number?: number,
-    meeting_key?: number,
-    session_key?: number,
-    x?: number,
-    y?: number,
-    z?: number
+    date?: string;
+    driver_number?: number;
+    meeting_key?: number;
+    session_key?: number;
+    x?: number;
+    y?: number;
+    z?: number;
 }
 
 /**
@@ -201,12 +201,12 @@ export interface MeetingParams {
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export interface PitParams {
-    date?: string,
-    driver_number?: number,
-    lap_number?: number,
-    meeting_key?: number,
-    pit_duration?: number,
-    session_key?: number
+    date?: string;
+    driver_number?: number;
+    lap_number?: number;
+    meeting_key?: number;
+    pit_duration?: number;
+    session_key?: number;
 }
 
 /**
@@ -217,11 +217,11 @@ export interface PitParams {
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export interface PositionParams {
-    date?: string,
-    driver_number?: number,
-    meeting_key?: number | string,
-    position?: number,
-    session_key?: number | string
+    date?: string;
+    driver_number?: number;
+    meeting_key?: number | string;
+    position?: number;
+    session_key?: number | string;
 }
 
 /**
@@ -237,16 +237,16 @@ export interface PositionParams {
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export interface RaceControlParams {
-    category?: string,
-    date?: string,
-    driver_number?: number,
-    flag?: string,
-    lap_number?: number,
-    meeting_key?: number | string,
-    message?: string,
-    scope?: string,
-    sector?: number,
-    session_key?: number | string
+    category?: string;
+    date?: string;
+    driver_number?: number;
+    flag?: string;
+    lap_number?: number;
+    meeting_key?: number | string;
+    message?: string;
+    scope?: string;
+    sector?: number;
+    session_key?: number | string;
 }
 
 /**
@@ -266,20 +266,20 @@ export interface RaceControlParams {
  * @param year	The year the event takes place.
  */
 export interface SessionParams {
-    circuit_key?: number,
-    circuit_short_name?: string,
-    country_code?: string,
-    country_key?: number,
-    country_name?: string,
-    date_end?: string,
-    date_start?: string,
-    gmt_offset?: string,
-    location?: string,
-    meeting_key?: number,
-    session_key?: number | string,
-    session_name?: string,
-    session_type?: string,
-    year?: number
+    circuit_key?: number;
+    circuit_short_name?: string;
+    country_code?: string;
+    country_key?: number;
+    country_name?: string;
+    date_end?: string;
+    date_start?: string;
+    gmt_offset?: string;
+    location?: string;
+    meeting_key?: number;
+    session_key?: number | string;
+    session_name?: string;
+    session_type?: string;
+    year?: number;
 }
 
 /**
@@ -293,14 +293,14 @@ export interface SessionParams {
  * @param tyre_age_at_start	The age of the tyres at the start of the stint, in laps completed.
  */
 export interface StintParams {
-    compound?: string,
-    driver_number?: number,
-    lap_end?: number,
-    lap_start?: number,
-    meeting_key?: number | string,
-    session_key?: number | string,
-    stint_number?: number,
-    tyre_age_at_start?: number
+    compound?: string;
+    driver_number?: number;
+    lap_end?: number;
+    lap_start?: number;
+    meeting_key?: number | string;
+    session_key?: number | string;
+    stint_number?: number;
+    tyre_age_at_start?: number;
 }
 
 /**
@@ -311,11 +311,11 @@ export interface StintParams {
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export interface TeamRadioParams {
-    date?: string,
-    driver_number?: number,
-    meeting_key?: number | string,
-    recording_url?: string,
-    session_key?: number | string
+    date?: string;
+    driver_number?: number;
+    meeting_key?: number | string;
+    recording_url?: string;
+    session_key?: number | string;
 }
 
 /**
@@ -331,14 +331,14 @@ export interface TeamRadioParams {
  * @param wind_speed	Wind speed (m/s).
  */
 export interface WeatherParams {
-    air_temperature?: number,
-    date?: string,
-    humidity?: number,
-    meeting_key?: number,
-    pressure?: number,
-    rainfall?: number,
-    session_key?: number,
-    track_temperature?: number,
-    wind_direction?: number,
-    wind_speed?: number
+    air_temperature?: number;
+    date?: string;
+    humidity?: number;
+    meeting_key?: number;
+    pressure?: number;
+    rainfall?: number;
+    session_key?: number;
+    track_temperature?: number;
+    wind_direction?: number;
+    wind_speed?: number;
 }
