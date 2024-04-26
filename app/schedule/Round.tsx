@@ -19,7 +19,7 @@ function formatDateRange(startDate: string, endDate: string) {
 }
 
 
-const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
+const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceData, meetings }) => {
   const [results, setResults] = useState<any>(null);
   const [meeting, setMeeting] = useState<MeetingParams>();
   const [raceDates, setRaceDates] = useState<any>(null);
@@ -65,20 +65,9 @@ const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
   }, [raceData]);
 
   useEffect(() => {
-    const getMeeting = async () => {
-      try {
-        const params: MeetingParams = {
-          meeting_name: raceData.raceName,
-        };
-        const apiData = await fetchMeeting(params);
-        setMeeting(apiData.pop());
-      } catch (error) {
-        console.error("Error fetching race results", error);
-      }
-    };
-
-    getMeeting();
-  }, [raceData]);
+    const currentMeeting = meetings.find(v => v.meeting_name === raceData.raceName);
+    setMeeting(currentMeeting);
+  }, [raceData, meetings]);
 
   const handleCardClick = () => {
     console.log(raceData.raceName);
@@ -86,7 +75,10 @@ const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
 
   return (
     <div
-      className="bg-zinc-800 lg:w-3xl rounded-lg p-5"
+      className="flex flex-col justify-evenly 
+                  bg-gradient-to-b from-zinc-800 to-red-900
+                  hover:scale-[0.99]
+                  w-full md:w-5/12 rounded-lg p-5"
       key={`${raceData.round}-container`}
       onClick={handleCardClick}
     >
@@ -96,7 +88,7 @@ const Round: React.FC<{ raceData: any }> = ({ raceData }) => {
       </div>
       <span key={`${raceData.round}-title`} className="flex justify-center">
         <span className="font-extralight">{`Round ${raceData.round}`}</span>
-        <Spacer x={1} /><Minus className="font-thin"/><Spacer x={1} />
+        <Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
         <span className="font-light">{raceData.raceName}</span>
       </span>
       <p className="text-center font-small">{meeting?.meeting_official_name}</p>
