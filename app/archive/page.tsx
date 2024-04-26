@@ -3,7 +3,10 @@
 import { fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";
 import { Autocomplete, AutocompleteItem, Button, Divider } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { ArchiveChampionshipTableSkeleton } from "./ArchiveSkeletons";
+import ArchiveDriversTable from "./ArchiveDriversTable";
+import ArchiveConstructorsTable from "./ArchiveConstructorsTable";
 
 const Page: React.FC = () => {
     const [drivers, setDrivers] = useState<any>(null);
@@ -18,7 +21,10 @@ const Page: React.FC = () => {
         (_, index) => currentYear - index
     );
 
-    const onSelectionChange = (key: React.Key) => setSelectedYear(key.toLocaleString);
+    const onSelectionChange = (key: React.Key) => {
+        if (key.toString() == selectedYear) return null;
+        setSelectedYear(key.toString());
+    }
 
     const handleTelemetryAccess = () => router.push(`/telemetry?year=${selectedYear}`);
 
@@ -31,44 +37,76 @@ const Page: React.FC = () => {
         };
 
         if (selectedYear) {
+            setDrivers(null);
+            setConstructors(null);
             fetchData(selectedYear);
         }
     }, [selectedYear]);
 
-
+    const show: boolean = false
 
     return (
-        <>
-            <div className="flex items-center h-auto">
-                <h1 className="text-3xl font-light p-5">Archive</h1>
-                {selectedYear && (
-                    <>
-                        <Divider orientation="vertical" className="h-10" />
-                        <h2 className="text-2xl font-thin p-5">{selectedYear} Season</h2>
-                    </>
-                )}
+        <div className="max-w-screen-lg mx-auto">
+            <div>
+                <div className="flex items-center h-auto">
+                    <h1 className="text-3xl font-light p-5">Archive</h1>
+                    {selectedYear && (
+                        <>
+                            <Divider orientation="vertical" className="h-10" />
+                            <h2 className="text-2xl font-thin p-5">{selectedYear} Season</h2>
+                        </>
+                    )}
+                </div>
+                <div className="flex flex-row p-5">
+                    <Autocomplete
+                        label="Select a year"
+                        className="max-w-xs"
+                        onSelectionChange={onSelectionChange}
+                    >
+                        {years.map((year) => (
+                            <AutocompleteItem key={year} value={year}>
+                                {year}
+                            </AutocompleteItem>
+                        ))}
+                    </Autocomplete>
+                    {selectedYear && telemetryYears.includes(parseInt(selectedYear)) && (
+                        <div className="inline-flex items-center ml-auto">
+                            <Button
+                                className="ml-auto"
+                                color="primary"
+                                onClick={handleTelemetryAccess}
+                            >
+                                Access Telemetry for {selectedYear}
+                            </Button>
+                        </div>
+                    )}
+                </div>
             </div>
-            <div className="flex flex-row p-5">
-                <Autocomplete
-                    label="Select a year"
-                    className="max-w-xs"
-                    onSelectionChange={onSelectionChange}
-                >
-                    {years.map((year) => (
-                        <AutocompleteItem key={year} value={year}>
-                            {year}
-                        </AutocompleteItem>
-                    ))}
-                </Autocomplete>
-                {selectedYear && telemetryYears.includes(parseInt(selectedYear)) && (
-                    <div className="inline-flex items-center ml-auto">
-                        <Button color="primary" className="ml-auto" onClick={handleTelemetryAccess}>
-                            Access Telemetry for {selectedYear}
-                        </Button>
-                    </div>
-                )}
-            </div>
-        </>
+            {selectedYear && (
+                <>
+                    {drivers ? (
+                        <div className="flex justify-center">
+                            <ArchiveDriversTable data={drivers} />
+                        </div>
+                    ) : (
+                        <div className="flex justify-center">
+                            <ArchiveChampionshipTableSkeleton />
+                        </div>
+                    )}
+                    {constructors ? (
+                        <div className="flex justify-center">
+                            {console.log(constructors)}
+                            <ArchiveConstructorsTable data={constructors} />
+                        </div>
+                    ) : (
+                        <div className="flex justify-center">
+                            <ArchiveChampionshipTableSkeleton />
+                        </div>
+                    )}
+                </>
+            )}
+
+        </div>
     );
 };
 

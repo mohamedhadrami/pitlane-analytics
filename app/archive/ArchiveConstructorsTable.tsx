@@ -1,7 +1,8 @@
 // pages/constructors.tsx
 
-import styles from '../../styles/championshipTable.module.css';
-import { useRouter } from "next/router";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 const ArchiveConstructorsTable: React.FC<{ data: any }> = ({ data }) => {
     const router = useRouter();
@@ -10,41 +11,46 @@ const ArchiveConstructorsTable: React.FC<{ data: any }> = ({ data }) => {
         router.push(`/constructor/${constructor.Constructor.constructorId}`);
     };
 
+    const classNames = React.useMemo(
+        () => ({
+            wrapper: ["max-w-3xl", "rounded-xl"],
+            th: ["bg-transparent", "text-default-500", "text-sm", "border-b", "border-divider"],
+            tr: ["hover:bg-red-800", "rounded-full"],
+            td: ["text-default-600"],
+            table: ["rounded-xl"]
+        }),
+        [],
+    );
+
     const hasStandingsData = data?.MRData.StandingsTable.StandingsLists[0];
 
     return (
         <div>
-            {hasStandingsData ? (
-                <div className={styles.container}>
-                    <div className={styles.tableContainer}>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Position</th>
-                                    <th>Name</th>
-                                    <th>Nationality</th>
-                                    <th>Wins</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map((constructors: any, index: number) => (
-                                    <tr key={constructors.round} onClick={() => handleRowClick(constructors)}>
-                                        <td>{constructors.position}</td>
-                                        <td>{constructors.Constructor.name}</td>
-                                        <td>{constructors.Constructor.nationality}</td>
-                                        <td>{constructors.wins}</td>
-                                        <td>{constructors.points}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            ) : (
-                <p>No available constructors data.</p>
-            )}
-        </div>
+            <Table classNames={classNames} className="m-5" radius="lg" isStriped>
+                <TableHeader>
+                    <TableColumn>Position</TableColumn>
+                    <TableColumn>Name</TableColumn>
+                    <TableColumn>Nationality</TableColumn>
+                    <TableColumn>Wins</TableColumn>
+                    <TableColumn>Points</TableColumn>
+                </TableHeader>
+                {hasStandingsData ? (
+                    <TableBody>
+                        {data?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map((constructors: any, index: number) => (
+                            <TableRow key={constructors.round} onClick={() => handleRowClick(constructors)}>
+                                <TableCell>{constructors.position}</TableCell>
+                                <TableCell>{constructors.Constructor.name}</TableCell>
+                                <TableCell>{constructors.Constructor.nationality}</TableCell>
+                                <TableCell>{constructors.wins}</TableCell>
+                                <TableCell>{constructors.points}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                ) : (
+                    <TableBody emptyContent="No data available">{[]}</TableBody>
+                )}
+            </Table>
+        </div >
     );
 };
 

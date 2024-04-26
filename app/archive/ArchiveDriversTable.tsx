@@ -1,11 +1,21 @@
 // pages/drivers.tsx
 
-import styles from '../../styles/championshipTable.module.css';
-import { useRouter } from "next/router";
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 const ArchiveDriversTable: React.FC<{ data: any }> = ({ data }) => {
     const router = useRouter();
-    
+    const classNames = React.useMemo(
+        () => ({
+          wrapper: ["max-w-3xl", "rounded-xl"],
+          th: ["bg-transparent", "text-default-500", "text-sm", "border-b", "border-divider"],
+          td: ["text-default-600"],
+          table: ["rounded-xl"]
+        }),
+        [],
+      );
+
     const handleRowClick = (driver: any) => {
         router.push(`/archive/driver/${driver.Driver.driverId}`)
     };
@@ -13,33 +23,29 @@ const ArchiveDriversTable: React.FC<{ data: any }> = ({ data }) => {
     const hasDriverCode = data?.MRData.StandingsTable.StandingsLists[0].DriverStandings.some((driver: any) => driver.Driver.code);
 
     return (
-        <div className={styles.container}>
-            <div className={styles.tableContainer}>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Position</th>
-                            {hasDriverCode && <th>Driver Code</th>}
-                            <th>Full Name</th>
-                            <th>Nationality</th>
-                            <th>Team</th>
-                            <th>Points</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any, index: number) => (
-                            <tr key={driver.round} onClick={() => handleRowClick(driver)}>
-                                <td>{driver.position}</td>
-                                {hasDriverCode && <td>{driver.Driver.code}</td>}
-                                <td>{`${driver.Driver.givenName} ${driver.Driver.familyName}`}</td>
-                                <td>{driver.Driver.nationality}</td>
-                                <td>{driver.Constructors[0].name}</td>
-                                <td>{driver.points}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+        <div className="m-5">
+            <Table classNames={classNames} className="m-5" radius="lg" isStriped>
+                <TableHeader>
+                    <TableColumn>Position</TableColumn>
+                    <TableColumn>Driver Code</TableColumn>
+                    <TableColumn>Full Name</TableColumn>
+                    <TableColumn>Nationality</TableColumn>
+                    <TableColumn>Team</TableColumn>
+                    <TableColumn>Points</TableColumn>
+                </TableHeader>
+                <TableBody>
+                    {data?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any, index: number) => (
+                        <TableRow key={driver.round} onClick={() => handleRowClick(driver)}>
+                            <TableCell>{driver.position}</TableCell>
+                            {hasDriverCode && <TableCell>{driver.Driver.code}</TableCell>}
+                            <TableCell>{`${driver.Driver.givenName} ${driver.Driver.familyName}`}</TableCell>
+                            <TableCell>{driver.Driver.nationality}</TableCell>
+                            <TableCell>{driver.Constructors[0].name}</TableCell>
+                            <TableCell>{driver.points}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
         </div>
     );
 };
