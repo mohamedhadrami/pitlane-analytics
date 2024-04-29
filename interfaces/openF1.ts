@@ -43,7 +43,7 @@ export const drsStatus: Record<number, string> = {
     9: '?',
     10: 'DRS on',
     12: 'DRS on',
-    14: 'DRS on',
+    14: 'DRS activated',
 };
 
 
