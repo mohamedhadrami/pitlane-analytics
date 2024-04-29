@@ -4,10 +4,11 @@ import React, { useState, useEffect } from "react";
 import { fetchRaceResults } from "../../services/ergastApi";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { MeetingParams } from "../../interfaces/openF1";
-import { fetchMeeting } from "../../services/openF1Api";
 import { driverImage, trackImage } from "../../utils/helpers";
-import { Divider, Spacer } from "@nextui-org/react";
-import { Minus } from "lucide-react";
+import { Minus, X } from "lucide-react";
+import { Image, Divider, Spacer, Button, Table, TableHeader, TableColumn, TableBody, TableCell, TableRow, Pagination, Link, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerTitle } from "@/components/ui/drawer";
+import RaceDrawer from "@/components/drawers/RaceDrawer";
 
 function formatDateRange(startDate: string, endDate: string) {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
@@ -24,13 +25,15 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
   const [meeting, setMeeting] = useState<MeetingParams>();
   const [raceDates, setRaceDates] = useState<any>(null);
   const [flagData, setFlagData] = useState<any>(null);
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchResults = async () => {
       try {
         const raceResults = await fetchRaceResults(
-          raceData.season,
-          raceData.round
+          raceData.round,
+          undefined,
+          true,
         );
         const parsedData = raceResults.MRData.RaceTable.Races[0].Results;
         setResults(parsedData);
@@ -53,6 +56,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
         let countryName = raceData.Circuit.Location.country;
         if (countryName === "UK") countryName = "United Kingdom";
         else if (countryName === "China") countryName = "Zhōngguó";
+        else if (countryName === "Netherlands") countryName = "Kingdom of the Netherlands";
         const flagApiData = await fetchCountryFlagByName(countryName);
         setFlagData(flagApiData);
       } catch (error) {
@@ -70,43 +74,52 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
   }, [raceData, meetings]);
 
   const handleCardClick = () => {
-    console.log(raceData.raceName);
+    setOpenDrawer(!openDrawer);
   };
 
   return (
-    <div
-      className="flex flex-col justify-evenly 
+    <>
+      <div
+        className="flex flex-col justify-evenly 
                   bg-gradient-to-b from-zinc-800 to-red-900
-                  hover:scale-[0.99]
-                  w-full md:w-5/12 rounded-lg p-5"
-      key={`${raceData.round}-container`}
-      onClick={handleCardClick}
-    >
-      <div className="flex flex-row items-center justify-between">
-        <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
-        <img src={flagData?.png} className="w-12 h-auto rounded" />
-      </div>
-      <span key={`${raceData.round}-title`} className="flex justify-center">
-        <span className="font-extralight">{`Round ${raceData.round}`}</span>
-        <Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-        <span className="font-light">{raceData.raceName}</span>
-      </span>
-      <p className="text-center font-small">{meeting?.meeting_official_name}</p>
+                  hover:scale-[0.99] 
+                  ml-auto w-full md:w-5/12 rounded-lg p-5"
+        key={`${raceData.round}-container`}
+        onClick={handleCardClick}
+      >
+        <div className="flex flex-row items-center justify-between">
+          <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
+          <img src={flagData?.png} className="w-12 h-auto rounded" />
+        </div>
+        <span key={`${raceData.round}-title`} className="flex justify-center">
+          <span className="font-extralight">{`Round ${raceData.round}`}</span>
+          <Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
+          <span className="font-light">{raceData.raceName}</span>
+        </span>
+        <p className="text-center font-small">{meeting?.meeting_official_name}</p>
 
-      <Divider className="my-3" />
+        <Divider className="my-3" />
 
-      <div className="flex flex-row items-center justify-between">
-        <p key={`${raceData.Circuit.Location.locality}`}>
-          {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
-        </p>
-        <p>{raceData.Circuit.circuitName}</p>
-      </div>
-      <div className="flex justify-center">
-        <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} />
-      </div>
+        <div className="flex flex-row items-center justify-between">
+          <p key={`${raceData.Circuit.Location.locality}`}>
+            {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
+          </p>
+          <p>{raceData.Circuit.circuitName}</p>
+        </div>
+        <div className="flex justify-center">
+          <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} />
+        </div>
 
-      {results && <ResultsContainer results={results} />}
-    </div>
+        {results && <ResultsContainer results={results} />}
+      </div>
+      <RaceDrawer
+        isOpen={openDrawer}
+        setIsOpen={setOpenDrawer}
+        raceData={raceData}
+        raceResults={results}
+        meeting={meeting!}
+      />
+    </>
   );
 };
 
