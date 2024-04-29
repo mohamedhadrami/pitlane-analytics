@@ -23,8 +23,8 @@ const ArchiveDriversTable: React.FC<{ data: any }> = ({ data }) => {
     const hasDriverCode = data?.MRData.StandingsTable.StandingsLists[0].DriverStandings.some((driver: any) => driver.Driver.code);
 
     return (
-        <div className="m-5">
-            <Table classNames={classNames} className="m-5" radius="lg" isStriped>
+        <div className="">
+            <Table classNames={classNames} className="" radius="lg" isStriped>
                 <TableHeader>
                     <TableColumn>Position</TableColumn>
                     <TableColumn>Driver Code</TableColumn>

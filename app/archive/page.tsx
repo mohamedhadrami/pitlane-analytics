@@ -1,18 +1,30 @@
 "use client"
 
-import { fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";
-import { Autocomplete, AutocompleteItem, Button, Divider } from "@nextui-org/react";
+import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";
+import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArchiveChampionshipTableSkeleton } from "./ArchiveSkeletons";
 import ArchiveDriversTable from "./ArchiveDriversTable";
 import ArchiveConstructorsTable from "./ArchiveConstructorsTable";
+import ArchiveRacesTable from "./ArchiveRacesTable";
 
 const Page: React.FC = () => {
     const [drivers, setDrivers] = useState<any>(null);
     const [constructors, setConstructors] = useState<any>(null);
+    const [races, setRaces] = useState<any>(null);
     const [selectedYear, setSelectedYear] = useState<string>("");
     const router = useRouter();
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     const years = Array.from({ length: new Date().getFullYear() - 1949 }, (_, index) => (new Date().getFullYear() - index).toString());
     const currentYear = new Date().getFullYear();
@@ -34,6 +46,8 @@ const Page: React.FC = () => {
             setDrivers(driversData);
             const constructorsData = await fetchConstrutorChampionship(season);
             setConstructors(constructorsData);
+            const raceData = await fetchAllRaceResults(season);
+            setRaces(raceData);
         };
 
         if (selectedYear) {
@@ -74,6 +88,7 @@ const Page: React.FC = () => {
                             <Button
                                 className="ml-auto"
                                 color="primary"
+                                variant="ghost"
                                 onClick={handleTelemetryAccess}
                             >
                                 Access Telemetry for {selectedYear}
@@ -83,27 +98,43 @@ const Page: React.FC = () => {
                 </div>
             </div>
             {selectedYear && (
-                <>
-                    {drivers ? (
-                        <div className="flex justify-center">
-                            <ArchiveDriversTable data={drivers} />
-                        </div>
-                    ) : (
-                        <div className="flex justify-center">
-                            <ArchiveChampionshipTableSkeleton />
-                        </div>
-                    )}
-                    {constructors ? (
-                        <div className="flex justify-center">
-                            {console.log(constructors)}
-                            <ArchiveConstructorsTable data={constructors} />
-                        </div>
-                    ) : (
-                        <div className="flex justify-center">
-                            <ArchiveChampionshipTableSkeleton />
-                        </div>
-                    )}
-                </>
+                <div className="mx-5 w-full">
+                    <Tabs className="" color="primary" isVertical={!isMobile}>
+                        <Tab key="drivers" title="Drivers" className="">
+                            {drivers ? (
+                                <div className="">
+                                    <ArchiveDriversTable data={drivers} />
+                                </div>
+                            ) : (
+                                <div className="">
+                                    <ArchiveChampionshipTableSkeleton />
+                                </div>
+                            )}
+                        </Tab>
+                        <Tab key="constructors" title="Constructors" className="">
+                            {constructors ? (
+                                <div className="">
+                                    <ArchiveConstructorsTable data={constructors} />
+                                </div>
+                            ) : (
+                                <div className="">
+                                    <ArchiveChampionshipTableSkeleton />
+                                </div>
+                            )}
+                        </Tab>
+                        <Tab key="races" title="Races" className="">
+                            {races ? (
+                                <div className="">
+                                    <ArchiveRacesTable data={races} />
+                                </div>
+                            ) : (
+                                <div className="">
+                                    <ArchiveChampionshipTableSkeleton />
+                                </div>
+                            )}
+                        </Tab>
+                    </Tabs>
+                </div>
             )}
 
         </div>

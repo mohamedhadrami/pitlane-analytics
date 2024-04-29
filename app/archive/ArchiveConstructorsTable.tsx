@@ -26,7 +26,7 @@ const ArchiveConstructorsTable: React.FC<{ data: any }> = ({ data }) => {
 
     return (
         <div>
-            <Table classNames={classNames} className="m-5" radius="lg" isStriped>
+            <Table classNames={classNames} className="" radius="lg" isStriped>
                 <TableHeader>
                     <TableColumn>Position</TableColumn>
                     <TableColumn>Name</TableColumn>
