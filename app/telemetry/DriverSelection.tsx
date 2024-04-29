@@ -5,6 +5,7 @@ import { DriverParams } from "@/interfaces/openF1";
 import { driverImage, isValidColor } from "@/utils/helpers";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { toast } from "sonner";
 
 interface DriverSelectionProps {
   drivers: DriverParams[],
@@ -33,33 +34,50 @@ const DriverSelection: React.FC<DriverSelectionProps> = ({
   selectedDrivers,
   toggleDriverSelect
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 600);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleDriverSelection = (driver: DriverParams) => {
     toggleDriverSelect(driver);
+    if (selectedDrivers.has(driver.driver_number?.toString()!)) {
+      toast.info(`Unselected ${driver.first_name} ${driver.last_name}`)
+    } else {
+      toast.info(`Selected ${driver.first_name} ${driver.last_name}`)
+    }
   }
 
   return (
     <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-3 px-15 pb-30">
-      {drivers.map((driver: DriverParams) => {
-        const borderColor = isValidColor(`#${driver.team_colour}`)
-          ? `#${driver.team_colour}`
-          : "#fff";
-        return (
-          <DriverImage
-            key={driver.driver_number}
-            src={driverImage(driver.full_name!)}
-            alt={`${driver.first_name} ${driver.last_name}`}
-            bordercolor={borderColor}
-            isselected={
-              selectedDrivers &&
-              selectedDrivers.has(driver.driver_number?.toString()!)
-            }
-            onClick={() => {
-              handleDriverSelection(driver);
-            }}
-          />
-        );
-      })}
+      {!isMobile ? (
+        drivers.map((driver: DriverParams) => {
+          const borderColor = isValidColor(`#${driver.team_colour}`)
+            ? `#${driver.team_colour}`
+            : "#fff";
+          return (
+            <DriverImage
+              key={driver.driver_number}
+              src={driverImage(driver.full_name!)}
+              alt={`${driver.first_name} ${driver.last_name}`}
+              bordercolor={borderColor}
+              isselected={
+                selectedDrivers &&
+                selectedDrivers.has(driver.driver_number?.toString()!)
+              }
+              onClick={() => {
+                handleDriverSelection(driver);
+              }}
+            />
+          );
+        })
+      ) : (<p>h</p>)}
     </div>
   );
 }

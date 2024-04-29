@@ -11,6 +11,7 @@ import LapTimesLineChart from "@/app/telemetry/LapTimesLineChart";
 import { DriverChartData } from "@/interfaces/custom";
 import { calculateLapTime } from "@/utils/telemetryUtils";
 import LapStatsLineChart from "@/app/telemetry/LapStatsLineChart";
+import { toast } from "sonner";
 
 
 const Page: React.FC = () => {
@@ -159,6 +160,7 @@ const Page: React.FC = () => {
                 });
                 return updatedMap;
             });
+            toast.success(`Data for ${driver.name_acronym} loaded successfully!`)
         }
 
         if (selectedDrivers?.size !== 0) setSelectedLap(null);

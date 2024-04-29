@@ -2,7 +2,7 @@
 
 "use client"
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -19,6 +19,7 @@ import { formatSecondsToTime, isValidColor } from "../../utils/helpers";
 import { Cog } from "lucide-react";
 import { Popover, PopoverTrigger, PopoverContent, Button, Switch } from "@nextui-org/react";
 import { DriverChartData } from "@/interfaces/custom";
+import { toast } from "sonner";
 
 interface LapTimesLineChartProps {
   driversData: Map<string, DriverChartData>;
@@ -100,6 +101,14 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
       .flat()
   );
 
+  useEffect(() => {
+    if (chartData.length == 0) {
+      {toast.warning("Warning", {
+        description: "No data to display. Please select a driver or reload the page."
+      })}
+    }
+  }, [chartData])
+
   return (
     <div className="mt-7">
       <div className="flex justify-center gap-5">
@@ -159,7 +168,9 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
           </ResponsiveContainer>
         </div>
       ) : (
-        <p className="text-center font-extralight m-5 mb-10">No data to display. Please select a driver or reload the page.</p>
+        <>
+          <p className="text-center font-extralight m-5 mb-10">No data to display. Please select a driver or reload the page.</p>
+        </>
       )}
     </div>
   );

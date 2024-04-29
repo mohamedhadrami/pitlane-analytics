@@ -7,6 +7,7 @@ import { Providers } from "./providers";
 import React from "react";
 import CustomNavbar from "@/components/CustomNavbar";
 import { Link } from "@nextui-org/react";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -33,6 +34,7 @@ export default function RootLayout({
             <Link isExternal href="https://ergast.com/mrd/">Ergast API</Link>
           </p>
         </footer>
+        <Toaster />
       </body>
     </html>
   );
