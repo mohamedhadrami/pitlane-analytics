@@ -28,7 +28,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
 
     return (
         <div style={{ scrollbarWidth: "none" }}
-            className="border-1 border-white border-solid overflow-y-scroll h-[50vh]">
+            className="overflow-y-scroll h-[50vh]">
             <div className="m-3 min-w-[400px] font-extralight">
                 <table>
                     {raceControl && raceControl.map((event: RaceControlParams, id: number) => (

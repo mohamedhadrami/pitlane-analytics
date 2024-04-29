@@ -68,7 +68,7 @@ const LiveTiming: React.FC<{ drivers: DriverParams[], stints: StintParams[], lap
             ) : (
                 <>
                     {laps && laps.length > 0 ? (
-                        <Table aria-label="Example static collection table">
+                        <Table aria-label="Example static collection table" removeWrapper>
                             <TableHeader columns={headers}>
                                 {(header) => (
                                     <TableColumn key={header.uid}>

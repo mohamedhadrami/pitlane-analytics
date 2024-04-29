@@ -108,9 +108,7 @@ const Dashboard: React.FC = () => {
                 )}
                 {teamRadio && isRadio && (
                     <Grid item xs>
-                        <div style={{border: "1px white solid", height: "50vh", overflowY: "scroll", scrollbarWidth: "none"}}>
-                            <TeamRadios drivers={drivers} teamRadio={teamRadio} />
-                        </div>
+                        <TeamRadios drivers={drivers} teamRadio={teamRadio} />
                     </Grid>
                 )}
             </Grid>

@@ -22,11 +22,14 @@ const TeamRadios: React.FC<{ drivers: DriverParams[], teamRadio: TeamRadioParams
     }, [teamRadio]);
 
     return (
-        <table className="p-0 m-3">
-            {teamRadio && gmtOffset && teamRadio.map((radio: TeamRadioParams, index: number) => (
-                <Radio key={index} drivers={drivers} radio={radio} gmtOffset={gmtOffset} />
-            ))}
-        </table>
+        <div style={{ scrollbarWidth: "none" }}
+            className="overflow-y-scroll h-[50vh]">
+            <table className="p-0 m-3">
+                {teamRadio && gmtOffset && teamRadio.map((radio: TeamRadioParams, index: number) => (
+                    <Radio key={index} drivers={drivers} radio={radio} gmtOffset={gmtOffset} />
+                ))}
+            </table>
+        </div>
     );
 };
 
