@@ -1,5 +1,6 @@
 // utils/telemetryUtils.ts
 
+import { DriverChartData } from "@/interfaces/custom";
 import { CarDataParams, DriverParams, LapParams, LocationParams, WeatherParams } from "../../pitlane-analytics/interfaces/openF1ics-old/interfaces/openF1";
 
 export const calculateWeatherStats = (weatherData: WeatherParams[]) => {
@@ -68,17 +69,7 @@ export const getWindDirection = (angle: number | undefined) => {
     return directions[index];
 };
 
-export const calculateAverages = (driversData: Map<
-    string,
-    {
-        driver: DriverParams;
-        laps: LapParams[];
-        carData: CarDataParams[];
-        locationData: LocationParams[];
-        raceControl: any[];
-        chartData: any[];
-    }
->) => {
+export const calculateAverages = (driversData: Map<string, DriverChartData>) => {
     const averages = {};
 
     // Initialize variables to store sum and count for each parameter for each driver
