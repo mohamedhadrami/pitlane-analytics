@@ -69,8 +69,15 @@ export const fetchConstrutorChampionship = async (season: any) => {
     return data;
 }
 
-export const fetchRaceResults = async (season: any, round: any) => {
-    const endpoint = `/${season}/${round}/results.json`;
+export const fetchRaceResults = async (round: any, season?: any, isCurrentYear?: boolean) => {
+    let endpoint =  `/current/${round}/results.json`;
+    if (season) endpoint = `/${season}/${round}/results.json`;
+    const data = await fetchApiData(endpoint);
+    return data;
+}
+
+export const fetchAllRaceResults = async (season: any) => {
+    let endpoint =  `/${season}/results.json?limit=999`;
     const data = await fetchApiData(endpoint);
     return data;
 }
@@ -84,7 +91,7 @@ export const fetchDriverResults = async (driverId: string, year?: number, isCurr
 
 export const fetchConstructorResults = async (constructorId: string, year?: number, isCurrentYear?: boolean) => {
     let endpoint = year ? `/${year}/constructors/${constructorId}/results.json` : `/drivers/${constructorId}/results.json`;
-    if (isCurrentYear) endpoint = `/current/drivers/${constructorId}/results.json`
+    if (isCurrentYear) endpoint = `/current/constructors/${constructorId}/results.json`
     const data = await fetchApiData(endpoint);
     return data;
 }
