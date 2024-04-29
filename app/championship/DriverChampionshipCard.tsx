@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { fetchCountryNameByCode } from "../../services/countryApi";
 import { DriverParams } from "../../interfaces/openF1";
-import { useRouter } from "next/navigation";
 import { Image, Divider, Spacer } from "@nextui-org/react";
 import {
   driverImage,
@@ -14,27 +13,7 @@ import {
   numberImage,
   teamNameConvertor,
 } from "../../utils/helpers";
-
-const DriverImage = styled.img<{ borderColor: string }>`
-  border: 1px solid ${(props) => props.borderColor};
-`;
-
-const CardContainer = styled.div<{ borderColor: string }>`
-  &:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    border-color: ${(props) => props.borderColor};
-  }
-  border-color: #111;
-  ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
-  
-  &:hover ${DriverImage} {
-    ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
-    ${(props) => `--tw-gradient-to: #111 var(--tw-gradient-to-position);`}
-  }
-`;
-
-// ${(props) => `--tw-gradient-to: ${props.borderColor} var(--tw-gradient-to-position);`}
-// ${(props) => `background-color: ${props.borderColor};`}
+import DriverDrawer from "@/components/drawers/DriverDrawer";
 
 const DriverChampionshipCard: React.FC<{
   driver: any;
@@ -47,11 +26,10 @@ const DriverChampionshipCard: React.FC<{
   const [numberUrl, setNumberUrl] = useState<string>("");
   const [logoUrl, setLogoUrl] = useState<string>("");
   const [flagUrl, setFlagUrl] = useState<string>("");
-
-  const router = useRouter();
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   const handleDriverSelect = () => {
-    router.push(`/driver/${driver.Driver.code}`);
+    setOpenDrawer(!openDrawer);
   };
 
   useEffect(() => {
@@ -60,7 +38,8 @@ const DriverChampionshipCard: React.FC<{
         const apiDriverData: DriverParams | undefined = drivers.find(v => v.name_acronym === driver.Driver.code);
         setDriverData(apiDriverData);
         if (apiDriverData != undefined) {
-          const name = await fetchCountryNameByCode(apiDriverData?.country_code);
+          const countryCode: string = apiDriverData.country_code!;
+          const name = await fetchCountryNameByCode(countryCode);
           setCountryName(name);
           setTeamColor(
             isValidColor(`#${apiDriverData?.team_colour}`)
@@ -117,7 +96,6 @@ const DriverChampionshipCard: React.FC<{
                 alt={`${driver.Constructors[0].name} logo`} />
             </div>
           </div>
-          {/*<Divider className="" /> */}
           <div className="flex flex-row items-center justify-between p-2">
             <DriverImage
               className="w-24 h-24 rounded-full bg-gradient-to-t from-transparent to-transparent"
@@ -133,8 +111,29 @@ const DriverChampionshipCard: React.FC<{
           </div>
         </CardContainer>
       )}
+      {driverData && (
+        <DriverDrawer isOpen={openDrawer} setIsOpen={setOpenDrawer} driver={driver} driverData={driverData} />
+      )}
     </>
   );
 };
 
 export default DriverChampionshipCard;
+
+const DriverImage = styled.img<{ borderColor: string }>`
+  border: 1px solid ${(props) => props.borderColor};
+`;
+
+const CardContainer = styled.div<{ borderColor: string }>`
+  &:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    border-color: ${(props) => props.borderColor};
+  }
+  border-color: #111;
+  ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
+  
+  &:hover ${DriverImage} {
+    ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
+    ${(props) => `--tw-gradient-to: #111 var(--tw-gradient-to-position);`}
+  }
+`;

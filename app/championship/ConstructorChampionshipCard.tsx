@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { DriverParams } from "../../interfaces/openF1";
-import { useRouter } from "next/navigation";
 import { carImage, isValidColor, logoImage, teamNameConvertor } from "../../utils/helpers";
 import { Divider, Image, Spacer } from "@nextui-org/react";
+import ConstructorDrawer from "@/components/drawers/ConstructorDrawer";
 
 const CardContainer = styled.div<{ borderColor: string }>`
   &:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    border-color: ${(props) => props.borderColor};
+    border: 1px solid ${(props) => props.borderColor};
   }
 `;
 
@@ -23,11 +23,10 @@ const ConstructorChampionshipCard: React.FC<{
   const [teamColor, setTeamColor] = useState<string>("");
   const [carImageUrl, setCarImageUrl] = useState<string>("");
   const [logoImageUrl, setLogoImageUrl] = useState<string>("");
-
-  const router = useRouter();
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   const handleConstructorSelect = () => {
-    router.push(`/constructor/${constructor.Constructor.constructorId}`);
+    setOpenDrawer(!openDrawer);
   };
 
   useEffect(() => {
@@ -55,39 +54,59 @@ const ConstructorChampionshipCard: React.FC<{
     setLogoImageUrl(logoUrl);
   }, [teamName, year]);
 
+  const positionColor = (position: any) => {
+    switch (position) {
+      case "1":
+        return "from-yellow-300";
+      case "2":
+        return "from-slate-800";
+      case "3":
+        return "from-orange-900"
+      default:
+        return "from-zinc-800";
+    }
+  }
+
   return (
-    <CardContainer 
-      className="bg-zinc-800 rounded-lg p-3 min-w-80 shadow-md transition duration-300 border border-transparent"
-      borderColor={teamColor} 
-      onClick={handleConstructorSelect}
-    >
-      <div className="flex p-2">
-        <span className="text-3xl font-bold">{constructor.position}</span>
-        <span className="flex items-center text-lg ml-auto">
-          <span className="font-medium">{constructor.points}</span>
-          <Spacer x={1} />
-          <span className="font-thin">{constructor.points === "1" ? "Point" : "Points"}</span>
-        </span>
-      </div>
-      <Divider className="" />
-      <div className="flex flex-col p-2">
-        <div className="flex flex-row items-center justify-between">
-          <p>{constructor.Constructor.name}</p>
+    <>
+      <CardContainer
+        className={`bg-gradient-to-br ${positionColor(constructor.position)} to-zinc-500 
+      rounded-lg p-3 min-w-80 shadow-md 
+      transition duration-300 border border-transparent`}
+        borderColor={teamColor}
+        onClick={handleConstructorSelect}
+      >
+        <div className="flex p-2">
+          <span className="text-3xl font-bold">{constructor.position}</span>
+          <span className="flex items-center text-lg ml-auto">
+            <span className="font-medium">{constructor.points}</span>
+            <Spacer x={1} />
+            <span className="font-thin">{constructor.points === "1" ? "Point" : "Points"}</span>
+          </span>
+        </div>
+        <Divider className="" />
+        <div className="flex flex-col p-2">
+          <div className="flex flex-row items-center justify-between">
+            <p>{constructor.Constructor.name}</p>
+            <Image
+              src={logoImageUrl}
+              alt={`${constructor.Constructor.name} logo`}
+              width={75}
+            />
+          </div>
+        </div>
+        <div>
           <Image
-            src={logoImageUrl}
-            alt={`${constructor.Constructor.name} logo`}
-            width={75}
+            src={carImageUrl}
+            alt={`${constructor.Constructor.name} car`}
+            height={300}
           />
         </div>
-      </div>
-      <div>
-        <Image
-          src={carImageUrl}
-          alt={`${constructor.Constructor.name} car`}
-          height={300}
-        />
-      </div>
-    </CardContainer>
+      </CardContainer>
+      {constructor && teamName && (
+        <ConstructorDrawer isOpen={openDrawer} setIsOpen={setOpenDrawer} constructor={constructor} teamName={teamName} />
+      )}
+    </>
   );
 };
 
