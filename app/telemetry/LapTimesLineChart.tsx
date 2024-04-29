@@ -1,4 +1,8 @@
-import React, { useRef, useState } from "react";
+// components/Telemetry/Charts/LapTimesLineChart.tsx
+
+"use client"
+
+import React, { useState } from "react";
 import {
   LineChart,
   Line,
@@ -9,48 +13,29 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import styles from "../../../styles/telemetry/chart.module.css";
-import { DriverParams, LapParams } from "../../../interfaces/openF1";
+import { DriverParams, LapParams, RaceControlParams } from "../../interfaces/openF1";
 import LapTimeTooltip from "./LapTimeTooltip";
-import { formatSecondsToTime, isValidColor } from "../../../utils/helpers";
-import SettingsIcon from "@mui/icons-material/Settings";
+import { formatSecondsToTime, isValidColor } from "../../utils/helpers";
+import { Cog } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent, Button, Switch } from "@nextui-org/react";
+import { DriverChartData } from "@/interfaces/custom";
 
-interface LapTimeSpeedLineChartProps {
-  sessionData: {
-    pit: any[];
-    position: any[];
-    raceControl: any[];
-    teamRadio: any[];
-    weather: any[];
-  };
-  driversData: Map<
-    string,
-    {
-      driver: DriverParams;
-      laps: LapParams[];
-      carData: any[];
-      stintData: any[];
-    }
-  >;
+interface LapTimesLineChartProps {
+  driversData: Map<string, DriverChartData>;
+  raceControl: RaceControlParams[];
   onLapSelect: (lap_number: number) => void;
 }
 
-const LapTimeSpeedLineChart: React.FC<LapTimeSpeedLineChartProps> = ({
-  sessionData,
+const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
   driversData,
+  raceControl,
   onLapSelect,
 }) => {
   const [isRaceControl, setIsRaceControl] = useState<boolean>(true);
 
   const handleRaceControl = () => {
     setIsRaceControl(!isRaceControl);
-  };
-
-  const [showTooltip, setShowTooltip] = useState(false);
-  const cogRef = useRef(null);
-
-  const handleToggleTooltip = () => {
-    setShowTooltip((prevState) => !prevState);
+    console.log(raceControl)
   };
 
   const maxLaps = Math.max(
@@ -72,21 +57,21 @@ const LapTimeSpeedLineChart: React.FC<LapTimeSpeedLineChartProps> = ({
       );
 
       if (lap) {
-        lapData[`time_${driverData.driver.name_acronym}`] = lap.lap_duration;
+        lapData[`time_${driverData.driver.name_acronym}` as keyof typeof lapData] = lap.lap_duration!;
 
-        const raceControlForLap = sessionData.raceControl.filter(
+        const raceControlForLap = raceControl.filter(
           (message) => message.lap_number === lap_number
         );
 
         if (isRaceControl) {
           if (raceControlForLap.length > 0) {
-            lapData[`raceControl`] = raceControlForLap;
+            lapData[`raceControl` as keyof typeof lapData] = raceControlForLap;
           }
         }
 
         for (const stint of driverData.stintData) {
           if (lap_number >= stint.lap_start && lap_number <= stint.lap_end) {
-            lapData[`tyre_${driverData.driver.name_acronym}`] = stint.compound;
+            lapData[`tyre_${driverData.driver.name_acronym}` as keyof typeof lapData] = stint.compound;
             break;
           }
         }
@@ -116,24 +101,32 @@ const LapTimeSpeedLineChart: React.FC<LapTimeSpeedLineChartProps> = ({
   );
 
   return (
-    <div className={styles.chartContainer}>
-      <div className={styles.chartHeader}>
-        <span></span>
-        <h2>Lap Times</h2>
-        <div className={styles.lapTimeSettings}>
-
-            <SettingsIcon className={`rotate`} />
-
+    <div className="mt-7">
+      <div className="flex justify-center gap-5">
+        <h2 className="text-2xl font-extralight">Lap Times</h2>
+        <div className="align-middle">
+          <Popover placement="right" showArrow={true}>
+            <PopoverTrigger>
+              <Cog className="" />
+            </PopoverTrigger>
+            <PopoverContent className="bg-gradient-to-tl from-zinc-800 to-[#111]">
+              <div className="px-1 py-2 flex flex-col font-thin">
+                <Switch isSelected={isRaceControl} onValueChange={setIsRaceControl} size="sm">
+                  Race Control
+                </Switch>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
       {chartData.length > 0 ? (
-        <div className={styles.chartContent}>
+        <div className="flex justify-center">
           <ResponsiveContainer width={800} aspect={1.75}>
             <LineChart
               data={chartData}
               margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-              onClick={(data, index) => onLapSelect(parseInt(data.activeLabel))}
+              onClick={(data, index) => onLapSelect(parseInt(data.activeLabel!))}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="lap_number" tick={false} />
@@ -166,10 +159,10 @@ const LapTimeSpeedLineChart: React.FC<LapTimeSpeedLineChartProps> = ({
           </ResponsiveContainer>
         </div>
       ) : (
-        <p>No data to display</p>
+        <p className="text-center font-extralight m-5 mb-10">No data to display. Please select a driver or reload the page.</p>
       )}
     </div>
   );
 };
 
-export default LapTimeSpeedLineChart;
+export default LapTimesLineChart;

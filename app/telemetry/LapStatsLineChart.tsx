@@ -12,47 +12,22 @@ import {
   Scatter,
   Label,
 } from "recharts";
-import styles from "../../../styles/telemetry/chart.module.css";
-import {
-  CarDataParams,
-  DriverParams,
-  LapParams,
-  LocationParams,
-  segmentColor,
-} from "../../../interfaces/openF1";
 import LapStatsTooltip from "./LapStatsTooltip";
-import HtmlTooltip from "../SettingsIconTooltip";
-import SettingsIcon from "@mui/icons-material/Settings";
 import {
   formatSecondsToTime,
   isValidColor,
   parseISOTime,
-} from "../../../utils/helpers";
-import { calculateAverages } from "../../../utils/telemetryUtils";
-import AverageLapStats from "../AverageLapStats";
+} from "@/utils/helpers";
+import { Popover, PopoverContent, PopoverTrigger, Switch } from "@nextui-org/react";
+import { Cog } from "lucide-react";
+import { DriverChartData } from "@/interfaces/custom";
+import TelemetryLapSummary from "./AverageLapStats";
 
-interface ExtendedCarDataParams extends CarDataParams {
-  lap_time: number;
-}
 
 interface LapStatsLineChartProps {
-  driversData: Map<
-    string,
-    {
-      driver: DriverParams;
-      laps: LapParams[];
-      carData: ExtendedCarDataParams[];
-      locationData: LocationParams[];
-      raceControl: any[];
-      chartData: any[];
-    }
-  >;
+  driversData: Map<string, DriverChartData>;
   lapSelected: number;
 }
-
-const Overlay = () => {
-  return <div className={styles.dataOverlay}>Hello</div>;
-};
 
 const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
   driversData,
@@ -81,11 +56,6 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
     rpm: "RPM",
     n_gear: "Gear",
     drs: "DRS",
-  };
-
-  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
-  const handleChartHover = (isHovering) => {
-    setIsOverlayVisible(isHovering);
   };
 
   const xData = new Set<number>();
@@ -129,27 +99,28 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
     }*/
   });
 
-  const updatedDriversData: Map<
-    string,
-    {
-      driver: DriverParams;
-      laps: LapParams[];
-      carData: ExtendedCarDataParams[];
-      locationData: LocationParams[];
-      chartData: any[];
-    }
-  > = new Map(driversDataWithArrays);
+  const updatedDriversData: Map<string, DriverChartData> = new Map(driversDataWithArrays);
 
   const renderCharts = () => {
     return (
-      <div className={styles.chartContainer}>
-        <div className={styles.chartHeader}>
-          <span></span>
-          <h2>Telemetry Visualization Lap {lapSelected}</h2>
-          <div className={styles.lapTimeSettings}>
-            
-            <SettingsIcon className={`rotate`} />
-
+      <div className="">
+        <div className="flex justify-center gap-5">
+          <h2 className="text-2xl font-extralight">Lap Times</h2>
+          <div className="align-middle">
+            <Popover placement="right" showArrow={true}>
+              <PopoverTrigger>
+                <Cog className="" />
+              </PopoverTrigger>
+              <PopoverContent className="bg-gradient-to-tl from-zinc-800 to-[#111]">
+                <div className="px-1 py-2 flex flex-col font-thin gap-3">
+                  {Object.entries(visibleCharts).map(([key, value]) => (
+                    <Switch isSelected={value} onValueChange={() => toggleChartVisibility(key)} size="sm">
+                      {parameterDisplayText[key]}
+                    </Switch>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 
@@ -177,20 +148,16 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
           </ScatterChart>
         </div>*/}
 
-        {/*isOverlayVisible && <Overlay />*/}
-
-        <div className={styles.charts}>
+        <div className="flex flex-col md:grid justify-center">
           {Object.keys(visibleCharts).map((parameter) => (
-            <div key={parameter} className={styles.chartContainer}>
+            <div
+              key={parameter}
+              className={`${visibleCharts[parameter] ? "block" : "none"} mx-8 my-5 flex justify-center`}
+            >
               <LineChart
                 width={800}
                 height={300}
-                margin={{ top: 20, right: 30, bottom: 20, left: 30 }}
-                style={{ display: visibleCharts[parameter] ? "block" : "none" }}
-                onMouseEnter={() => handleChartHover(true)}
-                onMouseLeave={() => handleChartHover(false)}
               >
-                <CartesianGrid />
                 <XAxis
                   dataKey="time"
                   type="category"
@@ -238,60 +205,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
         </div>
         <div>
           <h2>Lap Summary</h2>
-          <AverageLapStats driversData={driversData} />
         </div>
-        <div>
-          <h2>Segments</h2>
-          {driversData && Array.from(driversData.values()).map((driver) => (
-            <div key={driver.driver_id}>
-              <p>{driver.laps[lapSelected - 1].lap_number}</p>
-              <div style={{ display: "flex" }}>
-                {/* Display boxes for each segment in sector 1 */}
-                {driver.laps[lapSelected - 1].segments_sector_1?.map((segment, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      backgroundColor: segmentColor[segment],
-                      marginRight: "5px"
-                    }}
-                  ></div>
-                ))}
-              </div>
-              <div style={{ display: "flex" }}>
-                {/* Display boxes for each segment in sector 2 */}
-                {driver.laps[lapSelected - 1].segments_sector_2?.map((segment, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      backgroundColor: segmentColor[segment],
-                      marginRight: "5px"
-                    }}
-                  ></div>
-                ))}
-              </div>
-              <div style={{ display: "flex" }}>
-                {/* Display boxes for each segment in sector 3 */}
-                {driver.laps[lapSelected - 1].segments_sector_3?.map((segment, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      width: "20px",
-                      height: "20px",
-                      backgroundColor: segmentColor[segment],
-                      marginRight: "5px"
-                    }}
-                  ></div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-
       </div>
     );
   };
@@ -300,5 +214,3 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
 };
 
 export default LapStatsLineChart;
-
-// <p>{segmentColor[segment]}</p>

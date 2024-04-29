@@ -2,11 +2,15 @@
 
 import { useState, useEffect } from "react";
 import SessionSelector from "./SessionSelector";
-import { DriverParams, MeetingParams, SessionParams, WeatherParams } from "@/interfaces/openF1";
-import { fetchDrivers, fetchMeeting, fetchSession, fetchWeather } from "@/services/openF1Api";
+import { DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, WeatherParams } from "@/interfaces/openF1";
+import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
 import SessionStats from "./SessionStats";
 import DriverSelection from "./DriverSelection";
 import { useSearchParams } from "next/navigation";
+import LapTimesLineChart from "@/app/telemetry/LapTimesLineChart";
+import { DriverChartData } from "@/interfaces/custom";
+import { calculateLapTime } from "@/utils/telemetryUtils";
+import LapStatsLineChart from "@/app/telemetry/LapStatsLineChart";
 
 
 const Page: React.FC = () => {
@@ -27,7 +31,18 @@ const Page: React.FC = () => {
 
     const [isShowDriverSelect, setIsShowDriverSelect] = useState<boolean>(false);
     const [drivers, setDrivers] = useState<DriverParams[]>([]);
-    const [selectedDrivers, setSelectedDrivers] = useState<DriverParams[]>([])
+    const [selectedDrivers, setSelectedDrivers] = useState<
+        Map<
+            string, DriverChartData
+        >
+    >(new Map());
+
+    const [raceControl, setRaceControl] = useState<RaceControlParams[]>([]);
+
+    const [isShowLapTimes, setIsShowLapTimes] = useState<boolean>(false);
+    const [selectedLap, setSelectedLap] = useState<number | null>(null);
+
+    const [isShowTelemetry, setIsShowTelemetry] = useState<boolean>(false);
 
 
     useEffect(() => {
@@ -97,23 +112,120 @@ const Page: React.FC = () => {
             setDrivers(res);
             if (res) setIsShowDriverSelect(true);
         }
+        const fetchRaceControlData = async () => {
+            const params: RaceControlParams = {
+                meeting_key: selectedMeetingKey,
+                session_key: selectedSessionKey
+            }
+            const res = await fetchRaceControl(params);
+            setRaceControl(res);
+        }
         if (selectedSessionKey) {
             const session = sessions?.find(v => v.session_key === selectedSessionKey);
             setSelectedSession(session)
             fetchWeatherData();
             fetchDriverData();
+            fetchRaceControlData();
         }
     }, [selectedSessionKey, sessions]);
 
-    const toggleDriverSelect = (driver: DriverParams) => {
-        let updatedDrivers = selectedDrivers;
-        if (selectedDrivers.includes(driver)) {
-            updatedDrivers.splice(selectedDrivers.indexOf(driver), 1);
+    const toggleDriverSelect = async (driver: DriverParams) => {
+        const driverKey = driver.driver_number?.toString();
+        const isDriverSelected = selectedDrivers?.has(driverKey!);
+
+        if (isDriverSelected) {
+            const updatedDrivers = new Map(selectedDrivers);
+            updatedDrivers.delete(driverKey!);
+            setSelectedDrivers(updatedDrivers);
         } else {
-            updatedDrivers.push(driver);
+            const params = {
+                meeting_key: selectedMeetingKey,
+                session_key: selectedSessionKey,
+                driver_number: driver.driver_number,
+            };
+
+            const lapApiData = await fetchLaps(params);
+            const stintApiData = await fetchStint(params);
+
+            setSelectedDrivers((prevMap) => {
+                const updatedMap = new Map(prevMap);
+                updatedMap.set(driverKey!, {
+                    driver,
+                    laps: lapApiData,
+                    carData: [],
+                    locationData: [],
+                    stintData: stintApiData,
+                    chartData: []
+                });
+                return updatedMap;
+            });
         }
-        setSelectedDrivers(updatedDrivers);
+
+        if (selectedDrivers?.size !== 0) setSelectedLap(null);
     }
+
+    useEffect(() => {
+        if (selectedDrivers.size > 0) {
+            setIsShowLapTimes(true);
+        }
+    }, [selectedDrivers]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            selectedDrivers.forEach(
+                async (driver: DriverChartData) => {
+                  const driverData = driver.driver;
+                  const lapData = driver.laps;
+                  const stintData = driver.stintData;
+                  const lap: LapParams = lapData.find((lap: LapParams) => lap.lap_number === selectedLap)!;
+                  const params = {
+                    meeting_key: selectedMeetingKey,
+                    session_key: selectedSessionKey,
+                    driver_number: driver.driver.driver_number,
+                  };
+          
+                  const date_gt: string = lap.date_start!;
+                  const lapDurationMilliseconds: number = lap.lap_duration! * 1000;
+                  const date_gtObject: Date = new Date(date_gt);
+                  const localTimeOffset: number = date_gtObject.getTimezoneOffset();
+                  const date_ltObject: Date = new Date(
+                    date_gtObject.getTime() +
+                      lapDurationMilliseconds -
+                      localTimeOffset * 60 * 1000
+                  );
+                  const date_lt: string = date_ltObject.toISOString();
+                  const dateRangeParams: DateRangeParams = {
+                    date_gt: date_gt,
+                    date_lt: date_lt,
+                  };
+          
+                  const carApiData = await fetchCarData(params, dateRangeParams);
+                  const carDataWithLapTime = calculateLapTime(carApiData);
+          
+                  const locationApiData = await fetchLocation(params, dateRangeParams);
+          
+                  setSelectedDrivers(
+                    (prevMap) =>
+                      new Map(
+                        prevMap.set(driver.driver.driver_number!.toString(), {
+                            driver: driverData,
+                            laps: lapData,
+                            carData: carDataWithLapTime,
+                            locationData: locationApiData,
+                            stintData: stintData,
+                            chartData: driver.chartData
+                        })
+                      )
+                  );
+                }
+              );
+        }
+
+        if (selectedLap) {
+            fetchData();
+            setIsShowTelemetry(true);
+        }
+    }, [selectedLap])
 
     return (
         <>
@@ -129,17 +241,30 @@ const Page: React.FC = () => {
                 selectedMeeting={selectedMeeting}
                 selectedSession={selectedSession}
             />
-            {isShowSession && selectedSession && weather && (
+            {isShowSession && selectedMeeting && selectedSession && weather && (
                 <SessionStats
                     meeting={selectedMeeting}
                     session={selectedSession}
-                    weather={weather} />
+                    weather={weather}
+                />
             )}
             {isShowDriverSelect && selectedSession && drivers && (
                 <DriverSelection
                     drivers={drivers}
                     selectedDrivers={selectedDrivers}
-                    toggleDriverSelect={toggleDriverSelect} />
+                    toggleDriverSelect={toggleDriverSelect}
+                />
+            )}
+            {isShowLapTimes && selectedDrivers && raceControl && (
+                <LapTimesLineChart
+                    driversData={selectedDrivers}
+                    raceControl={raceControl}
+                    onLapSelect={setSelectedLap} />
+            )}
+            {isShowTelemetry && selectedDrivers && selectedLap && (
+                <LapStatsLineChart
+                    driversData={selectedDrivers}
+                    lapSelected={selectedLap} />
             )}
         </>
     )

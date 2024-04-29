@@ -1,16 +1,15 @@
 // Components/Telemetry/LapTimeTooltip.tsx
 
 import React from "react";
-import styles from "../../../styles/telemetry/chart.module.css";
 import {
   HardCompound,
   InterCompound,
   MediumCompound,
   SoftCompound,
   WetCompound,
-} from "../../Tyres";
-import { RaceControlParams } from "../../../interfaces/openF1";
-import { formatSecondsToTime } from "../../../utils/helpers";
+} from "../../components/Tyres";
+import { RaceControlParams } from "../../interfaces/openF1";
+import { formatSecondsToTime } from "../../utils/helpers";
 
 interface LapTimeTooltipProps {
   active: boolean;
@@ -44,17 +43,16 @@ const LapTimeTooltip: React.FC<LapTimeTooltipProps> = ({
   payload,
   label,
 }) => {
-  //console.log(payload)
   if (active && payload && payload.length) {
     return (
-      <div className={styles.tooltip}>
-        <p>Lap {label}</p>
+      <div className="bg-gradient-to-tl from-zinc-800 to-[#111] p-2 rounded-lg max-w-xs">
+        <p className="font-light">Lap {label}</p>
         {payload.map((entry: any) => (
-          <div className={styles.tooltipDriver}>
+          <div className="flex gap-5 justify-between">
             <p key={entry.dataKey} style={{ color: entry.color }}>
               {entry.name}: {formatSecondsToTime(entry.value)}
             </p>
-            <div className={styles.tooltipTyre}>
+            <div className="max-w-5">
               {getCompoundComponent(entry.payload[`tyre_${entry.name}`])}
             </div>
           </div>

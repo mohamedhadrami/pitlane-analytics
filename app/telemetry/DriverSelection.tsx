@@ -1,5 +1,6 @@
 "use client"
 
+import { DriverChartData } from "@/interfaces/custom";
 import { DriverParams } from "@/interfaces/openF1";
 import { driverImage, isValidColor } from "@/utils/helpers";
 import React, { useEffect, useState } from "react";
@@ -7,7 +8,7 @@ import styled from "styled-components";
 
 interface DriverSelectionProps {
   drivers: DriverParams[],
-  selectedDrivers: DriverParams[],
+  selectedDrivers: Map<string, DriverChartData>
   toggleDriverSelect: (driver: DriverParams) => void
 }
 
@@ -32,23 +33,10 @@ const DriverSelection: React.FC<DriverSelectionProps> = ({
   selectedDrivers,
   toggleDriverSelect
 }) => {
-  const [localSelection, setLocalSelection] = useState<DriverParams[]>([]);
 
   const handleDriverSelection = (driver: DriverParams) => {
-    let updatedDrivers = localSelection;
-    if (localSelection.includes(driver)) {
-        updatedDrivers.splice(localSelection.indexOf(driver), 1);
-    } else {
-        updatedDrivers.push(driver);
-    }
-    setLocalSelection(updatedDrivers);
     toggleDriverSelect(driver);
   }
-
-  useEffect(() => {
-    setLocalSelection(selectedDrivers);
-    console.log(selectedDrivers)
-  }, [selectedDrivers])
 
   return (
     <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-3 px-15 pb-30">
@@ -59,12 +47,12 @@ const DriverSelection: React.FC<DriverSelectionProps> = ({
         return (
           <DriverImage
             key={driver.driver_number}
-            src={driverImage(driver?.full_name)}
+            src={driverImage(driver.full_name!)}
             alt={`${driver.first_name} ${driver.last_name}`}
             bordercolor={borderColor}
             isselected={
-              localSelection &&
-              localSelection.includes(driver)
+              selectedDrivers &&
+              selectedDrivers.has(driver.driver_number?.toString()!)
             }
             onClick={() => {
               handleDriverSelection(driver);
