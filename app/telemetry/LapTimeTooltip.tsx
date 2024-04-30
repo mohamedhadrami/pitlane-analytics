@@ -45,10 +45,10 @@ const LapTimeTooltip: React.FC<LapTimeTooltipProps> = ({
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-gradient-to-tl from-zinc-800 to-[#111] p-2 rounded-lg max-w-xs">
+      <div key={`Lap-${label}`} className="bg-gradient-to-tl from-zinc-800 to-[#111] p-2 rounded-lg max-w-xs">
         <p className="font-light">Lap {label}</p>
         {payload.map((entry: any) => (
-          <div className="flex gap-5 justify-between">
+          <div className="flex gap-5 justify-between" key={`Lap-time-${entry.name}`}>
             <p key={entry.dataKey} style={{ color: entry.color }}>
               {entry.name}: {formatSecondsToTime(entry.value)}
             </p>
@@ -58,7 +58,7 @@ const LapTimeTooltip: React.FC<LapTimeTooltipProps> = ({
           </div>
         ))}
         {payload[0].payload.raceControl?.map((event: RaceControlParams) => (
-          <div style={{maxWidth: '400px'}}>
+          <div key={`${event.category}-${event.date}`} className="max-w-96">
             - {event.message}
           </div>
         ))}

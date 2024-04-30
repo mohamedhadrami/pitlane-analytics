@@ -26,7 +26,13 @@ const ArchiveConstructorsTable: React.FC<{ data: any }> = ({ data }) => {
 
     return (
         <div>
-            <Table classNames={classNames} className="" radius="lg" isStriped>
+            <Table
+                classNames={classNames}
+                className=""
+                radius="lg"
+                isStriped
+                aria-label="constructor-table"
+            >
                 <TableHeader>
                     <TableColumn>Position</TableColumn>
                     <TableColumn>Name</TableColumn>
@@ -37,7 +43,7 @@ const ArchiveConstructorsTable: React.FC<{ data: any }> = ({ data }) => {
                 {hasStandingsData ? (
                     <TableBody>
                         {data?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map((constructors: any, index: number) => (
-                            <TableRow key={constructors.round} onClick={() => handleRowClick(constructors)}>
+                            <TableRow key={constructors.Constructor.constructorId} onClick={() => handleRowClick(constructors)}>
                                 <TableCell>{constructors.position}</TableCell>
                                 <TableCell>{constructors.Constructor.name}</TableCell>
                                 <TableCell>{constructors.Constructor.nationality}</TableCell>

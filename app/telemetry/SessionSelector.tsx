@@ -7,7 +7,7 @@ import Selector from "./Selector";
 import { MeetingParams, SessionParams } from "@/interfaces/openF1";
 
 interface SessionSelectorsProps {
-    years: number[],
+    years: string[],
     meetings: MeetingParams[],
     sessions: SessionParams[],
     setSelectedYear: (value: any) => void,
@@ -82,7 +82,7 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
     return (
         <div className="flex justify-center">
             <div className="flex md:flex place-content-between w-full md:w-1/2 space-x-4 px-5">
-                {Object.keys(selections).map((key) => (
+                {Object.keys(selections).map((key: string) => (
                     <Selector
                         id={key}
                         key={`${key}-dropdown`}

@@ -41,12 +41,13 @@ const ArchiveRacesTable: React.FC<{ data: any }> = ({ data }) => {
                 className="w-full"
                 radius="lg"
                 isStriped
+                aria-label="race-table"
             >
                 <TableHeader>
                     <TableColumn>Race</TableColumn>
-                    <TableColumn><p className="ordinal ...">1st</p></TableColumn>
-                    <TableColumn><p className="ordinal ...">2nd</p></TableColumn>
-                    <TableColumn><p className="ordinal ...">3rd</p></TableColumn>
+                    <TableColumn>1st</TableColumn>
+                    <TableColumn>2nd</TableColumn>
+                    <TableColumn>3rd</TableColumn>
                 </TableHeader>
                 {raceSummary ? (
                     <TableBody items={raceSummary}>

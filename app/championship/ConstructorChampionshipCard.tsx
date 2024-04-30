@@ -1,16 +1,16 @@
 // components/ConstructorChampionshipCard.tsx
 
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import { styled } from "styled-components";
 import { DriverParams } from "../../interfaces/openF1";
 import { carImage, isValidColor, logoImage, teamNameConvertor } from "../../utils/helpers";
 import { Divider, Image, Spacer } from "@nextui-org/react";
 import ConstructorDrawer from "@/components/drawers/ConstructorDrawer";
 
-const CardContainer = styled.div<{ borderColor: string }>`
+const CardContainer = styled.div<{ bordercolor: string }>`
   &:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid ${(props) => props.borderColor};
+    border: 1px solid ${(props) => props.bordercolor};
   }
 `;
 
@@ -71,9 +71,9 @@ const ConstructorChampionshipCard: React.FC<{
     <>
       <CardContainer
         className={`bg-gradient-to-br ${positionColor(constructor.position)} to-zinc-500 
-      rounded-lg p-3 min-w-80 shadow-md 
-      transition duration-300 border border-transparent`}
-        borderColor={teamColor}
+                    rounded-lg p-3 min-w-80 shadow-md 
+                    transition duration-300 border border-transparent`}
+        bordercolor={teamColor}
         onClick={handleConstructorSelect}
       >
         <div className="flex p-2">

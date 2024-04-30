@@ -17,7 +17,7 @@ import { toast } from "sonner";
 const Page: React.FC = () => {
     const searchParams = useSearchParams();
 
-    const [years, setYears] = useState<number[]>([]);
+    const [years, setYears] = useState<string[]>([]);
     const [meetings, setMeetings] = useState<MeetingParams[]>([]);
     const [sessions, setSessions] = useState<SessionParams[]>([]);
 
@@ -62,7 +62,7 @@ const Page: React.FC = () => {
         const currentYear = new Date().getFullYear();
         const availableYears = Array.from(
             { length: currentYear - 2017 },
-            (_, index) => currentYear - index
+            (_, index) => (currentYear - index).toString()
         );
         setYears(availableYears);
     }, []);
@@ -128,6 +128,8 @@ const Page: React.FC = () => {
             fetchDriverData();
             fetchRaceControlData();
         }
+        setSelectedDrivers(new Map())
+        setIsShowLapTimes(false);
     }, [selectedSessionKey, sessions]);
 
     const toggleDriverSelect = async (driver: DriverParams) => {
@@ -145,8 +147,16 @@ const Page: React.FC = () => {
                 driver_number: driver.driver_number,
             };
 
-            const lapApiData = await fetchLaps(params);
-            const stintApiData = await fetchStint(params);
+            const lapApiPromise = fetchLaps(params);
+            const stintApiPromise = fetchStint(params);
+
+            toast.promise(Promise.all([lapApiPromise, stintApiPromise]), {
+                loading: `Loading data for ${driver.name_acronym}...`,
+                success: `Data for ${driver.name_acronym} loaded successfully!`,
+                error: `Error loading data for ${driver.name_acronym}`,
+            });
+
+            const [lapApiData, stintApiData] = await Promise.all([lapApiPromise, stintApiPromise]);
 
             setSelectedDrivers((prevMap) => {
                 const updatedMap = new Map(prevMap);
@@ -160,67 +170,64 @@ const Page: React.FC = () => {
                 });
                 return updatedMap;
             });
-            toast.success(`Data for ${driver.name_acronym} loaded successfully!`)
         }
 
         if (selectedDrivers?.size !== 0) setSelectedLap(null);
     }
 
     useEffect(() => {
-        if (selectedDrivers.size > 0) {
-            setIsShowLapTimes(true);
-        }
+        if (selectedDrivers.size > 0) setIsShowLapTimes(true);
     }, [selectedDrivers]);
 
     useEffect(() => {
         const fetchData = async () => {
             selectedDrivers.forEach(
                 async (driver: DriverChartData) => {
-                  const driverData = driver.driver;
-                  const lapData = driver.laps;
-                  const stintData = driver.stintData;
-                  const lap: LapParams = lapData.find((lap: LapParams) => lap.lap_number === selectedLap)!;
-                  const params = {
-                    meeting_key: selectedMeetingKey,
-                    session_key: selectedSessionKey,
-                    driver_number: driver.driver.driver_number,
-                  };
-          
-                  const date_gt: string = lap.date_start!;
-                  const lapDurationMilliseconds: number = lap.lap_duration! * 1000;
-                  const date_gtObject: Date = new Date(date_gt);
-                  const localTimeOffset: number = date_gtObject.getTimezoneOffset();
-                  const date_ltObject: Date = new Date(
-                    date_gtObject.getTime() +
-                      lapDurationMilliseconds -
-                      localTimeOffset * 60 * 1000
-                  );
-                  const date_lt: string = date_ltObject.toISOString();
-                  const dateRangeParams: DateRangeParams = {
-                    date_gt: date_gt,
-                    date_lt: date_lt,
-                  };
-          
-                  const carApiData = await fetchCarData(params, dateRangeParams);
-                  const carDataWithLapTime = calculateLapTime(carApiData);
-          
-                  const locationApiData = await fetchLocation(params, dateRangeParams);
-          
-                  setSelectedDrivers(
-                    (prevMap) =>
-                      new Map(
-                        prevMap.set(driver.driver.driver_number!.toString(), {
-                            driver: driverData,
-                            laps: lapData,
-                            carData: carDataWithLapTime,
-                            locationData: locationApiData,
-                            stintData: stintData,
-                            chartData: driver.chartData
-                        })
-                      )
-                  );
+                    const driverData = driver.driver;
+                    const lapData = driver.laps;
+                    const stintData = driver.stintData;
+                    const lap: LapParams = lapData.find((lap: LapParams) => lap.lap_number === selectedLap)!;
+                    const params = {
+                        meeting_key: selectedMeetingKey,
+                        session_key: selectedSessionKey,
+                        driver_number: driver.driver.driver_number,
+                    };
+
+                    const date_gt: string = lap.date_start!;
+                    const lapDurationMilliseconds: number = lap.lap_duration! * 1000;
+                    const date_gtObject: Date = new Date(date_gt);
+                    const localTimeOffset: number = date_gtObject.getTimezoneOffset();
+                    const date_ltObject: Date = new Date(
+                        date_gtObject.getTime() +
+                        lapDurationMilliseconds -
+                        localTimeOffset * 60 * 1000
+                    );
+                    const date_lt: string = date_ltObject.toISOString();
+                    const dateRangeParams: DateRangeParams = {
+                        date_gt: date_gt,
+                        date_lt: date_lt,
+                    };
+
+                    const carApiData = await fetchCarData(params, dateRangeParams);
+                    const carDataWithLapTime = calculateLapTime(carApiData);
+
+                    const locationApiData = await fetchLocation(params, dateRangeParams);
+
+                    setSelectedDrivers(
+                        (prevMap) =>
+                            new Map(
+                                prevMap.set(driver.driver.driver_number!.toString(), {
+                                    driver: driverData,
+                                    laps: lapData,
+                                    carData: carDataWithLapTime,
+                                    locationData: locationApiData,
+                                    stintData: stintData,
+                                    chartData: driver.chartData
+                                })
+                            )
+                    );
                 }
-              );
+            );
         }
 
         if (selectedLap) {
@@ -233,6 +240,7 @@ const Page: React.FC = () => {
         <>
             <h1 className="text-3xl font-light py-5 text-center">Telemetry</h1>
             <SessionSelector
+                key="session-selector"
                 years={years}
                 meetings={meetings}
                 sessions={sessions}
@@ -245,6 +253,7 @@ const Page: React.FC = () => {
             />
             {isShowSession && selectedMeeting && selectedSession && weather && (
                 <SessionStats
+                    key="session-stats"
                     meeting={selectedMeeting}
                     session={selectedSession}
                     weather={weather}
@@ -252,6 +261,7 @@ const Page: React.FC = () => {
             )}
             {isShowDriverSelect && selectedSession && drivers && (
                 <DriverSelection
+                    key="driver-selector"
                     drivers={drivers}
                     selectedDrivers={selectedDrivers}
                     toggleDriverSelect={toggleDriverSelect}
@@ -259,12 +269,14 @@ const Page: React.FC = () => {
             )}
             {isShowLapTimes && selectedDrivers && raceControl && (
                 <LapTimesLineChart
+                    key="lap-time-chart"
                     driversData={selectedDrivers}
                     raceControl={raceControl}
                     onLapSelect={setSelectedLap} />
             )}
             {isShowTelemetry && selectedDrivers && selectedLap && (
                 <LapStatsLineChart
+                    key="lap-stats-chart"
                     driversData={selectedDrivers}
                     lapSelected={selectedLap} />
             )}

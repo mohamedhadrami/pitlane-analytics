@@ -65,8 +65,9 @@ const DriverChampionshipCard: React.FC<{
     <>
       {driver && flagUrl && (
         <CardContainer
+          key={`${driver.Driver.code}_card`}
           className="bg-gradient-to-br from-zinc-800 to-zinc-800 border-[#111] rounded-lg p-3 min-w-80 shadow-md transition duration-300 border border-transparent"
-          borderColor={teamColor || "#fff"}
+          bordercolor={teamColor || "#fff"}
           onClick={handleDriverSelect}
         >
           <div className="flex p-2">
@@ -82,37 +83,50 @@ const DriverChampionshipCard: React.FC<{
             <div className="flex flex-row items-center justify-between">
               <span>{`${driver.Driver.givenName} ${driver.Driver.familyName}`}</span>
               <Image
+                key={`${driver.Driver.code}_flag`}
                 className="rounded-md mt-2"
                 width={40}
                 src={flagUrl}
-                alt={`${driver.Driver.nationality} flag`} />
+                alt={`${driver.Driver.nationality} flag`}
+              />
             </div>
             <div className="flex flex-row items-center justify-between">
               <span>{driver.Constructors[0].name}</span>
               <Image
+                key={`${driver.Driver.code}_team-logo`}
                 className="mt-2"
                 width={40}
                 src={logoUrl}
-                alt={`${driver.Constructors[0].name} logo`} />
+                alt={`${driver.Constructors[0].name} logo`}
+              />
             </div>
           </div>
           <div className="flex flex-row items-center justify-between p-2">
             <DriverImage
+              key={`${driver.Driver.code}_driver-image`}
               className="w-24 h-24 rounded-full bg-gradient-to-t from-transparent to-transparent"
               src={driverImage(driver.Driver.givenName, driver.Driver.familyName)}
               alt={`${driver.Driver.givenName} ${driver.Driver.familyName}`}
-              borderColor={teamColor} />
+              bordercolor={teamColor}
+            />
             <div className="flex items-center">
               <Image
+                key={`${driver.Driver.code}_driver-number`}
                 className="inline-block align-middle"
                 src={numberUrl}
-                alt="Driver Number" />
+                alt="Driver Number"
+              />
             </div>
           </div>
         </CardContainer>
       )}
       {driverData && (
-        <DriverDrawer isOpen={openDrawer} setIsOpen={setOpenDrawer} driver={driver} driverData={driverData} />
+        <DriverDrawer
+          isOpen={openDrawer}
+          setIsOpen={setOpenDrawer}
+          driver={driver}
+          driverData={driverData}
+        />
       )}
     </>
   );
@@ -120,20 +134,20 @@ const DriverChampionshipCard: React.FC<{
 
 export default DriverChampionshipCard;
 
-const DriverImage = styled.img<{ borderColor: string }>`
-  border: 1px solid ${(props) => props.borderColor};
+const DriverImage = styled.img<{ bordercolor: string }>`
+  border: 1px solid ${(props) => props.bordercolor};
 `;
 
-const CardContainer = styled.div<{ borderColor: string }>`
+const CardContainer = styled.div<{ bordercolor: string }>`
   &:hover {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    border-color: ${(props) => props.borderColor};
+    border-color: ${(props) => props.bordercolor};
   }
   border-color: #111;
-  ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
+  ${(props) => `--tw-gradient-from: ${props.bordercolor} var(--tw-gradient-from-position);`}
   
   &:hover ${DriverImage} {
-    ${(props) => `--tw-gradient-from: ${props.borderColor} var(--tw-gradient-from-position);`}
+    ${(props) => `--tw-gradient-from: ${props.bordercolor} var(--tw-gradient-from-position);`}
     ${(props) => `--tw-gradient-to: #111 var(--tw-gradient-to-position);`}
   }
 `;

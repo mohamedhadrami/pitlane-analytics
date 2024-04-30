@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { DriverParams, RaceControlParams, SessionParams } from "../../interfaces/openF1";
 import { driverImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
+import { Image } from "@nextui-org/react";
 
 const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlParams[] }> = ({ drivers, raceControl }) => {
     const [gmtOffset, setGmtOffset] = useState(null);
@@ -30,23 +31,23 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
         <div style={{ scrollbarWidth: "none" }}
             className="overflow-y-scroll h-[50vh]">
             <div className="m-3 min-w-[400px] font-extralight">
-                <table>
+                <div>
                     {raceControl && raceControl.map((event: RaceControlParams, id: number) => (
-                        <tr key={`${event.date}-${event.category}-${id}`} className="flex items-center my-1">
+                        <div key={`${event.date}-${event.category}-${id}`} className="flex items-center my-1">
                             {gmtOffset && (
-                                <th className="text-[#999] font-extralight w-1/4 text-left">
+                                <div className="text-[#999] font-extralight w-1/4 text-left">
                                     {parseISOTimeFull(event?.date, gmtOffset)}
-                                </th>
+                                </div>
                             )}
-                            <th className="flex items-center w-3/4 text-left font-extralight">
+                            <div className="flex items-center w-3/4 text-left font-extralight">
                                 {event.flag && event.flag !== "CLEAR" && (
-                                    <img
+                                    <Image
                                         src={`flags/${event.flag}.png`}
                                         alt={`${event.flag}`}
-                                        className="w-5 mr-3 border-solid border-1 border-white" />
+                                        className="w-5 mr-3 rounded-none border-solid border-1 border-white" />
                                 )}
                                 {event.category && event.category === "SafetyCar" && (
-                                    <img
+                                    <Image
                                         src={`flags/SC.png`}
                                         alt={`${event.flag}`}
                                         className="w-5 mr-3" />
@@ -55,10 +56,10 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
                                     <div>h</div>
                                 )}
                                 <p className="m-0">{event.message}</p>
-                            </th>
-                        </tr>
+                            </div>
+                        </div>
                     ))}
-                </table>
+                </div>
             </div>
         </div>
     );

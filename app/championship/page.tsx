@@ -50,6 +50,7 @@ const Page: React.FC = () => {
                 {drivers.length > 1 && driverData?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any, index: number) => (
                     <div key={index} className="flex justify-center">
                         <DriverChampionshipCard
+                            key={`${driver.Driver.code}_champ-card`}
                             driver={driver}
                             drivers={drivers}
                             year={year} />
@@ -62,6 +63,7 @@ const Page: React.FC = () => {
                 {drivers.length > 1 && constructorData?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map(
                     (constructor: any, index: number) => (
                         <ConstructorChampionshipCard
+                            key={`${constructor.Constructor.constructorId}_champ-card`}
                             constructor={constructor}
                             drivers={drivers}
                             year={year}

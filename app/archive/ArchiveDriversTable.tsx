@@ -8,13 +8,13 @@ const ArchiveDriversTable: React.FC<{ data: any }> = ({ data }) => {
     const router = useRouter();
     const classNames = React.useMemo(
         () => ({
-          wrapper: ["max-w-3xl", "rounded-xl"],
-          th: ["bg-transparent", "text-default-500", "text-sm", "border-b", "border-divider"],
-          td: ["text-default-600"],
-          table: ["rounded-xl"]
+            wrapper: ["max-w-3xl", "rounded-xl"],
+            th: ["bg-transparent", "text-default-500", "text-sm", "border-b", "border-divider"],
+            td: ["text-default-600"],
+            table: ["rounded-xl"]
         }),
         [],
-      );
+    );
 
     const handleRowClick = (driver: any) => {
         router.push(`/archive/driver/${driver.Driver.driverId}`)
@@ -24,7 +24,13 @@ const ArchiveDriversTable: React.FC<{ data: any }> = ({ data }) => {
 
     return (
         <div className="">
-            <Table classNames={classNames} className="" radius="lg" isStriped>
+            <Table
+                classNames={classNames}
+                className=""
+                radius="lg"
+                isStriped
+                aria-label="constructor-table"
+            >
                 <TableHeader>
                     <TableColumn>Position</TableColumn>
                     <TableColumn>Driver Code</TableColumn>
@@ -35,7 +41,7 @@ const ArchiveDriversTable: React.FC<{ data: any }> = ({ data }) => {
                 </TableHeader>
                 <TableBody>
                     {data?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any, index: number) => (
-                        <TableRow key={driver.round} onClick={() => handleRowClick(driver)}>
+                        <TableRow key={driver.Driver.code} onClick={() => handleRowClick(driver)}>
                             <TableCell>{driver.position}</TableCell>
                             {hasDriverCode && <TableCell>{driver.Driver.code}</TableCell>}
                             <TableCell>{`${driver.Driver.givenName} ${driver.Driver.familyName}`}</TableCell>

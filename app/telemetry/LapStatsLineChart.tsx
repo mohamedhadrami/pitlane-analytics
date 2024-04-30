@@ -105,7 +105,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
     return (
       <div className="">
         <div className="flex justify-center gap-5">
-          <h2 className="text-2xl font-extralight">Lap Times</h2>
+          <h2 className="text-2xl font-extralight">{`Telemetry for Lap ${lapSelected}`}</h2>
           <div className="align-middle">
             <Popover placement="right" showArrow={true}>
               <PopoverTrigger>
@@ -114,7 +114,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
               <PopoverContent className="bg-gradient-to-tl from-zinc-800 to-[#111]">
                 <div className="px-1 py-2 flex flex-col font-thin gap-3">
                   {Object.entries(visibleCharts).map(([key, value]) => (
-                    <Switch isSelected={value} onValueChange={() => toggleChartVisibility(key)} size="sm">
+                    <Switch isSelected={value} onValueChange={() => toggleChartVisibility(key)} size="sm" key={`${key}-switch`}>
                       {parameterDisplayText[key]}
                     </Switch>
                   ))}
@@ -152,7 +152,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
           {Object.keys(visibleCharts).map((parameter) => (
             <div
               key={parameter}
-              className={`${visibleCharts[parameter] ? "block" : "none"} mx-8 my-5 flex justify-center`}
+              className={`${visibleCharts[parameter] ? "" : "hidden"} mx-8 my-5 flex justify-center`}
             >
               <LineChart
                 width={800}

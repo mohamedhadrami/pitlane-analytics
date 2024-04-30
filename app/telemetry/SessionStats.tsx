@@ -143,7 +143,7 @@ const SessionStatsCards: React.FC<{
 }) => {
         return (
             <div className="flex md:flex-row flex-col gap-3 m-5 w-full">
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg">
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
                     <CardHeader className="flex justify-between items-center">
                         <h1 className="text-lg font-light">Session</h1>
                         <CalendarFold />
@@ -153,7 +153,7 @@ const SessionStatsCards: React.FC<{
                         <SessionStatsContainer session={session!} meeting={meeting!} />
                     </CardBody>
                 </Card>
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg">
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
                     <CardHeader className="flex justify-between items-center">
                         <h1 className="text-lg font-light">Circuit</h1>
                         <Image
@@ -166,7 +166,7 @@ const SessionStatsCards: React.FC<{
                         <CircuitStatsContainer flag={flag} meeting={meeting!} />
                     </CardBody>
                 </Card>
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg">
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
                     <CardHeader className="flex justify-between items-center">
                         <h1 className="text-lg font-light">Weather</h1>
                         <Cloudy />
@@ -235,7 +235,7 @@ const SessionStatsAccordian: React.FC<{
                     <AccordionItem
                         key="session" aria-label="Session" title="Session"
                         startContent={<CalendarFold className="mx-2" />}
-                        subtitle="Info about selected session"
+                        subtitle={`Get information about the ${meeting.meeting_name} ${session.session_name}`}
                     >
                         <SessionStatsContainer session={session!} meeting={meeting!} />
                     </AccordionItem>
@@ -245,7 +245,7 @@ const SessionStatsAccordian: React.FC<{
                             className="rounded-lg"
                             width={40}
                             src={flag?.png} />}
-                        subtitle="Info about the circuit"
+                        subtitle={`Get information about ${meeting.circuit_short_name}`}
                     >
                         <CircuitStatsContainer flag={flag} meeting={meeting!} />
                     </AccordionItem>
