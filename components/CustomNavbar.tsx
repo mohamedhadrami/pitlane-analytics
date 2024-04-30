@@ -1,8 +1,7 @@
 
 "use client"
 
-import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, Button, NavbarMenu, Link, NavbarMenuItem, Spacer } from "@nextui-org/react";
-import { Menu } from "lucide-react";
+import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, NavbarMenu, Link, NavbarMenuItem, Spacer } from "@nextui-org/react";
 import { useState } from "react";
 import Image from 'next/image';
 
@@ -17,8 +16,7 @@ const CustomNavbar: React.FC = () => {
     "Championship": "/championship",
     "Live": "/dashboard",
     "Telemetry": "/telemetry",
-    "Archive": "/archive",
-    "Log Out": "/",
+    "Archive": "/archive"
   };
 
   return (
@@ -63,27 +61,19 @@ const CustomNavbar: React.FC = () => {
             />
           </Link>
         </NavbarBrand>
-        <NavbarItem className="font-extralight">
-          <Link color="foreground" href="/schedule">Schedule</Link>
-        </NavbarItem>
-        <NavbarItem className="font-extralight">
-          <Link color="foreground" href="/championship">Championship</Link>
-        </NavbarItem>
-        <NavbarItem className="font-extralight">
-          <Link color="foreground" href="/dashboard">Live</Link>
-        </NavbarItem>
-        <NavbarItem className="font-extralight">
-          <Link color="foreground" href="/telemetry">Telemetry</Link>
-        </NavbarItem>
-        <NavbarItem className="font-extralight">
-          <Link color="foreground" href="/archive">Archive</Link>
-        </NavbarItem>
+        {Object.entries(menuItems).map(([label, href], index) => (
+          <NavbarItem key={`${label}-${index}`} className="font-extralight">
+            <Link href={href} color="foreground">
+              {label}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
 
       <NavbarMenu>
         {Object.entries(menuItems).map(([label, href], index) => (
-          <NavbarMenuItem key={`${label}-${index}`}>
-            <Link href={href} color={index === 2 ? "warning" : index === Object.keys(menuItems).length - 1 ? "danger" : "foreground"} size="lg">
+          <NavbarMenuItem key={`${label}-${index}`} className="font-extralight">
+            <Link href={href} color="foreground" size="lg">
               {label}
             </Link>
           </NavbarMenuItem>
