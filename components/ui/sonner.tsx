@@ -23,11 +23,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
           title: 'text-white font-light text-base',
           actionButton: "group-[.toast]:bg-zinc-900 group-[.toast]:text-zinc-50 dark:group-[.toast]:bg-zinc-50 dark:group-[.toast]:text-zinc-900",
           cancelButton: "bg-red-500",
-          success: `from-green-500 to-green-900 ${generalClasses}`,
+          success: `from-success-400 to-success-100 ${generalClasses}`,
           info: `from-zinc-800 to-[#111] ${generalClasses}`,
-          loading: `from-zinc-800 to-[#111] ${generalClasses}`,
-          error: `from-red-500 to-red-900 ${generalClasses}`,
-          warning: `from-amber-500 to-amber-900 ${generalClasses}`,
+          loading: `from-[#006FEE] to-danger-300 ${generalClasses}`,
+          error: `from-danger-500 to-danger-100 ${generalClasses}`,
+          warning: `from-warning-400 to-warning-100 ${generalClasses}`,
         },
       }}
       icons={{
