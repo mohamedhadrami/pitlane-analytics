@@ -13,7 +13,7 @@ interface SessionSelectorsProps {
     setSelectedYear: (value: any) => void,
     setSelectedMeetingKey: (value: any) => void,
     setSelectedSessionKey: (value: any) => void,
-    selectedYear: number | undefined,
+    selectedYear: string | undefined,
     selectedMeeting: MeetingParams | undefined,
     selectedSession: SessionParams | undefined,
 }
@@ -87,10 +87,10 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
                         id={key}
                         key={`${key}-dropdown`}
                         label={key}
-                        values={selections[key].values}
+                        values={selections[key as keyof typeof selections].values}
                         onChange={setValue}
                         displayValue={getValue}
-                        disabled={selections[key].disabled}
+                        disabled={selections[key as keyof typeof selections].disabled}
                     />
                 ))}
             </div>

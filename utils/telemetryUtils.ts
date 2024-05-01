@@ -1,7 +1,7 @@
 // utils/telemetryUtils.ts
 
 import { DriverChartData } from "@/interfaces/custom";
-import { CarDataParams, DriverParams, LapParams, LocationParams, WeatherParams } from "../../pitlane-analytics/interfaces/openF1ics-old/interfaces/openF1";
+import { CarDataParams, WeatherParams } from "@/interfaces/openF1"
 
 export const calculateWeatherStats = (weatherData: WeatherParams[]) => {
     if (weatherData?.length === 0) return null;
@@ -47,10 +47,10 @@ export const calculateLapTime = (carApiData: CarDataParams[]): CarDataParams[] =
         return [];
     }
 
-    const firstTimestamp = new Date(carApiData[0].date).getTime();
+    const firstTimestamp = new Date(carApiData[0].date!).getTime();
 
     const carDataWithLapTime = carApiData.map((carData) => {
-        const currentTimestamp = new Date(carData.date).getTime();
+        const currentTimestamp = new Date(carData.date!).getTime();
         const lapTimeSeconds = (currentTimestamp - firstTimestamp) / 1000;
 
         return {
@@ -70,48 +70,53 @@ export const getWindDirection = (angle: number | undefined) => {
 };
 
 export const calculateAverages = (driversData: Map<string, DriverChartData>) => {
-    const averages = {};
+    const averages: Record<string, { speed: number, throttle: number, brake: number, driver_name: string }> = {};
 
-    // Initialize variables to store sum and count for each parameter for each driver
-    const sums = {};
-    const counts = {};
+    const sums: Record<string, Record<string, number>> = {};
+    const counts: Record<string, Record<string, number>> = {};
 
-    // Initialize sums and counts for each parameter for each driver
     Array.from(driversData.values()).forEach((driverData) => {
-        sums[driverData.driver.name_acronym] = {
-            speed: 0,
-            throttle: 0,
-            brake: 0,
-        };
-        counts[driverData.driver.name_acronym] = {
-            speed: 0,
-            throttle: 0,
-            brake: 0,
-        };
+        const acronym = driverData.driver.name_acronym;
+        if (acronym) {
+            sums[acronym] = {
+                speed: 0,
+                throttle: 0,
+                brake: 0,
+            };
+            counts[acronym] = {
+                speed: 0,
+                throttle: 0,
+                brake: 0,
+            };
+        }
     });
 
-    // Iterate through driversData to calculate sums and counts
     Array.from(driversData.values()).forEach((driverData) => {
-        driverData.carData.forEach((carDatum) => {
-            sums[driverData.driver.name_acronym].speed += carDatum.speed;
-            counts[driverData.driver.name_acronym].speed++;
+        const acronym = driverData.driver.name_acronym;
+        if (acronym) {
+            driverData.carData.forEach((carDatum) => {
+                sums[acronym].speed += carDatum.speed!;
+                counts[acronym].speed++;
 
-            sums[driverData.driver.name_acronym].throttle += carDatum.throttle;
-            counts[driverData.driver.name_acronym].throttle++;
+                sums[acronym].throttle += carDatum.throttle!;
+                counts[acronym].throttle++;
 
-            sums[driverData.driver.name_acronym].brake += carDatum.brake;
-            counts[driverData.driver.name_acronym].brake++;
-        });
+                sums[acronym].brake += carDatum.brake!;
+                counts[acronym].brake++;
+            });
+        }
     });
 
-    // Calculate averages for each driver
     Array.from(driversData.values()).forEach((driverData) => {
-        averages[driverData.driver.name_acronym] = {
-            speed: sums[driverData.driver.name_acronym].speed / counts[driverData.driver.name_acronym].speed,
-            throttle: sums[driverData.driver.name_acronym].throttle / counts[driverData.driver.name_acronym].throttle,
-            brake: sums[driverData.driver.name_acronym].brake / counts[driverData.driver.name_acronym].brake,
-            driver_name: driverData.driver.full_name,
-        };
+        const acronym = driverData.driver.name_acronym;
+        if (acronym) {
+            averages[acronym] = {
+                speed: sums[acronym].speed / counts[acronym].speed,
+                throttle: sums[acronym].throttle / counts[acronym].throttle,
+                brake: sums[acronym].brake / counts[acronym].brake,
+                driver_name: driverData.driver.full_name!,
+            };
+        }
     });
 
     return averages;

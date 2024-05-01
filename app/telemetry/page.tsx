@@ -21,7 +21,7 @@ const Page: React.FC = () => {
     const [meetings, setMeetings] = useState<MeetingParams[]>([]);
     const [sessions, setSessions] = useState<SessionParams[]>([]);
 
-    const [selectedYear, setSelectedYear] = useState<number>();
+    const [selectedYear, setSelectedYear] = useState<string>();
     const [selectedMeeting, setSelectedMeeting] = useState<MeetingParams>();
     const [selectedMeetingKey, setSelectedMeetingKey] = useState<number>();
     const [selectedSession, setSelectedSession] = useState<SessionParams>();
@@ -51,7 +51,7 @@ const Page: React.FC = () => {
             const queryYear = searchParams.get("year");
             const queryMeeting = searchParams.get("meeting");
             const querySession = searchParams.get("session");
-            if (queryYear) setSelectedYear(parseInt(queryYear))
+            if (queryYear) setSelectedYear(queryYear)
             if (queryMeeting) setSelectedMeetingKey(parseInt(queryMeeting))
             if (querySession) setSelectedSessionKey(parseInt(querySession))
         }
@@ -166,6 +166,7 @@ const Page: React.FC = () => {
                     carData: [],
                     locationData: [],
                     stintData: stintApiData,
+                    raceControl: raceControl,
                     chartData: []
                 });
                 return updatedMap;
@@ -222,6 +223,7 @@ const Page: React.FC = () => {
                                     carData: carDataWithLapTime,
                                     locationData: locationApiData,
                                     stintData: stintData,
+                                    raceControl: raceControl,
                                     chartData: driver.chartData
                                 })
                             )

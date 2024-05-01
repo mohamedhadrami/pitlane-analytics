@@ -45,7 +45,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
   const toggleChartVisibility = (parameter: string) => {
     setVisibleCharts((prevVisibleCharts) => ({
       ...prevVisibleCharts,
-      [parameter]: !prevVisibleCharts[parameter],
+      [parameter]: !prevVisibleCharts[parameter as keyof typeof prevVisibleCharts],
     }));
   };
 
@@ -62,13 +62,13 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
 
   Array.from(driversData.values()).forEach((driverData) => {
     driverData.carData.forEach((carDatum) => {
-      xData.add(carDatum.lap_time);
+      xData.add(carDatum.lap_time!);
     });
   });
 
-  const driversDataWithArrays = Array.from(driversData.entries()).map(
+  const driversDataWithArrays: [string, DriverChartData][] = Array.from(driversData.entries()).map(
     ([driverId, driverData]) => {
-      const driverChartData = [];
+      const driverChartData: any[] = [];
       Array.from(xData).forEach((time) => {
         const carsData = { time };
         const carDatum = driverData.carData.find(
@@ -76,11 +76,15 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
         );
         if (carDatum) {
           Object.keys(visibleCharts).forEach((parameter) => {
-            carsData[`${parameter}_${driverData.driver.name_acronym}`] =
-              carDatum[parameter];
+            const parameterKey = `${parameter}_${driverData.driver.name_acronym}` as keyof typeof carsData;
+            const carDatumValue = carDatum[parameter as keyof typeof carDatum];
+
+            if (typeof carDatumValue === 'number') {
+              carsData[parameterKey] = carDatumValue;
+            }
           });
-          carsData[`time_${driverData.driver.name_acronym}`] =
-            carDatum.lap_time;
+          carsData[`time_${driverData.driver.name_acronym}` as keyof typeof carsData] =
+            carDatum.lap_time!;
           driverChartData.push(carsData);
         }
       });
@@ -115,7 +119,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
                 <div className="px-1 py-2 flex flex-col font-thin gap-3">
                   {Object.entries(visibleCharts).map(([key, value]) => (
                     <Switch isSelected={value} onValueChange={() => toggleChartVisibility(key)} size="sm" key={`${key}-switch`}>
-                      {parameterDisplayText[key]}
+                      {parameterDisplayText[key as keyof typeof parameterDisplayText]}
                     </Switch>
                   ))}
                 </div>
@@ -152,7 +156,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
           {Object.keys(visibleCharts).map((parameter) => (
             <div
               key={parameter}
-              className={`${visibleCharts[parameter] ? "" : "hidden"} mx-8 my-5 flex justify-center`}
+              className={`${visibleCharts[parameter as keyof typeof visibleCharts] ? "" : "hidden"} mx-8 my-5 flex justify-center`}
             >
               <LineChart
                 width={800}
@@ -167,7 +171,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({
                 />
                 <YAxis
                   label={{
-                    value: `${parameterDisplayText[parameter]}`,
+                    value: `${parameterDisplayText[parameter as keyof typeof visibleCharts]}`,
                     angle: -90,
                     position: "insideLeft",
                   }}

@@ -347,9 +347,9 @@ export const TyreCompound: React.FC<{ compound: string }> = ({ compound }) => {
       color = 'white';
       label = 'T';*/
     default:
-        path = null;
-        color = null;
-        label = null
+        path = '';
+        color ='';
+        label ='';
   }
 
   return (

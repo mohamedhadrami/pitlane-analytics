@@ -13,11 +13,11 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { DriverParams, LapParams, RaceControlParams } from "../../interfaces/openF1";
+import { RaceControlParams } from "../../interfaces/openF1";
 import LapTimeTooltip from "./LapTimeTooltip";
 import { formatSecondsToTime, isValidColor } from "../../utils/helpers";
 import { Cog } from "lucide-react";
-import { Popover, PopoverTrigger, PopoverContent, Button, Switch } from "@nextui-org/react";
+import { Popover, PopoverTrigger, PopoverContent, Switch } from "@nextui-org/react";
 import { DriverChartData } from "@/interfaces/custom";
 import { toast } from "sonner";
 
@@ -34,11 +34,6 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
 }) => {
   const [isRaceControl, setIsRaceControl] = useState<boolean>(true);
 
-  const handleRaceControl = () => {
-    setIsRaceControl(!isRaceControl);
-    console.log(raceControl)
-  };
-
   const maxLaps = Math.max(
     ...Array.from(driversData.values()).map(
       (driverData) => driverData.laps.length
@@ -47,10 +42,15 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
 
   const xData = Array.from({ length: maxLaps }, (_, index) => index + 1);
 
-  const chartData = xData.map((lap_number) => {
-    const lapData = { lap_number };
+  interface LapData {
+    lap_number: number;
+    raceControl: RaceControlParams[];
+    [key: string]: number | RaceControlParams[] | undefined;
+  }
 
-    // Iterate through each driver's data
+  const chartData: LapData[] = xData.map((lap_number) => {
+    const lapData: LapData = { lap_number, raceControl: [] };
+
     Array.from(driversData.values()).forEach((driverData) => {
       const lap = driverData.laps.find(
         (lap) => lap.lap_number === lap_number && lap.lap_duration !== null
@@ -71,8 +71,10 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
         }
 
         for (const stint of driverData.stintData) {
-          if (lap_number >= stint.lap_start && lap_number <= stint.lap_end) {
-            lapData[`tyre_${driverData.driver.name_acronym}` as keyof typeof lapData] = stint.compound;
+          if (lap_number >= stint.lap_start! && lap_number <= stint.lap_end!) {
+            const tyreKey = `tyre_${driverData.driver.name_acronym}` as keyof LapData;
+            const compoundValue: number | undefined = stint.compound ? Number(stint.compound) : undefined;
+            lapData[tyreKey] = compoundValue;
             break;
           }
         }
@@ -82,30 +84,25 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
     return lapData;
   });
 
-  const minLapTime = Math.min(
-    ...chartData
-      .map((data) =>
-        Object.entries(data)
-          .filter(
-            ([key, value]) => key !== "lap_number" && typeof value === "number"
-          )
-          .map(([key, value]) => value)
-      )
-      .flat()
-  );
-  const maxLapTime = Math.max(
-    ...chartData
-      .map((data) =>
-        Object.values(data).filter((key) => typeof key === "number")
-      )
-      .flat()
-  );
+  const lapTimes: number[] = chartData
+    .map((data) =>
+      Object.entries(data)
+        .filter(([key, value]) => key !== "lap_number" && typeof value === "number")
+        .map(([key, value]) => value)
+    )
+    .flat()
+    .filter((value): value is number => typeof value === "number");
+
+  const minLapTime: number = Math.min(...lapTimes);
+  const maxLapTime: number = Math.max(...lapTimes);
 
   useEffect(() => {
     if (chartData.length == 0) {
-      {toast.warning("Warning", {
-        description: "No data to display. Please select a driver or reload the page."
-      })}
+      {
+        toast.warning("Warning", {
+          description: "No data to display. Please select a driver or reload the page."
+        })
+      }
     }
   }, [chartData])
 

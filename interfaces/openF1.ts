@@ -189,7 +189,7 @@ export interface MeetingParams {
     meeting_key?: number;
     meeting_name?: string;
     meeting_official_name?: string;
-    year?: number;
+    year?: string | number;
 }
 
 /**
@@ -279,7 +279,7 @@ export interface SessionParams {
     session_key?: number | string;
     session_name?: string;
     session_type?: string;
-    year?: number;
+    year?: string | number;
 }
 
 /**

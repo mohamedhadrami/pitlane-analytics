@@ -9,7 +9,7 @@ interface SelectorProps {
     label: string;
     values: any[] | null;
     onChange: (value: any, name: any) => void;
-    displayValue: (label: any) => void;
+    displayValue: (label: string | undefined) => string | undefined;
     disabled?: boolean;
 }
 
@@ -48,8 +48,10 @@ const Selector: React.FC<SelectorProps> = ({
         let chosenValue = [...e][0];
         onChange(chosenValue, label);
     };
-    
+
     const organizedValues = organizeValues(label, values, disabled);
+
+    const selectedKeys = displayValue(label);
 
     return (
         <>
@@ -65,16 +67,16 @@ const Selector: React.FC<SelectorProps> = ({
                         {label ? displayValue(label) : ''}
                     </Button>
                 </DropdownTrigger>
-                {values && values.length > 0 && (
+                {organizedValues && organizedValues.length > 0 && (
                     <DropdownMenu
                         aria-label={`${label} selection`}
                         variant="solid"
                         color="primary"
                         selectionMode="single"
-                        selectedKeys={displayValue(label)}
+                        selectedKeys={selectedKeys}
                         onSelectionChange={handleChange}
                     >
-                        {organizedValues?.map((value) => (
+                        {organizedValues.map((value) => (
                             <DropdownItem key={value}>{value}</DropdownItem>
                         ))}
                     </DropdownMenu>

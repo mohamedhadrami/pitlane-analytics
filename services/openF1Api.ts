@@ -15,7 +15,7 @@ import {
   StintParams,
   TeamRadioParams,
   WeatherParams,
-} from "../../pitlane-analytics/interfaces/openF1ics-old/interfaces/openF1";
+} from "@/interfaces/openF1"
 
 const fetchApiData = async (
   endpoint: string,

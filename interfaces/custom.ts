@@ -1,4 +1,4 @@
-import { CarDataParams, DriverParams, LapParams, LocationParams, StintParams } from "./openF1";
+import { CarDataParams, DriverParams, LapParams, LocationParams, RaceControlParams, StintParams } from "./openF1";
 
 
 export interface DriverChartData {
@@ -7,9 +7,10 @@ export interface DriverChartData {
     carData: ExtendedCarDataParams[];
     locationData: LocationParams[];
     stintData: StintParams[];
+    raceControl: RaceControlParams[];
     chartData: any[];
 }
 
 export interface ExtendedCarDataParams extends CarDataParams {
-    lap_time: number;
+    lap_time?: number;
 }

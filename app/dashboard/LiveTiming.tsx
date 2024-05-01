@@ -29,7 +29,7 @@ const LiveTiming: React.FC<{ drivers: DriverParams[], stints: StintParams[], lap
     const renderCell = (driver: DriverParams, columnKey: React.Key, laps: LapParams[], stints: StintParams[]) => {
         const stint = stints.filter(stint => stint.driver_number === driver.driver_number).pop();
         const lap = laps?.pop();
-        const tyreAge = stint?.lap_end ? (stint?.lap_end - stint?.lap_start) : (lap?.lap_number - stint?.lap_start + stint?.tyre_age_at_start)
+        const tyreAge = stint?.lap_end ? (stint?.lap_end - stint?.lap_start!) : (lap?.lap_number! - stint?.lap_start! + stint?.tyre_age_at_start!)
         switch (columnKey) {
             case "position":
             case "driver":
@@ -47,7 +47,7 @@ const LiveTiming: React.FC<{ drivers: DriverParams[], stints: StintParams[], lap
             case "tyre":
                 return (
                     <div style={{ width: "25px", marginLeft: "auto", marginRight: "auto" }}>
-                        {getCompoundComponent(stint?.compound)}{tyreAge}
+                        {getCompoundComponent(stint?.compound!)}{tyreAge}
                     </div>
                 )
             case "lap":
@@ -56,7 +56,7 @@ const LiveTiming: React.FC<{ drivers: DriverParams[], stints: StintParams[], lap
                 )
             case "sectors":
                 return (
-                    <SectorSegment lap={lap} />
+                    <SectorSegment lap={lap!} />
                 );
         }
     }
