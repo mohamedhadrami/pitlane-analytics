@@ -92,7 +92,7 @@ const Page: React.FC = () => {
             const meeting = meetings?.find(v => v.meeting_key === selectedMeetingKey);
             setSelectedMeeting(meeting)
         }
-    }, [selectedMeetingKey, meetings]);
+    }, [selectedYear, selectedMeetingKey, meetings]);
 
     useEffect(() => {
         const fetchWeatherData = async () => {
@@ -130,7 +130,7 @@ const Page: React.FC = () => {
         }
         setSelectedDrivers(new Map())
         setIsShowLapTimes(false);
-    }, [selectedSessionKey, sessions]);
+    }, [selectedMeetingKey, selectedSessionKey, sessions]);
 
     const toggleDriverSelect = async (driver: DriverParams) => {
         const driverKey = driver.driver_number?.toString();
@@ -236,7 +236,7 @@ const Page: React.FC = () => {
             fetchData();
             setIsShowTelemetry(true);
         }
-    }, [selectedLap])
+    }, [selectedMeetingKey, selectedSessionKey, raceControl, selectedDrivers, selectedLap])
 
     return (
         <>

@@ -107,7 +107,7 @@ const Home: React.FC = () => {
       }
     }
 
-  }, [nextRaceIndex])
+  }, [data?.MRData.RaceTable.Races, meeting, nextRaceIndex])
 
   useEffect(() => {
     if (data) {

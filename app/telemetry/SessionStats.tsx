@@ -91,6 +91,7 @@ const CircuitStatsContainer: React.FC<{ flag: any, meeting: MeetingParams }> = (
             <div className="flex justify-center">
                 <Image
                     className=""
+                    alt="track image"
                     src={trackImage(meeting?.location, meeting?.country_name)}
                 />
             </div>
@@ -158,6 +159,7 @@ const SessionStatsCards: React.FC<{
                         <h1 className="text-lg font-light">Circuit</h1>
                         <Image
                             className="rounded-lg"
+                            alt="flag image"
                             width={40}
                             src={flag?.png} />
                     </CardHeader>
@@ -243,6 +245,7 @@ const SessionStatsAccordian: React.FC<{
                         key="circuit" aria-label="Circuit" title="Circuit"
                         startContent={<Image
                             className="rounded-lg"
+                            alt="flag image"
                             width={40}
                             src={flag?.png} />}
                         subtitle={`Get information about ${meeting.circuit_short_name}`}

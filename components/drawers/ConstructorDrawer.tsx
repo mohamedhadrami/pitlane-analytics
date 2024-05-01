@@ -37,7 +37,7 @@ const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, con
       setResults(data?.MRData.RaceTable.Races);
     }
     fetchData();
-  }, []);
+  });
 
 
   const items = React.useMemo(() => {

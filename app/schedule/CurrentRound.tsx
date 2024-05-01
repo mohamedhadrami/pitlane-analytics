@@ -4,7 +4,7 @@ import { fetchCountryFlagByName } from "../../services/countryApi";
 import { fetchRaceResults } from "../../services/ergastApi";
 import { fetchMeeting } from "../../services/openF1Api";
 import { trackImage } from "../../utils/helpers";
-import { Divider, Spacer } from "@nextui-org/react";
+import { Divider, Image, Spacer } from "@nextui-org/react";
 import { Minus } from "lucide-react";
 
 function formatDateRange(startDate: string, endDate: string) {
@@ -99,7 +99,7 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
         >
             <div className="flex flex-row items-center justify-between">
                 <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
-                <img src={flagData?.png} className="w-12 h-auto rounded" />
+                <Image src={flagData?.png} className="w-12 h-auto rounded" alt="flag image" />
             </div>
             <span key={`${raceData.round}-title`} className="flex justify-center">
                 <span className="font-extralight">{`Round ${raceData.round}`}</span>
@@ -150,7 +150,7 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
                         <p>{raceData.Circuit.circuitName}</p>
                     </div>
                     <div className="flex justify-center">
-                        <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} />
+                        <Image src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
                     </div>
                 </div>
             </div>

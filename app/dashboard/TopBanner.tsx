@@ -5,7 +5,7 @@ import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp
 import { MeetingParams, SessionParams, WeatherParams } from "../../interfaces/openF1";
 import { getWindDirection } from "../../utils/telemetryUtils";
 import { trackImage } from "../../utils/helpers";
-import { Divider } from "@nextui-org/react";
+import { Divider, Image } from "@nextui-org/react";
 
 const labelClasses = "text-gray-400 mr-3";
 
@@ -18,7 +18,7 @@ const TopBanner: React.FC<{ meeting: MeetingParams, session: SessionParams, weat
                     <div className="inline-block">{session?.session_name}</div>
                     <div className="inline-block font-extralight">{meeting?.meeting_official_name}</div>
                     <div className="inline-block font-extralight">{meeting?.location}, {meeting?.country_name}</div>
-                    <img src={trackImageSrc} className="h-7 inline-block" />
+                    <Image src={trackImageSrc} className="h-7 inline-block" alt="track image" />
                     <h4 className="inline-block">Weather</h4>
                     <div className="flex space-x-4 font-extralight h-5">
                         <div className="inline-block">
@@ -66,7 +66,7 @@ const TopBanner: React.FC<{ meeting: MeetingParams, session: SessionParams, weat
                             <span>{weather?.rainfall ? "Dance and you shall recieved" : "No rain"}</span>
                         </div>
                     </div>
-                    <img src={trackImageSrc} className="h-7 inline-block" />
+                    <Image src={trackImageSrc} className="h-7 inline-block" alt="track image" />
 
                 </div>
             )}

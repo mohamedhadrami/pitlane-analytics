@@ -55,7 +55,7 @@ const DriverChampionshipCard: React.FC<{
       }
     };
     fetchData();
-  }, []);
+  });
 
   useEffect(() => {
     setFlagUrl(flagImage(countryName))

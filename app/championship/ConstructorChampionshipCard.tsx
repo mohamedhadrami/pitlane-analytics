@@ -42,7 +42,7 @@ const ConstructorChampionshipCard: React.FC<{
       }
     };
     fetchData();
-  }, []);
+  }, [constructor.Constructor.name, drivers]);
 
   useEffect(() => {
     const correctedTeamName = teamNameConvertor(teamName)

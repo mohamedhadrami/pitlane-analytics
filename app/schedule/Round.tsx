@@ -89,7 +89,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
       >
         <div className="flex flex-row items-center justify-between">
           <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
-          <img src={flagData?.png} className="w-12 h-auto rounded" />
+          <Image src={flagData?.png} className="w-12 h-auto rounded" alt="flag" />
         </div>
         <span key={`${raceData.round}-title`} className="flex justify-center">
           <span className="font-extralight">{`Round ${raceData.round}`}</span>
@@ -107,7 +107,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
           <p>{raceData.Circuit.circuitName}</p>
         </div>
         <div className="flex justify-center">
-          <img src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} />
+          <Image src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
         </div>
 
         {results && <ResultsContainer results={results} />}
@@ -138,11 +138,12 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
       <h3 key={`${results.round}-results-title`} className="text-center font-light text-lg m-3">Race Results</h3>
       <div key={`${results.round}-results-container`} className="flex flex-row justify-center gap-5">
         <div className={driverClasses}>
-          <img
+          <Image
             src={driverImage(
               results[1].Driver.givenName,
               results[1].Driver.familyName
             )}
+            alt={`${results[1].Driver.givenName} ${results[1].Driver.familyName} driver image`}
             className={driverImageClasses}
           />
           <span key={`${results.round}-2`} className="flex items-center">
@@ -154,11 +155,12 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
           </span>
         </div>
         <div className={driverClasses}>
-          <img
+          <Image
             src={driverImage(
               results[0].Driver.givenName,
               results[0].Driver.familyName
             )}
+            alt={`${results[0].Driver.givenName} ${results[0].Driver.familyName} driver image`}
             className={`${driverImageClasses} w-32`}
           />
           <span key={`${results.round}-2`} className="flex items-center">
@@ -170,11 +172,12 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
           </span>
         </div>
         <div className={driverClasses}>
-          <img
+          <Image
             src={driverImage(
               results[2].Driver.givenName,
               results[2].Driver.familyName
             )}
+            alt={`${results[2].Driver.givenName} ${results[2].Driver.familyName} driver image`}
             className={driverImageClasses}
           />
           <span key={`${results.round}-2`} className="flex items-center">

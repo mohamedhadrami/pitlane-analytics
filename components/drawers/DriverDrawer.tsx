@@ -37,7 +37,7 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, driver, 
       setDriverResults(data?.MRData.RaceTable.Races);
     }
     fetchData();
-  }, []);
+  });
 
 
   const items = React.useMemo(() => {
