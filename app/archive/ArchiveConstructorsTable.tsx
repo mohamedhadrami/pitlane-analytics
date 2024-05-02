@@ -1,4 +1,4 @@
-// pages/constructors.tsx
+// @/app/archive/ArchiveConstructorsTable.tsx
 
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
 import { useRouter } from "next/navigation";

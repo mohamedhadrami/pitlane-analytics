@@ -1,4 +1,4 @@
-// utils/telemetryUtils.ts
+// @/utils/telemetryUtils.ts
 
 import { DriverChartData } from "@/interfaces/custom";
 import { CarDataParams, WeatherParams } from "@/interfaces/openF1"

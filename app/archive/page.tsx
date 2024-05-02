@@ -1,3 +1,5 @@
+// @/app/archive/page.tsx
+
 "use client"
 
 import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";

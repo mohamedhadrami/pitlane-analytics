@@ -1,3 +1,5 @@
+// @/app/archive/ArchiveSkeletons.tsx
+
 "use client"
 
 import { Skeleton, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";

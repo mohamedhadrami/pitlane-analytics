@@ -1,4 +1,4 @@
-// pages/drivers.tsx
+// @/app/archive/ArchiveRacesTable.tsx
 
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { useRouter } from "next/navigation";

@@ -1,3 +1,5 @@
+// @/app/analytics/page.tsx
+
 "use client"
 
 const Page: React.FC = () => {
