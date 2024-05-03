@@ -4,7 +4,7 @@
 
 import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";
 import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArchiveChampionshipTableSkeleton } from "./ArchiveSkeletons";
 import ArchiveDriversTable from "./ArchiveDriversTable";
@@ -18,6 +18,15 @@ const Page: React.FC = () => {
     const [selectedYear, setSelectedYear] = useState<string>("");
     const router = useRouter();
     const [isMobile, setIsMobile] = useState(false);
+
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        if (searchParams) {
+            const queryYear = searchParams.get("year");
+            if (queryYear) setSelectedYear(queryYear);
+        }
+    }, [searchParams])
 
     useEffect(() => {
         const handleResize = () => {
