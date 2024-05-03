@@ -1,12 +1,11 @@
-// components/drawer/RaceDrawer.tsx
-
-"use client"
+// @/components/drawer/RaceDrawer.tsx
 
 import { MeetingParams } from "@/interfaces/openF1";
-import { Link, Button, Tabs, Tab, Card, CardBody, Pagination, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { Link, Button, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { X } from "lucide-react";
-import { useMemo, useState } from "react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerOverlay } from "../ui/drawer";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "../ui/drawer";
+import CustomTable from "../tables/CustomTable";
+import { RaceHeaders } from "@/utils/const";
 
 interface RaceDrawerProps {
     isOpen: boolean;
@@ -17,31 +16,6 @@ interface RaceDrawerProps {
 }
 
 const RaceDrawer: React.FC<RaceDrawerProps> = ({ isOpen, setIsOpen, raceData, raceResults, meeting }) => {
-    const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState<number>();
-    const rowsPerPage = 5;
-
-    const classNames = useMemo(
-        () => ({
-            wrapper: ["rounded-xl"],
-            th: ["bg-transparent", "text-default-500", "text-sm", "border-b", "border-divider"],
-            tr: ["hover:bg-red-800", "rounded-full"],
-            td: ["text-default-600"],
-            table: ["rounded-xl"]
-        }),
-        [],
-    );
-
-
-    const items = useMemo(() => {
-        if (raceResults) {
-            setTotalPages(Math.ceil(raceResults.length / rowsPerPage));
-            const start = (page - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-
-            return raceResults.slice(start, end);
-        }
-    }, [page, raceResults]);
 
     return (
         <div>
@@ -78,60 +52,12 @@ const RaceDrawer: React.FC<RaceDrawerProps> = ({ isOpen, setIsOpen, raceData, ra
                             </Tab>
                             {raceResults &&
                                 <Tab key="resutls-table" title="Results">
-                                    <div className="">
-                                        <Table
-                                            classNames={classNames}
-                                            className="mx-5 mb-5"
-                                            radius="lg"
-                                            isStriped
-                                            bottomContent={
-                                                <div className="flex w-full justify-center">
-                                                    <Pagination
-                                                        isCompact
-                                                        showControls
-                                                        showShadow
-                                                        color="secondary"
-                                                        page={page}
-                                                        total={totalPages!}
-                                                        onChange={(page: any) => setPage(page)}
-                                                    />
-                                                </div>
-                                            }
-                                        >
-                                            <TableHeader>
-                                                <TableColumn>Position</TableColumn>
-                                                <TableColumn>Driver</TableColumn>
-                                                <TableColumn>Team</TableColumn>
-                                                <TableColumn>Points</TableColumn>
-                                                <TableColumn>Time</TableColumn>
-                                                <TableColumn>Fastest Lap</TableColumn>
-                                                <TableColumn>Status</TableColumn>
-                                            </TableHeader>
-                                            {raceResults ? (
-                                                <TableBody items={items}>
-                                                    {(item: any) => (
-                                                        <TableRow key={item.number} className={`${item.status == "Retired" ? "brightness-50" : ""}`}>
-                                                            <TableCell>{item.position}</TableCell>
-                                                            <TableCell>{`${item.Driver.givenName} ${item.Driver.familyName}`}</TableCell>
-                                                            <TableCell>{item.Constructor.name}</TableCell>
-                                                            <TableCell>{item.points}</TableCell>
-                                                            <TableCell>{item.Time ? item.Time.time : item.status}</TableCell>
-                                                            {item.FastestLap ? (
-                                                                <TableCell className={`${item.FastestLap.rank == 1 ? "font-bold text-[#FF00FF]" : ""}`}>
-                                                                    {item.FastestLap.Time.time}
-                                                                </TableCell>
-                                                            ) : (
-                                                                <TableCell>No time set</TableCell>
-                                                            )}
-                                                            <TableCell>{item.status}</TableCell>
-                                                        </TableRow>
-                                                    )}
-                                                </TableBody>
-                                            ) : (
-                                                <TableBody emptyContent="No data available">{[]}</TableBody>
-                                            )}
-                                        </Table>
-                                    </div>
+                                    <CustomTable 
+                                        rawData={raceResults}
+                                        headers={RaceHeaders}
+                                        type="race"
+                                        isPagination
+                                    />
                                 </Tab>
                             }
                         </Tabs>

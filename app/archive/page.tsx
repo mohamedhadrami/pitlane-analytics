@@ -6,10 +6,8 @@ import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionsh
 import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ArchiveChampionshipTableSkeleton } from "./ArchiveSkeletons";
-import ArchiveDriversTable from "./ArchiveDriversTable";
-import ArchiveConstructorsTable from "./ArchiveConstructorsTable";
-import ArchiveRacesTable from "./ArchiveRacesTable";
+import CustomTable from "@/components/tables/CustomTable";
+import { ConstructorChampionshipHeaders, DriverChampionshipHeaders, SeasonRacesHeaders } from "@/utils/const";
 
 const Page: React.FC = () => {
     const [drivers, setDrivers] = useState<any>(null);
@@ -68,8 +66,6 @@ const Page: React.FC = () => {
         }
     }, [selectedYear]);
 
-    const show: boolean = false
-
     return (
         <div className="max-w-screen-lg mx-auto">
             <div>
@@ -112,37 +108,25 @@ const Page: React.FC = () => {
                 <div className="mx-5 w-full">
                     <Tabs className="" color="primary" isVertical={!isMobile}>
                         <Tab key="drivers" title="Drivers" className="">
-                            {drivers ? (
-                                <div className="">
-                                    <ArchiveDriversTable data={drivers} />
-                                </div>
-                            ) : (
-                                <div className="">
-                                    <ArchiveChampionshipTableSkeleton />
-                                </div>
-                            )}
+                            <CustomTable
+                                rawData={drivers?.MRData.StandingsTable.StandingsLists[0].DriverStandings}
+                                headers={DriverChampionshipHeaders}
+                                type="archiveDriversChampionship"
+                            />
                         </Tab>
                         <Tab key="constructors" title="Constructors" className="">
-                            {constructors ? (
-                                <div className="">
-                                    <ArchiveConstructorsTable data={constructors} />
-                                </div>
-                            ) : (
-                                <div className="">
-                                    <ArchiveChampionshipTableSkeleton />
-                                </div>
-                            )}
+                            <CustomTable
+                                rawData={constructors?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings}
+                                headers={ConstructorChampionshipHeaders}
+                                type="archiveConstructorsChampionship"
+                            />
                         </Tab>
                         <Tab key="races" title="Races" className="">
-                            {races ? (
-                                <div className="">
-                                    <ArchiveRacesTable data={races} />
-                                </div>
-                            ) : (
-                                <div className="">
-                                    <ArchiveChampionshipTableSkeleton />
-                                </div>
-                            )}
+                            <CustomTable
+                                rawData={races?.MRData.RaceTable.Races}
+                                headers={SeasonRacesHeaders}
+                                type="archiveSeasonRaces"
+                            />
                         </Tab>
                     </Tabs>
                 </div>

@@ -3,9 +3,11 @@
 import React, { useState, useEffect } from "react";
 import { DriverParams } from "@/interfaces/openF1";
 import { fetchDriverResults } from "@/services/ergastApi";
-import { Link, Button, Tabs, Tab, Card, CardBody, Pagination, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import { Link, Button, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerOverlay } from "../ui/drawer";
 import { X, Minus } from "lucide-react";
+import CustomTable from "../tables/CustomTable";
+import { DriverHeader } from "@/utils/const";
 
 interface DriverDrawerProps {
   isOpen: boolean;
@@ -15,40 +17,15 @@ interface DriverDrawerProps {
 }
 
 const DriverDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, driver, driverData }) => {
-  const [driverResults, setDriverResults] = useState<any>();
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState<number>();
-  const rowsPerPage = 4;
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["rounded-xl"],
-      th: ["bg-transparent", "text-default-500", "text-sm", "border-b", "border-divider"],
-      tr: ["hover:bg-red-800", "rounded-full"],
-      td: ["text-default-600"],
-      table: ["rounded-xl"]
-    }),
-    [],
-  );
+  const [results, setResults] = useState<any>();
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchDriverResults(driver.Driver.driverId, undefined, true);
-      setDriverResults(data?.MRData.RaceTable.Races);
+      setResults(data?.MRData.RaceTable.Races);
     }
     fetchData();
   });
-
-
-  const items = React.useMemo(() => {
-    if (driverResults) {
-      setTotalPages(Math.ceil(driverResults.length / rowsPerPage));
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-
-      return driverResults.slice(start, end);
-    }
-  }, [page, driverResults]);
 
   return (
     <div>
@@ -92,50 +69,12 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, driver, 
                 </Card>
               </Tab>
               <Tab key="resutls-table" title="Results">
-                <div className="">
-                  <Table
-                    classNames={classNames}
-                    className="mx-5 mb-5"
-                    radius="lg"
-                    isStriped
-                    bottomContent={
-                      <div className="flex w-full justify-center">
-                        <Pagination
-                          isCompact
-                          showControls
-                          showShadow
-                          color="secondary"
-                          page={page}
-                          total={totalPages!}
-                          onChange={(page: any) => setPage(page)}
-                        />
-                      </div>
-                    }
-                  >
-                    <TableHeader>
-                      <TableColumn>Race</TableColumn>
-                      <TableColumn>Starting Position</TableColumn>
-                      <TableColumn>Final Position</TableColumn>
-                      <TableColumn>Total Points</TableColumn>
-                      <TableColumn>Status</TableColumn>
-                    </TableHeader>
-                    {driverResults ? (
-                      <TableBody items={items}>
-                        {(item: any) => (
-                          <TableRow key={item.round}>
-                            <TableCell>{item.raceName}</TableCell>
-                            <TableCell>{item.Results[0].grid}</TableCell>
-                            <TableCell>{item.Results[0].position}</TableCell>
-                            <TableCell>{item.Results[0].points}</TableCell>
-                            <TableCell>{item.Results[0].status}</TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    ) : (
-                      <TableBody emptyContent="No data available">{[]}</TableBody>
-                    )}
-                  </Table>
-                </div>
+                <CustomTable
+                  rawData={results}
+                  headers={DriverHeader}
+                  type="driver"
+                  isPagination
+                />
               </Tab>
             </Tabs>
           </div>

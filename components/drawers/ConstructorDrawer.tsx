@@ -1,11 +1,12 @@
 // @/components/drawers/ConstructorDrawer.tsx
 
 import React, { useState, useEffect } from "react";
-import { DriverParams } from "@/interfaces/openF1";
-import { fetchConstructorResults, fetchDriverResults } from "@/services/ergastApi";
-import { Link, Button, Tabs, Tab, Card, CardBody, Pagination, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerOverlay } from "../ui/drawer";
+import { fetchConstructorResults } from "@/services/ergastApi";
+import { Link, Button, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerOverlay } from "../ui/drawer";
 import { X, Minus } from "lucide-react";
+import { ConstructorHeader } from "@/utils/const";
+import CustomTable from "../tables/CustomTable";
 
 interface DriverDrawerProps {
   isOpen: boolean;
@@ -16,21 +17,7 @@ interface DriverDrawerProps {
 
 const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, constructor, teamName }) => {
   const [results, setResults] = useState<any>();
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState<number>();
-  const rowsPerPage = 4;
-
-  const classNames = React.useMemo(
-    () => ({
-      wrapper: ["rounded-xl"],
-      th: ["bg-transparent", "text-default-500", "text-sm", "border-b", "border-divider"],
-      tr: ["hover:bg-red-800", "rounded-full"],
-      td: ["text-default-600"],
-      table: ["rounded-xl"]
-    }),
-    [],
-  );
-
+  
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchConstructorResults(constructor.Constructor.constructorId, undefined, true);
@@ -38,17 +25,6 @@ const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, con
     }
     fetchData();
   });
-
-
-  const items = React.useMemo(() => {
-    if (results) {
-      setTotalPages(Math.ceil(results.length / rowsPerPage));
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-
-      return results.slice(start, end);
-    }
-  }, [page, results]);
 
   return (
     <div>
@@ -87,48 +63,12 @@ const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, con
                 </Card>
               </Tab>
               <Tab key="resutls-table" title="Results">
-                <div className="">
-                  <Table
-                    classNames={classNames}
-                    className="mx-5 mb-5"
-                    radius="lg"
-                    isStriped
-                    bottomContent={
-                      <div className="flex w-full justify-center">
-                        <Pagination
-                          isCompact
-                          showControls
-                          showShadow
-                          color="secondary"
-                          page={page}
-                          total={totalPages!}
-                          onChange={(page: any) => setPage(page)}
-                        />
-                      </div>
-                    }
-                  >
-                    <TableHeader>
-                      <TableColumn>Race</TableColumn>
-                      <TableColumn>Best Driver</TableColumn>
-                      <TableColumn>Final Position</TableColumn>
-                      <TableColumn>Total Points</TableColumn>
-                    </TableHeader>
-                    {results ? (
-                      <TableBody items={items}>
-                        {(item: any) => (
-                          <TableRow key={item.round}>
-                            <TableCell>{item.raceName}</TableCell>
-                            <TableCell>{`${item.Results[0].Driver.givenName} ${item.Results[0].Driver.familyName}`}</TableCell>
-                            <TableCell>{item.Results[0].position}</TableCell>
-                            <TableCell>{parseInt(item.Results[0].points) + parseInt(item.Results[1]?.points)}</TableCell>
-                          </TableRow>
-                        )}
-                      </TableBody>
-                    ) : (
-                      <TableBody emptyContent="No data available">{[]}</TableBody>
-                    )}
-                  </Table>
-                </div>
+                <CustomTable
+                  rawData={results}
+                  headers={ConstructorHeader}
+                  type="constructor"
+                  isPagination
+                />
               </Tab>
             </Tabs>
           </div>
