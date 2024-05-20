@@ -132,7 +132,7 @@ export interface LapParams {
 }
 
 export const segmentColor: Record<number, string> = {
-    0: '#FFFFFF99',
+    0: '#52525B',
     2048: '#FFFF00', // No improvement on PB (Yellow)
     2049: '#00FF00', // PB (Green)
     2050: 'white', // Unknown
@@ -186,7 +186,7 @@ export interface MeetingParams {
     date_start?: string;
     gmt_offset?: string;
     location?: string;
-    meeting_key?: number;
+    meeting_key?: number | string;
     meeting_name?: string;
     meeting_official_name?: string;
     year?: string | number;
@@ -275,7 +275,7 @@ export interface SessionParams {
     date_start?: string;
     gmt_offset?: string;
     location?: string;
-    meeting_key?: number;
+    meeting_key?: number | string;
     session_key?: number | string;
     session_name?: string;
     session_type?: string;
@@ -334,10 +334,10 @@ export interface WeatherParams {
     air_temperature?: number;
     date?: string;
     humidity?: number;
-    meeting_key?: number;
+    meeting_key?: number | string;
     pressure?: number;
     rainfall?: number;
-    session_key?: number;
+    session_key?: number | string;
     track_temperature?: number;
     wind_direction?: number;
     wind_speed?: number;

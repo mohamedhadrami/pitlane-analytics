@@ -76,6 +76,13 @@ export const fetchRaceResults = async (round: any, season?: any, isCurrentYear?:
     return data;
 }
 
+export const fetchRaceResultsByCircuit = async (circuitId: any, season?: any, isCurrentYear?: boolean) => {
+    let endpoint =  `/current/circuits/${circuitId}/results.json`;
+    if (season) endpoint = `/${season}/circuits/${circuitId}/results.json`;
+    const data = await fetchApiData(endpoint);
+    return data;
+}
+
 export const fetchAllRaceResults = async (season: any) => {
     let endpoint =  `/${season}/results.json?limit=999`;
     const data = await fetchApiData(endpoint);
