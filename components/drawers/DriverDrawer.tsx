@@ -28,7 +28,6 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, driver, 
   });
 
   return (
-    <div>
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerContent>
           <div className="mx-auto w-full max-w-3xl">
@@ -79,12 +78,8 @@ const DriverDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, driver, 
             </Tabs>
           </div>
         </DrawerContent>
-        <DrawerFooter>
-          <div className="h-2"></div>
-        </DrawerFooter>
         <DrawerOverlay className="bg-[#e10600aa]" />
       </Drawer>
-    </div>
   )
 }
 
