@@ -1,12 +1,11 @@
-
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DriverParams, SessionParams, TeamRadioParams } from "../../interfaces/openF1";
 import { driverImage, numberImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
 import { Image } from "@nextui-org/react";
 
 const TeamRadios: React.FC<{ drivers: DriverParams[], teamRadio: TeamRadioParams[] }> = ({ drivers, teamRadio }) => {
-    const [gmtOffset, setGmtOffset] = useState(null);
+    const [gmtOffset, setGmtOffset] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchOffset = async () => {
@@ -22,11 +21,13 @@ const TeamRadios: React.FC<{ drivers: DriverParams[], teamRadio: TeamRadioParams
         }
     }, [teamRadio]);
 
+    // Sort the teamRadio array by date in descending order
+    const sortedTeamRadio = [...teamRadio].sort((a, b) => Date.parse(b.date!) - Date.parse(a.date!));
+
     return (
-        <div style={{ scrollbarWidth: "none" }}
-            className="overflow-y-scroll h-[50vh]">
+        <div style={{ scrollbarWidth: "none" }} className="overflow-y-scroll h-[50vh]">
             <div className="p-0 m-3">
-                {teamRadio && gmtOffset && teamRadio.map((radio: TeamRadioParams, index: number) => (
+                {sortedTeamRadio && gmtOffset && sortedTeamRadio.map((radio: TeamRadioParams, index: number) => (
                     <Radio key={index} drivers={drivers} radio={radio} gmtOffset={gmtOffset} />
                 ))}
             </div>
@@ -34,7 +35,7 @@ const TeamRadios: React.FC<{ drivers: DriverParams[], teamRadio: TeamRadioParams
     );
 };
 
-const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffset: any }> = ({ drivers, radio, gmtOffset }) => {
+const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffset: string }> = ({ drivers, radio, gmtOffset }) => {
     const driver = drivers.find(driver => driver.driver_number === radio.driver_number);
 
     return (
@@ -57,33 +58,7 @@ const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffs
                 </audio>
             </div>
         </div>
-    )
+    );
 }
-
-/**
-<tr className="flex items-center h-[50px] font-extralight">
-            <th className="text-[#999] text-left font-extralight w-1/5">{parseISOTimeFull(radio.date, gmtOffset)}</th>
-            <th className="flex text-left h-auto w-[100px]">
-                <Chip
-                    variant="light"
-                    style={{ backgroundColor: `#${driver?.team_colour}` }} 
-                    avatar={
-                        <Avatar
-                            name={driver?.name_acronym}
-                            className="rounded-full bg-transparent"
-                            src={driverImage(driver?.first_name!, driver?.last_name!)}
-                        />
-                    }
-                >{driver?.name_acronym}</Chip>
-            </th>
-            <th className="items-right w-[200px]">
-                <audio controls controlsList="nodownload noplaybackrate" style={{ width: '100%' }}>
-                    <source src={radio.recording_url} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                </audio>
-            </th>
-        </tr>
- */
-
 
 export default TeamRadios;

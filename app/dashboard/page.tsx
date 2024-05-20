@@ -1,9 +1,9 @@
-// pages/dashboard.tsx
+// @/app/dashboard/page.tsx
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { DriverParams, MeetingParams, RaceControlParams, SessionParams, StintParams, TeamRadioParams, WeatherParams, LapParams } from "../../interfaces/openF1";
-import { fetchDrivers, fetchLaps, fetchMeeting, fetchPosition, fetchRaceControl, fetchSession, fetchStint, fetchTeamRadio, fetchWeather } from "../../services/openF1Api";
+import { DriverParams, MeetingParams, RaceControlParams, SessionParams, StintParams, TeamRadioParams, WeatherParams, LapParams, PositionParams, IntervalParams } from "../../interfaces/openF1";
+import { fetchDrivers, fetchIntervals, fetchLaps, fetchMeeting, fetchPosition, fetchRaceControl, fetchSession, fetchStint, fetchTeamRadio, fetchWeather } from "../../services/openF1Api";
 import { Grid } from "@mui/material";
 import TopBanner from "./TopBanner";
 import LiveTiming from "./LiveTiming";
@@ -19,65 +19,54 @@ const Dashboard: React.FC = () => {
     const [weather, setWeather] = useState<WeatherParams>();
     const [stints, setStints] = useState<StintParams[]>([]);
     const [laps, setLaps] = useState<LapParams[]>([]);
+    const [intervals, setIntervals] = useState<IntervalParams[]>([]);
+    const [positions, setPositions] = useState<PositionParams[]>([]);
 
-    const meeting_test = 1233;
-    const session_test = 9668;
+    const meeting_test = "latest"; //1234;
+    const session_test = "latest"; //9507;
+
+    const params = {
+        meeting_key: meeting_test,
+        session_key: session_test
+    }
 
     const fetchMeetingData = async () => {
-        const params = {
-            meeting_key: meeting_test
-        }
-        const data = await fetchMeeting(params);
+        const meetingParams: MeetingParams = {meeting_key: meeting_test}
+        const data = await fetchMeeting(meetingParams);
         setMeeting(data[0]);
     }
 
     const fetchSessionData = async () => {
-        const params = {
-            meeting_key: meeting_test,
-            session_key: session_test
-        }
         const data = await fetchSession(params);
         setSession(data[0]);
     }
 
     const fetchDriverData = async () => {
-        const params = {
-            meeting_key: meeting_test,
-            session_key: session_test
-        }
         const data = await fetchDrivers(params);
         setDrivers(data);
     }
 
     const fetchRaceControlData = async () => {
-        const params = {
-            meeting_key: meeting_test,
-            session_key: session_test
-        }
         const data = await fetchRaceControl(params);
         setRaceControl(data);
     }
 
-    const fetchTeamRadioData = async () => {
-        const params = {
-            meeting_key: meeting_test,
-            session_key: session_test
-        }
+    async function fetchTeamRadioData() {
         const data = await fetchTeamRadio(params);
         setTeamRadio(data);
     }
 
-    const fetchData = async () => {
-        const params = {
-            meeting_key: meeting_test,
-            session_key: session_test
-        }
+    async function fetchData() {
         const weatherData = await fetchWeather(params);
         setWeather(weatherData.pop());
         const stintData = await fetchStint(params);
         setStints(stintData);
         const lapData = await fetchLaps(params);
         setLaps(lapData);
+        const intervalData = await fetchIntervals(params);
+        setIntervals(intervalData);
+        const positionData = await fetchPosition(params);
+        setPositions(positionData);
     }
 
     useEffect(() => {
@@ -100,8 +89,8 @@ const Dashboard: React.FC = () => {
                 {meeting && session && weather && isBanner && (
                     <Grid item xs={12}><TopBanner meeting={meeting} session={session} weather={weather} /></Grid>
                 )}
-                {drivers && stints && laps && isLive && (
-                    <Grid item xs={12}><LiveTiming drivers={drivers} stints={stints} laps={laps} /></Grid>
+                {drivers && stints && laps && positions && isLive && (
+                    <Grid item xs={12} className="m-3"><LiveTiming drivers={drivers} stints={stints} laps={laps} positions={positions} intervals={intervals} /></Grid>
                 )}
                 {raceControl && isRace && (
                     <Grid item xs><RaceControl drivers={drivers} raceControl={raceControl} /></Grid>

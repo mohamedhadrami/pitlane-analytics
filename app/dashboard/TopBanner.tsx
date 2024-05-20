@@ -18,7 +18,7 @@ const TopBanner: React.FC<{ meeting: MeetingParams, session: SessionParams, weat
                     <div className="inline-block">{session?.session_name}</div>
                     <div className="inline-block font-extralight">{meeting?.meeting_official_name}</div>
                     <div className="inline-block font-extralight">{meeting?.location}, {meeting?.country_name}</div>
-                    <Image src={trackImageSrc} className="h-7 inline-block" alt="track image" />
+                    <Image src={trackImageSrc} radius="none" className="h-7 inline-block" alt="track image" />
                     <h4 className="inline-block">Weather</h4>
                     <div className="flex space-x-4 font-extralight h-5">
                         <div className="inline-block">
@@ -66,7 +66,7 @@ const TopBanner: React.FC<{ meeting: MeetingParams, session: SessionParams, weat
                             <span>{weather?.rainfall ? "Dance and you shall recieved" : "No rain"}</span>
                         </div>
                     </div>
-                    <Image src={trackImageSrc} className="h-7 inline-block" alt="track image" />
+                    <Image src={trackImageSrc} radius="none" className="h-7 inline-block" alt="track image" />
 
                 </div>
             )}
@@ -75,23 +75,3 @@ const TopBanner: React.FC<{ meeting: MeetingParams, session: SessionParams, weat
 };
 
 export default TopBanner;
-
-
-/**
-                    <div className="inline-block decoration-gray-950 font-extralight">{meeting?.meeting_official_name}</div>
-                    <div className="inline-block">{meeting?.location}, {meeting?.country_name}</div>
-                    <div className="inline-block">{session?.session_name}</div>
-<FontAwesomeIcon icon={faThermometer} />
-<FontAwesomeIcon icon={faTint} />
-<FontAwesomeIcon icon={faThermometer} />
-<FontAwesomeIcon icon={faWater} />
-<FontAwesomeIcon icon={faWind} />
-<FontAwesomeIcon icon={faCompass} />
-<FontAwesomeIcon icon={faCloudRain} />
-<FontAwesomeIcon
-                    icon={faArrowUp}
-                    style={{
-                        transform: `rotate(${weather?.wind_direction}deg)`,
-                    }}
-                />
-*/
