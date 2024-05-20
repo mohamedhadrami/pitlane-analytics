@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState } from "react";
 import { DriverParams, RaceControlParams, SessionParams } from "../../interfaces/openF1";
 import { driverImage, parseISOTimeFull } from "../../utils/helpers";
@@ -7,7 +5,7 @@ import { fetchSession } from "../../services/openF1Api";
 import { Image } from "@nextui-org/react";
 
 const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlParams[] }> = ({ drivers, raceControl }) => {
-    const [gmtOffset, setGmtOffset] = useState(null);
+    const [gmtOffset, setGmtOffset] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchOffset = async () => {
@@ -18,21 +16,22 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
             setGmtOffset(apiData[0]?.gmt_offset)
         }
         fetchOffset();
-    }, [raceControl])
+    }, [raceControl]);
 
     const driverData = (driver_number: number) => {
         const driver = drivers?.find(driver => driver.driver_number === driver_number);
-        console.log(driver)
         if (driver) return [driver?.first_name, driver?.last_name]
         else return [undefined, undefined]
     }
 
+    // Sort the raceControl array by date in descending order
+    const sortedRaceControl = raceControl.sort((a, b) => Date.parse(b.date!) - Date.parse(a.date!));
+
     return (
-        <div style={{ scrollbarWidth: "none" }}
-            className="overflow-y-scroll h-[50vh]">
+        <div style={{ scrollbarWidth: "none" }} className="overflow-y-scroll h-[50vh]">
             <div className="m-3 min-w-[400px] font-extralight">
                 <div>
-                    {raceControl && raceControl.map((event: RaceControlParams, id: number) => (
+                    {sortedRaceControl && sortedRaceControl.map((event: RaceControlParams, id: number) => (
                         <div key={`${event.date}-${event.category}-${id}`} className="flex items-center my-1">
                             {gmtOffset && (
                                 <div className="text-[#999] font-extralight w-1/4 text-left">
@@ -44,7 +43,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
                                     <Image
                                         src={`flags/${event.flag}.png`}
                                         alt={`${event.flag}`}
-                                        className="w-5 mr-3 rounded-none border-solid border-1 border-white" />
+                                        className="w-5 mr-3 rounded-sm" />
                                 )}
                                 {event.category && event.category === "SafetyCar" && (
                                     <Image
@@ -53,7 +52,10 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
                                         className="w-5 mr-3" />
                                 )}
                                 {event.driver_number && drivers && (
-                                    <div>h</div>
+                                    <Image
+                                        src={driverImage(`${driverData(event.driver_number)[0]} ${driverData(event.driver_number)[1]}`)}
+                                        alt={`driver-${event.driver_number}`}
+                                        className="w-8 rounded-full" />
                                 )}
                                 <p className="m-0">{event.message}</p>
                             </div>
@@ -66,11 +68,3 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
 };
 
 export default RaceControl;
-
-/**
- <img
-    src={driverImage(driverData(event.driver_number)[0], driverData(event.driver_number)[1])}
-    alt={`driver-${event.driver_number}`}
-    className="w-6 rounded-full" />
-                                
- */

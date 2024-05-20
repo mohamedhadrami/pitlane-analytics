@@ -1,63 +1,40 @@
 import React from "react";
 import { LapParams, segmentColor } from "../../interfaces/openF1";
+import { Divider } from "@nextui-org/react";
 
 const Segment: React.FC<{ segment: number }> = ({ segment }) => (
     <div
+        className="rounded-full w-0.5 h-3"
         style={{
-            width: "2px",
-            height: "10px",
-            borderRadius: "50vh",
-            backgroundColor: segmentColor[segment],
-            border: `1px solid ${segment ? segmentColor[segment] : "#fff"}`,
-            marginRight: "5px"
+            backgroundColor: segment !== null ? segmentColor[segment] : '#FF9966',
         }}
     />
 );
 
-const SectorSegment: React.FC<{ lap: LapParams }> = ({ lap }) => {
+const SectorSegment: React.FC<{ lap: LapParams, fastestLap: LapParams }> = ({ lap, fastestLap }) => {
+    var arr = Array<number>(7).fill(2064);
+    const renderSegments = (segments: number[] | undefined, sectorDuration: number | undefined) => (
+        <div className="flex flex-col mx-1 w-14">
+            <div className="flex gap-1">
+                {segments?.length === 0 
+                    ? arr.map((segment, index) => (
+                        <Segment key={index} segment={segment} />
+                    )) : segments?.map((segment, index) => (
+                        <Segment key={index} segment={segment} />
+                    ))
+                }
+            </div>
+            <div className="text-left">{sectorDuration}</div>
+        </div>
+    );
+
     return (
-        <div style={{ display: "flex" }}>
+        <div className="flex">
             {lap && (
                 <>
-                    <div>
-                        <div style={{ display: "flex" }}>
-                            {lap.segments_sector_1!.length === 0 ? <p>no data</p> : (lap.segments_sector_1!.map((segment: number, index: React.Key) => (
-                                <React.Fragment key={index}>
-                                    <Segment segment={segment} />
-                                </React.Fragment>
-                            )))}
-                        </div>
-                        <div>{lap.duration_sector_1}</div>
-                    </div>
-
-                    <div style={{ width: "10px" }} />
-                    <div>
-                        <div style={{ display: "flex" }}>
-                            {lap.segments_sector_2!.length === 0 ? 
-                            <p>no data</p> : 
-                            (lap.segments_sector_2!.map((segment: number, index: React.Key) => (
-                                <React.Fragment key={index}>
-                                    <Segment segment={segment} />
-                                </React.Fragment>
-                            )))}
-                        </div>
-                        <div>{lap.duration_sector_2}</div>
-                    </div>
-
-                    <div style={{ width: "10px" }} />
-                    <div>
-                        <div style={{ display: "flex" }}>
-                            {lap.segments_sector_3!.length === 0 ? 
-                            <div className="h-[10px] w-[50px] px-2 rounded-full border-white border-1"></div> 
-                            :
-                            (lap.segments_sector_3!.map((segment: number, index: React.Key) => (
-                                <React.Fragment key={index}>
-                                    <Segment segment={segment} />
-                                </React.Fragment>
-                            )))}
-                        </div>
-                        <div>{lap.duration_sector_3}</div>
-                    </div>
+                    {renderSegments(lap.segments_sector_1, lap.duration_sector_1)}
+                    {renderSegments(lap.segments_sector_2, lap.duration_sector_2)}
+                    {renderSegments(lap.segments_sector_3, lap.duration_sector_3)}
                 </>
             )}
         </div>
