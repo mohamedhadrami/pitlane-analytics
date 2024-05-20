@@ -31,7 +31,7 @@ const fetchApiData = async (
       if (dateRangeParams.date_lt) url += `&date<=${dateRangeParams.date_lt}`;
     }
     const response = await fetch(url);
-    console.log(url);
+    //console.log(url);
     const data = await response.json();
     return data;
   } catch (error) {
