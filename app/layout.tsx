@@ -8,6 +8,7 @@ import React from "react";
 import CustomNavbar from "@/components/CustomNavbar";
 import { Link } from "@nextui-org/react";
 import { Toaster } from "@/components/ui/sonner";
+import NetworkStatus from "@/components/NetworkStatus";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -35,6 +36,7 @@ export default function RootLayout({
           </p>
         </footer>
         <Toaster />
+        <NetworkStatus/>
       </body>
     </html>
   );
