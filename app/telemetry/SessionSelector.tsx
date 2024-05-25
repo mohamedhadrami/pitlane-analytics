@@ -1,4 +1,4 @@
-// app/telemetry/SessionSelector.tsx
+// @/app/telemetry/SessionSelector.tsx
 
 "use client"
 

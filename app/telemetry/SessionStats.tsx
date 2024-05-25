@@ -1,12 +1,15 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, Accordion, AccordionItem } from "@nextui-org/react";
+import { Card, CardHeader, CardBody, Divider, Image, Accordion, AccordionItem } from "@nextui-org/react";
 import { MeetingParams, SessionParams, WeatherParams } from "@/interfaces/openF1";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind, Cloudy, CalendarFold } from "lucide-react";
 import { calculateWeatherStats } from "@/utils/telemetryUtils";
 import { fetchCountryFlagByName } from "@/services/countryApi";
 import { parseISODateAndTime, trackImage } from "@/utils/helpers";
+import { fetchRaceResultsByCircuit } from "@/services/ergastApi";
+import CustomTable from "@/components/tables/CustomTable";
+import { RaceHeaders } from "@/utils/const";
 
 interface SessionStatsProps {
     meeting: MeetingParams | undefined,
@@ -23,6 +26,7 @@ const SessionStats: React.FC<SessionStatsProps> = ({
     const [weatherAvg, setWeatherAvg] = useState<any>(null);
     const [flag, setFlag] = useState<any>(null);
     const [isMobile, setIsMobile] = useState(false);
+    const [results, setResults] = useState<any>();
 
     useEffect(() => {
         const handleResize = () => {
@@ -41,18 +45,25 @@ const SessionStats: React.FC<SessionStatsProps> = ({
         const fetchData = async () => {
             const flagApiData = await fetchCountryFlagByName(meeting?.country_name!);
             setFlag(flagApiData);
+            //const res = await fetch(`/api/db/tables/results?year=${meeting?.year}&name=${meeting?.meeting_name}`);
+            //const data = await res.json();
+            //setResults(data.data);
         }
         if (meeting) fetchData();
     }, [meeting])
 
+    const show: boolean = true;
 
     return (
-        <div className="flex justify-center w-full">
+        <div className="flex justify-center w-full max-w-screen-lg mx-auto">
             {isMobile ?
                 <SessionStatsAccordian session={session} meeting={meeting!} flag={flag} weatherAvg={weatherAvg} />
                 :
                 <SessionStatsCards session={session} meeting={meeting!} flag={flag} weatherAvg={weatherAvg} />
             }
+            {results && show && (
+                <CustomTable rawData={results} headers={RaceHeaders} type='race2' />
+            )}
         </div>
     )
 }
