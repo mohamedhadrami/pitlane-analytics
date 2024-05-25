@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import { DriverParams, RaceControlParams, SessionParams } from "../../interfaces/openF1";
 import { driverImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
-import { Image } from "@nextui-org/react";
+import { Image, ScrollShadow } from "@nextui-org/react";
+import { useLiveSettings } from "./LiveSettingsContext";
 
 const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlParams[] }> = ({ drivers, raceControl }) => {
+    const { settings } = useLiveSettings();
+    const findSetting = (name: string) => settings.find(setting => setting.name === name);
+    const isShowRaceControlTime = findSetting('Show Race Control Time')?.value;
+    
     const [gmtOffset, setGmtOffset] = useState<string | null>(null);
 
     useEffect(() => {
@@ -30,10 +35,10 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
     return (
         <div style={{ scrollbarWidth: "none" }} className="overflow-y-scroll h-[50vh]">
             <div className="m-3 min-w-[400px] font-extralight">
-                <div>
+                <ScrollShadow className="min-w-[300px] h-[400px]" size={100}>
                     {sortedRaceControl && sortedRaceControl.map((event: RaceControlParams, id: number) => (
                         <div key={`${event.date}-${event.category}-${id}`} className="flex items-center my-1">
-                            {gmtOffset && (
+                            {isShowRaceControlTime && gmtOffset && (
                                 <div className="text-[#999] font-extralight w-1/4 text-left">
                                     {parseISOTimeFull(event?.date, gmtOffset)}
                                 </div>
@@ -61,7 +66,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
                             </div>
                         </div>
                     ))}
-                </div>
+                </ScrollShadow>
             </div>
         </div>
     );
