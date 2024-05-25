@@ -2,6 +2,7 @@ import { CarDataParams, DriverParams, LapParams, LocationParams, RaceControlPara
 
 
 export interface DriverChartData {
+    selectedLap: number | null;
     driver: DriverParams;
     laps: LapParams[];
     carData: ExtendedCarDataParams[];
