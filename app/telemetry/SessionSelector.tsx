@@ -81,7 +81,7 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
 
     return (
         <div className="flex justify-center">
-            <div className="flex md:flex place-content-between w-full md:w-1/2 space-x-4 px-5">
+            <div className="flex md:flex place-content-between w-full md:w-1/2 space-x-4 px-5 max-w-screen-md">
                 {Object.keys(selections).map((key: string) => (
                     <Selector
                         id={key}
