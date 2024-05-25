@@ -46,7 +46,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
         setIsShowTyre(findSetting('Show Tyre') ?? defaultSettings.showTyre);
         setIsShowGapToLeader(findSetting('Show Gap To Leader') ?? defaultSettings.showGapToLeader);
         setIsShowStintNumber(findSetting('Show Stint Number') ?? defaultSettings.showStintNumber);
-    }, [settings]);
+    }, [settings, defaultSettings.showFastestLap, defaultSettings.showTyre, defaultSettings.showGapToLeader, defaultSettings.showStintNumber]);
 
     const [sortedDrivers, setSortedDrivers] = useState<DriverParams[]>([]);
     const [currentLap, setCurrentLap] = useState<number | undefined>(0);
@@ -137,7 +137,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                 )
             case "sectors":
                 return (
-                    <SectorSegment lap={lap!} fastestLap={fastestLap!} />
+                    <SectorSegment lap={lap!} />
                 );
         }
     }
