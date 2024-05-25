@@ -3,7 +3,7 @@
 "use client"
 
 import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";
-import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs, Link } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CustomTable from "@/components/tables/CustomTable";
