@@ -30,7 +30,7 @@ const fetchApiData = async (
       if (dateRangeParams.date_gt) url += `&date>=${dateRangeParams.date_gt}`;
       if (dateRangeParams.date_lt) url += `&date<=${dateRangeParams.date_lt}`;
     }
-    const response = await fetch(url);
+    const response = await fetch(url, { mode: 'no-cors' });
     //console.log(url);
     const data = await response.json();
     return data;
