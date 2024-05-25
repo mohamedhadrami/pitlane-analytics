@@ -2,6 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import getPaginatedData from "../../paginatedData";
+import { CircuitKeys } from "@/interfaces/ergast";
 
 
 export async function GET(request: NextRequest) {
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
   const tableName = 'circuits';
 
   try {
-    const { metadata, data } = await getPaginatedData(request, tableName, orderByColumn, cursor, limit);
+    const { metadata, data } = await getPaginatedData(request, tableName, searchParams, CircuitKeys);
 
     return NextResponse.json({ metadata, data }, { status: 200 });
   } catch (error) {

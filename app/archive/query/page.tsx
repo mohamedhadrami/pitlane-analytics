@@ -36,7 +36,7 @@ const Page: React.FC = () => {
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.shiftKey && event.key === 'Enter') {
+    if (event.shiftKey && event.key === "Enter") {
       event.preventDefault(); // prevent default behavior of adding a newline
       handleQuerySubmit();
     }
@@ -48,7 +48,7 @@ const Page: React.FC = () => {
       <Textarea
         value={query}
         onValueChange={setQuery}
-        onKeyDown={handleKeyPress}
+        onKeyDown={(e) => handleKeyPress(e as React.KeyboardEvent<HTMLTextAreaElement>)}
         placeholder={`Write your SQL query here...`}
         radius="sm"
         variant="underlined"
@@ -56,25 +56,38 @@ const Page: React.FC = () => {
         classNames={{
           inputWrapper: "bg-black text-primary hover:bg-black after:bg-primary",
           input: "placeholder:text-primary !text-primary text-md font-medium",
-          description: "text-primary"
+          description: "text-primary",
         }}
         spellCheck={false}
       />
       <br />
-      <Tooltip content={<div className="flex items-center"><ArrowBigUp /> + Enter</div>}>
+      <Tooltip
+        content={
+          <div className="flex items-center">
+            <ArrowBigUp /> + Enter
+          </div>
+        }
+      >
         <Button
           onClick={handleQuerySubmit}
           disabled={loading}
           className="flex ml-auto"
-          startContent={loading ? <Loading size={25} /> : ''}
+          startContent={loading ? <Loading size={25} /> : ""}
           color="primary"
           radius="sm"
-          variant="bordered">
+          variant="bordered"
+        >
           {loading ? "Executing..." : "Execute Query"}
         </Button>
       </Tooltip>
       <ScrollShadow hideScrollBar className="w-[300px] h-[400px]">
-        <pre style={{ marginTop: "20px", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
+        <pre
+          style={{
+            marginTop: "20px",
+            whiteSpace: "pre-wrap",
+            wordBreak: "break-word",
+          }}
+        >
           {result}
         </pre>
       </ScrollShadow>

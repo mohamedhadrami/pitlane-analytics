@@ -6,6 +6,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spinne
 import { useInfiniteScroll } from "@nextui-org/use-infinite-scroll";
 import { useAsyncList } from "@react-stately/data";
 import Loading from "@/components/Loading";
+import { DbCircuits } from "@/interfaces/ergast";
 
 const Page: React.FC = () => {
     const [tables, setTables] = useState<[]>([]);
@@ -21,10 +22,9 @@ const Page: React.FC = () => {
         fetchData()
     }, [])
 
-    let list = useAsyncList({
+    let list = useAsyncList<DbCircuits>({
         async load({ signal, cursor }) {
             const url = cursor ? cursor : `/api/db/tables/circuits`;
-            console.log(url)
             const res = await fetch(url, { signal });
             const json = await res.json();
 
@@ -63,8 +63,8 @@ const Page: React.FC = () => {
                 }}
             >
                 <TableHeader>
-                    <TableColumn key="circuitid">ID</TableColumn>
-                    <TableColumn key="circuitref">Ref</TableColumn>
+                    <TableColumn key="circuit_id">ID</TableColumn>
+                    <TableColumn key="circuit_ref">Ref</TableColumn>
                     <TableColumn key="name">Name</TableColumn>
                     <TableColumn key="location">location</TableColumn>
                     <TableColumn key="country">Country</TableColumn>
@@ -100,7 +100,3 @@ const Page: React.FC = () => {
 };
 
 export default Page;
-
-/*
- 
-*/
