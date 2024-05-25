@@ -13,6 +13,18 @@ export interface DbCircuits {
   url: string;
 };
 
+export const CircuitKeys: string[] = [
+  "circuit_id",
+  "circuit_ref",
+  "name",
+  "location",
+  "country",
+  "lat",
+  "lng",
+  "alt",
+  "url",
+];
+
 
 export interface DbConstructorResults {
   constructor_results_id: number;

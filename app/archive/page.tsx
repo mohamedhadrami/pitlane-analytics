@@ -5,7 +5,7 @@
 import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";
 import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs, Link } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import CustomTable from "@/components/tables/CustomTable";
 import { ConstructorChampionshipHeaders, DriverChampionshipHeaders, SeasonRacesHeaders } from "@/utils/const";
 
@@ -42,10 +42,10 @@ const Page: React.FC = () => {
         (_, index) => currentYear - index
     );
 
-    const onSelectionChange = (key: React.Key) => {
-        if (key.toString() == selectedYear) return null;
-        setSelectedYear(key.toString());
-    }
+    const onSelectionChange = (key: Key | null) => {
+        if (key && key.toString() === selectedYear) return null;
+        setSelectedYear(key?.toString() ?? "");
+    };
 
     const handleTelemetryAccess = () => router.push(`/telemetry?year=${selectedYear}`);
 

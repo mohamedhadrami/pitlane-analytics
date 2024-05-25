@@ -155,7 +155,7 @@ const LapStatsLineChart: React.FC<LapStatsLineChartProps> = ({ driversData, lapS
                 {Object.entries(visibleCharts).map(([key, value]) => {
                     if (!value) return null;
                     return (
-                        <div className="max-w-screen-md mx-auto">
+                        <div className="max-w-screen-md mx-auto" key={key}>
                             {renderLineChart(key)}
                         </div>
                     )

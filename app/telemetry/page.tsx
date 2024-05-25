@@ -11,7 +11,6 @@ import { useSearchParams } from "next/navigation";
 import LapTimesLineChart from "@/app/telemetry/LapTimesLineChart";
 import { DriverChartData } from "@/interfaces/custom";
 import { calculateLapTime } from "@/utils/telemetryUtils";
-import LapStatsLineChartOld from "@/app/telemetry/OldLapStatsLineChart";
 import LapStatsLineChart from "@/app/telemetry/LapStatsLineChart";
 import { toast } from "sonner";
 import LapSummary from "./LapSummary";

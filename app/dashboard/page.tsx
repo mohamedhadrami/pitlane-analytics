@@ -110,9 +110,7 @@ const Dashboard: React.FC = () => {
         }
     }
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+    useEffect(() => {fetchData();});
 
     return (
         <LiveSettingsProvider>
