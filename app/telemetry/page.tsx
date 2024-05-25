@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import SessionSelector from "./SessionSelector";
-import { DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, WeatherParams } from "@/interfaces/openF1";
+import { CarDataParams, DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, WeatherParams } from "@/interfaces/openF1";
 import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
 import SessionStats from "./SessionStats";
 import DriverSelection from "./DriverSelection";
@@ -10,9 +11,10 @@ import { useSearchParams } from "next/navigation";
 import LapTimesLineChart from "@/app/telemetry/LapTimesLineChart";
 import { DriverChartData } from "@/interfaces/custom";
 import { calculateLapTime } from "@/utils/telemetryUtils";
+import LapStatsLineChartOld from "@/app/telemetry/OldLapStatsLineChart";
 import LapStatsLineChart from "@/app/telemetry/LapStatsLineChart";
 import { toast } from "sonner";
-
+import LapSummary from "./LapSummary";
 
 const Page: React.FC = () => {
     const searchParams = useSearchParams();
@@ -45,18 +47,16 @@ const Page: React.FC = () => {
 
     const [isShowTelemetry, setIsShowTelemetry] = useState<boolean>(false);
 
-
     useEffect(() => {
         if (searchParams) {
             const queryYear = searchParams.get("year");
             const queryMeeting = searchParams.get("meeting");
             const querySession = searchParams.get("session");
-            if (queryYear) setSelectedYear(queryYear)
-            if (queryMeeting) setSelectedMeetingKey(parseInt(queryMeeting))
-            if (querySession) setSelectedSessionKey(parseInt(querySession))
+            if (queryYear) setSelectedYear(queryYear);
+            if (queryMeeting) setSelectedMeetingKey(parseInt(queryMeeting));
+            if (querySession) setSelectedSessionKey(parseInt(querySession));
         }
-    }, [searchParams])
-
+    }, [searchParams]);
 
     useEffect(() => {
         const currentYear = new Date().getFullYear();
@@ -71,10 +71,10 @@ const Page: React.FC = () => {
         const fetchData = async () => {
             const params: MeetingParams = {
                 year: selectedYear
-            }
+            };
             const res = await fetchMeeting(params);
             setMeetings(res);
-        }
+        };
         if (selectedYear) fetchData();
     }, [selectedYear, years]);
 
@@ -83,14 +83,14 @@ const Page: React.FC = () => {
             const params: SessionParams = {
                 year: selectedYear,
                 meeting_key: selectedMeetingKey
-            }
+            };
             const res = await fetchSession(params);
             setSessions(res);
-        }
+        };
         if (selectedMeetingKey) {
             fetchData();
             const meeting = meetings?.find(v => v.meeting_key === selectedMeetingKey);
-            setSelectedMeeting(meeting)
+            setSelectedMeeting(meeting);
         }
     }, [selectedYear, selectedMeetingKey, meetings]);
 
@@ -99,36 +99,36 @@ const Page: React.FC = () => {
             const params: WeatherParams = {
                 meeting_key: selectedMeetingKey,
                 session_key: selectedSessionKey
-            }
+            };
             const res = await fetchWeather(params);
             setWeather(res);
             if (res) setIsShowSession(true);
-        }
+        };
         const fetchDriverData = async () => {
             const params: DriverParams = {
                 meeting_key: selectedMeetingKey,
                 session_key: selectedSessionKey
-            }
+            };
             const res = await fetchDrivers(params);
             setDrivers(res);
             if (res) setIsShowDriverSelect(true);
-        }
+        };
         const fetchRaceControlData = async () => {
             const params: RaceControlParams = {
                 meeting_key: selectedMeetingKey,
                 session_key: selectedSessionKey
-            }
+            };
             const res = await fetchRaceControl(params);
             setRaceControl(res);
-        }
+        };
         if (selectedSessionKey) {
             const session = sessions?.find(v => v.session_key === selectedSessionKey);
-            setSelectedSession(session)
+            setSelectedSession(session);
             fetchWeatherData();
             fetchDriverData();
             fetchRaceControlData();
         }
-        setSelectedDrivers(new Map())
+        setSelectedDrivers(new Map());
         setIsShowLapTimes(false);
     }, [selectedMeetingKey, selectedSessionKey, sessions]);
 
@@ -161,6 +161,7 @@ const Page: React.FC = () => {
             setSelectedDrivers((prevMap) => {
                 const updatedMap = new Map(prevMap);
                 updatedMap.set(driverKey!, {
+                    selectedLap: null,
                     driver,
                     laps: lapApiData,
                     carData: [],
@@ -174,116 +175,164 @@ const Page: React.FC = () => {
         }
 
         if (selectedDrivers?.size !== 0) setSelectedLap(null);
-    }
+    };
 
     useEffect(() => {
         if (selectedDrivers.size > 0) setIsShowLapTimes(true);
     }, [selectedDrivers]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            selectedDrivers.forEach(
-                async (driver: DriverChartData) => {
-                    const driverData = driver.driver;
-                    const lapData = driver.laps;
-                    const stintData = driver.stintData;
-                    const lap: LapParams = lapData.find((lap: LapParams) => lap.lap_number === selectedLap)!;
-                    const params = {
-                        meeting_key: selectedMeetingKey,
-                        session_key: selectedSessionKey,
-                        driver_number: driver.driver.driver_number,
-                    };
+    
+    const fetchData = useCallback(async () => {
+        const lapDataRequests = Array.from(selectedDrivers, async ([_, driverData]) => {
+            if (driverData.selectedLap !== selectedLap || driverData.carData.length === 0) {
+                const lap: LapParams = driverData.laps.find((lap: LapParams) => lap.lap_number === selectedLap)!;
+                const date_gt: string = lap.date_start!;
+                const lapDurationMilliseconds: number = lap.lap_duration! * 1000;
+                const date_gtObject: Date = new Date(date_gt);
+                const date_ltObject: Date = new Date(date_gtObject.getTime() + lapDurationMilliseconds);
+                const date_lt: string = date_ltObject.toISOString();
+                const dateRangeParams: DateRangeParams = {
+                    date_gt: date_gt,
+                    date_lt: date_lt,
+                };
+                const params = {
+                    meeting_key: selectedMeetingKey,
+                    session_key: selectedSessionKey,
+                    driver_number: driverData.driver.driver_number,
+                };
+                const carApiData: CarDataParams[] = await fetchCarData(params, dateRangeParams);
+                const carDataWithLapTime = calculateLapTime(carApiData);
+                //const locationApiData = await fetchLocation(params, dateRangeParams);
+                return {
+                    driver: driverData.driver,
+                    carDataWithLapTime,
+                    //locationData: locationApiData,
+                };
+            }
+            return null;
+        });
 
-                    const date_gt: string = lap.date_start!;
-                    const lapDurationMilliseconds: number = lap.lap_duration! * 1000;
-                    const date_gtObject: Date = new Date(date_gt);
-                    const localTimeOffset: number = date_gtObject.getTimezoneOffset();
-                    const date_ltObject: Date = new Date(
-                        date_gtObject.getTime() +
-                        lapDurationMilliseconds -
-                        localTimeOffset * 60 * 1000
-                    );
-                    const date_lt: string = date_ltObject.toISOString();
-                    const dateRangeParams: DateRangeParams = {
-                        date_gt: date_gt,
-                        date_lt: date_lt,
-                    };
+        const lapDataResults = await Promise.all(lapDataRequests);
+        const updatedSelectedDrivers = new Map(selectedDrivers);
 
-                    const carApiData = await fetchCarData(params, dateRangeParams);
-                    const carDataWithLapTime = calculateLapTime(carApiData);
-
-                    const locationApiData = await fetchLocation(params, dateRangeParams);
-
-                    setSelectedDrivers(
-                        (prevMap) =>
-                            new Map(
-                                prevMap.set(driver.driver.driver_number!.toString(), {
-                                    driver: driverData,
-                                    laps: lapData,
-                                    carData: carDataWithLapTime,
-                                    locationData: locationApiData,
-                                    stintData: stintData,
-                                    raceControl: raceControl,
-                                    chartData: driver.chartData
-                                })
-                            )
-                    );
+        let hasUpdate = false;
+        for (const result of lapDataResults) {
+            if (result !== null) {
+                const driverKey = result?.driver.driver_number!.toString();
+                const existingDriverData = updatedSelectedDrivers.get(driverKey!);
+                if (existingDriverData) {
+                    updatedSelectedDrivers.set(driverKey!, {
+                        ...existingDriverData,
+                        selectedLap: selectedLap,
+                        carData: result?.carDataWithLapTime!,
+                        //locationData: result?.locationData,
+                    });
+                    hasUpdate = true;
                 }
-            );
+            }
         }
 
+        if (hasUpdate) {
+            setSelectedDrivers(updatedSelectedDrivers);
+        }
+    }, [selectedDrivers, selectedLap, selectedMeetingKey, selectedSessionKey]);
+
+    useEffect(() => {
         if (selectedLap) {
             fetchData();
             setIsShowTelemetry(true);
         }
-    }, [selectedMeetingKey, selectedSessionKey, raceControl, selectedDrivers, selectedLap])
-
+    }, [fetchData, selectedLap]);
     return (
         <>
             <h1 className="text-3xl font-light py-5 text-center">Telemetry</h1>
-            <SessionSelector
+            <motion.div
                 key="session-selector"
-                years={years}
-                meetings={meetings}
-                sessions={sessions}
-                setSelectedYear={setSelectedYear}
-                setSelectedMeetingKey={setSelectedMeetingKey}
-                setSelectedSessionKey={setSelectedSessionKey}
-                selectedYear={selectedYear}
-                selectedMeeting={selectedMeeting}
-                selectedSession={selectedSession}
-            />
-            {isShowSession && selectedMeeting && selectedSession && weather && (
-                <SessionStats
-                    key="session-stats"
-                    meeting={selectedMeeting}
-                    session={selectedSession}
-                    weather={weather}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <SessionSelector
+                    years={years}
+                    meetings={meetings}
+                    sessions={sessions}
+                    setSelectedYear={setSelectedYear}
+                    setSelectedMeetingKey={setSelectedMeetingKey}
+                    setSelectedSessionKey={setSelectedSessionKey}
+                    selectedYear={selectedYear}
+                    selectedMeeting={selectedMeeting}
+                    selectedSession={selectedSession}
                 />
+            </motion.div>
+            {isShowSession && selectedMeeting && selectedSession && weather && (
+                <motion.div
+                    key="session-stats"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <SessionStats
+                        meeting={selectedMeeting}
+                        session={selectedSession}
+                        weather={weather}
+                    />
+                </motion.div>
             )}
             {isShowDriverSelect && selectedSession && drivers && (
-                <DriverSelection
+                <motion.div
                     key="driver-selector"
-                    drivers={drivers}
-                    selectedDrivers={selectedDrivers}
-                    toggleDriverSelect={toggleDriverSelect}
-                />
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <DriverSelection
+                        drivers={drivers}
+                        selectedDrivers={selectedDrivers}
+                        toggleDriverSelect={toggleDriverSelect}
+                    />
+                </motion.div>
             )}
             {isShowLapTimes && selectedDrivers && raceControl && (
-                <LapTimesLineChart
+                <motion.div
                     key="lap-time-chart"
-                    driversData={selectedDrivers}
-                    raceControl={raceControl}
-                    onLapSelect={setSelectedLap} />
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <LapTimesLineChart
+                        driversData={selectedDrivers}
+                        raceControl={raceControl}
+                        onLapSelect={setSelectedLap}
+                    />
+                </motion.div>
             )}
             {isShowTelemetry && selectedDrivers && selectedLap && (
-                <LapStatsLineChart
+                <motion.div
                     key="lap-stats-chart"
-                    driversData={selectedDrivers}
-                    lapSelected={selectedLap} />
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <LapStatsLineChart
+                        driversData={selectedDrivers}
+                        lapSelected={selectedLap}
+                    />
+                    <LapSummary
+                        driversData={selectedDrivers}
+                        lapSelected={selectedLap}
+                    />
+                </motion.div>
             )}
         </>
-    )
-}
+    );
+};
 
 export default Page;
+
+
+/**
+ * <LapStatsLineChartOld
+                        driversData={selectedDrivers}
+                        lapSelected={selectedLap}
+                    />
+ */

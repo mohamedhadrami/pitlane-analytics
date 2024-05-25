@@ -6,6 +6,7 @@ import { driverImage, isValidColor } from "@/utils/helpers";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 interface DriverSelectionProps {
   drivers: DriverParams[],
@@ -13,7 +14,7 @@ interface DriverSelectionProps {
   toggleDriverSelect: (driver: DriverParams) => void
 }
 
-const DriverImage = styled.img<{ isselected: string; bordercolor: string }>`
+const DriverImage = styled(motion.img) <{ isselected: string; bordercolor: string }>`
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -58,9 +59,8 @@ const DriverSelection: React.FC<DriverSelectionProps> = ({
   }
 
   return (
-    <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-3 px-15 pb-30">
-      {!isMobile ? (
-        drivers.map((driver: DriverParams) => {
+    <div className="max-w-screen-lg mx-auto flex flex-wrap justify-center gap-3 px-15 pb-30">
+      {drivers.map((driver: DriverParams) => {
           const borderColor = isValidColor(`#${driver.team_colour}`)
             ? `#${driver.team_colour}`
             : "#fff";
@@ -72,15 +72,18 @@ const DriverSelection: React.FC<DriverSelectionProps> = ({
               bordercolor={borderColor}
               isselected={
                 (selectedDrivers &&
-                selectedDrivers.has(driver.driver_number?.toString()!)).toString()
+                  selectedDrivers.has(driver.driver_number?.toString()!)).toString()
               }
               onClick={() => {
                 handleDriverSelection(driver);
               }}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1}}
             />
           );
         })
-      ) : (<p>h</p>)}
+      }
     </div>
   );
 }

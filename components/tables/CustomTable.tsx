@@ -44,6 +44,20 @@ const CustomTable: React.FC<TableProps> = ({
                         fastestLapClass: datum.FastestLap?.rank == 1 ? "font-bold text-[#FF00FF]" : "",
                         status: datum.status
                     }));
+                case 'race2':
+                    return rawData.map((datum: any, index: number) => ({
+                        key: datum.number,
+                        endpoint: datum.driver_id,
+                        className: RetiredStatuses.includes(datum.status_id) ? "brightness-50" : "",
+                        position: datum.position,
+                        driver: datum.driver_id,
+                        team: datum.constructor_id,
+                        points: datum.points,
+                        time: datum.time ? datum.time : datum.status_id,
+                        fastestLap: datum.fastest_lap ? datum.fastest_lap_time : "No time set",
+                        fastestLapClass: datum.fastest_lap == 1 ? "font-bold text-[#FF00FF]" : "",
+                        status: datum.status_id
+                    }));
                 case 'driversChampionship':
                 case 'archiveDriversChampionship':
                     return rawData.map((datum: any, index: number) => ({
@@ -127,6 +141,7 @@ const CustomTable: React.FC<TableProps> = ({
     const handleRowClick = (endpoint: string) => {
         let route = '/not_found';
         switch (type) {
+            case 'race2':
             case 'race': // SCHEDULE
                 route = `/driver/${endpoint}`
                 break;

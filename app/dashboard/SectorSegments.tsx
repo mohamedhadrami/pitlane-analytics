@@ -11,7 +11,7 @@ const Segment: React.FC<{ segment: number }> = ({ segment }) => (
     />
 );
 
-const SectorSegment: React.FC<{ lap: LapParams, fastestLap: LapParams }> = ({ lap, fastestLap }) => {
+const SectorSegment: React.FC<{ lap: LapParams }> = ({ lap }) => {
     var arr = Array<number>(7).fill(2064);
     const renderSegments = (segments: number[] | undefined, sectorDuration: number | undefined) => (
         <div className="flex flex-col mx-1 w-14">

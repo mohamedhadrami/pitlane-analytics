@@ -5,6 +5,7 @@ import SectorSegment from "./SectorSegments";
 import { getCompoundComponent } from "../../components/Tyres";
 import { formatSecondsToTime } from "../../utils/helpers";
 import Loading from "../../components/Loading";
+import { useLiveSettings } from "./LiveSettingsContext";
 
 const headers = [
     { name: "Position", uid: "position" },
@@ -13,7 +14,7 @@ const headers = [
     //{ name: "Lap", uid: "lap" },
     { name: "Lap Time", uid: "lapTime" },
     { name: "Sectors", uid: "sectors" }
-]
+];
 
 interface LiveTimingProps {
     drivers: DriverParams[];
@@ -24,6 +25,29 @@ interface LiveTimingProps {
 }
 
 const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, positions, intervals }) => {
+    const { settings } = useLiveSettings();
+
+    const defaultSettings = {
+        showFastestLap: true,
+        showTyre: true,
+        showGapToLeader: true,
+        showStintNumber: true,
+    };
+
+    const [isShowFastestLap, setIsShowFastestLap] = useState(defaultSettings.showFastestLap);
+    const [isShowTyre, setIsShowTyre] = useState(defaultSettings.showTyre);
+    const [isShowGapToLeader, setIsShowGapToLeader] = useState(defaultSettings.showGapToLeader);
+    const [isShowStintNumber, setIsShowStintNumber] = useState(defaultSettings.showStintNumber);
+
+    useEffect(() => {
+        const findSetting = (name: string) => settings.find(setting => setting.name === name)?.value;
+
+        setIsShowFastestLap(findSetting('Show Fastest Lap') ?? defaultSettings.showFastestLap);
+        setIsShowTyre(findSetting('Show Tyre') ?? defaultSettings.showTyre);
+        setIsShowGapToLeader(findSetting('Show Gap To Leader') ?? defaultSettings.showGapToLeader);
+        setIsShowStintNumber(findSetting('Show Stint Number') ?? defaultSettings.showStintNumber);
+    }, [settings]);
+
     const [sortedDrivers, setSortedDrivers] = useState<DriverParams[]>([]);
     const [currentLap, setCurrentLap] = useState<number | undefined>(0);
 
@@ -56,19 +80,20 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
     const renderCell = (driver: DriverParams, columnKey: React.Key, laps: LapParams[], stints: StintParams[]) => {
         const lap = laps?.filter(lap => lap.driver_number === driver.driver_number).pop();
         const fastestLap = laps
-                    .filter(lap => lap.driver_number === driver.driver_number && lap.lap_duration !== 0)
-                    .reduce((fastest: LapParams | null, current) => {
-                        if (current.lap_duration == null) {
-                            return fastest;
-                        }
-                        return !fastest || (current.lap_duration < fastest.lap_duration!) ? current : fastest;
-                    }, null);
+            .filter(lap => lap.driver_number === driver.driver_number && lap.lap_duration !== 0)
+            .reduce((fastest: LapParams | null, current) => {
+                if (current.lap_duration == null) {
+                    return fastest;
+                }
+                return !fastest || (current.lap_duration < fastest.lap_duration!) ? current : fastest;
+            }, null);
+
         switch (columnKey) {
             case "position":
                 const position = positions.filter(position => position.driver_number === driver.driver_number).pop()?.position;
                 if (position == 1) {
-                    console.log(lap)
-                    setCurrentLap(lap?.lap_number)}
+                    setCurrentLap(lap?.lap_number)
+                }
                 return (
                     <div className="flex justify-center gap-1">
                         <span className="text-center">{position}</span>
@@ -79,7 +104,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                 return (
                     <div className="flex flex-col">
                         <div className="">{formatSecondsToTime(lap?.lap_duration)}</div>
-                        <div className="font-thin flex flex-row justify-center gap-1">{formatSecondsToTime(fastestLap?.lap_duration)} {`(${fastestLap?.lap_number})`}</div>
+                        {isShowFastestLap ? (<div className="font-thin flex flex-row justify-center gap-1">{formatSecondsToTime(fastestLap?.lap_duration)} {`(${fastestLap?.lap_number})`}</div>) : ""}
                     </div>
                 );
             case "gap":
@@ -91,7 +116,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                 return (
                     <div className="flex flex-col">
                         <span className="">{gap}</span>
-                        <span className="font-thin">{gapToLeader}</span>
+                        {isShowGapToLeader ? (<span className="font-thin">{gapToLeader}</span>) : ""}
                     </div>
                 );
             case "tyre":
@@ -99,11 +124,11 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                 const tyreAge = stint?.lap_end ? (stint?.lap_end - stint?.lap_start!) : (lap?.lap_number! - stint?.lap_start! + stint?.tyre_age_at_start!);
                 return (
                     <div className="flex flex-col mx-auto">
-                        <div className="flex justify-center gap-1 items-center">
+                        {isShowTyre ? (<div className="flex justify-center gap-1 items-center">
                             <div className="w-[25px]">{getCompoundComponent(stint?.compound!)}</div>
                             <div className="">{tyreAge}</div>
-                        </div>
-                        <div className="font-thin text-center">Pit {stint?.stint_number}</div>
+                        </div>) : ""}
+                        {isShowStintNumber ? (<div className="font-thin text-center">Pit {stint?.stint_number}</div>) : ""}
                     </div>
                 )
             case "lap":
@@ -120,7 +145,6 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
     const renderRow = (driver: DriverParams) => {
         const lap = laps?.filter(lap => lap.driver_number === driver.driver_number).pop();
         const isGreyedOut = currentLap && lap && (currentLap - lap.lap_number! >= 3);
-        console.log(currentLap! - lap?.lap_number!)
         return (
             <TableRow key={driver.driver_number} className={isGreyedOut ? "brightness-50 bg-white" : ""}>
                 {(columnKey) => <TableCell className="bg-[#111] text-center">{renderCell(driver, columnKey, laps, stints)}</TableCell>}
