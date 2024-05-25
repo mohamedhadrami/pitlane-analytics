@@ -47,7 +47,7 @@ const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffs
 
     return (
         <div className="flex items-center h-[50px] font-extralight gap-3">
-            {isShowTeamRadioTime(<div className="text-[#999] text-left font-extralight w-1/6">
+            {isShowTeamRadioTime && (<div className="text-[#999] text-left font-extralight w-1/6">
                 {parseISOTimeFull(radio.date, gmtOffset)}
             </div>)}
             <div style={{ backgroundColor: `#${driver?.team_colour}` }} className={`flex text-left h-auto w-[75px] rounded-full bg-[#${driver?.team_colour}]`}>
