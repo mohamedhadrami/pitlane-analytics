@@ -1,25 +1,16 @@
-// components/Telemetry/Charts/LapTimesLineChart.tsx
-
 "use client"
 
 import React, { useEffect, useState } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
 import { RaceControlParams } from "../../interfaces/openF1";
 import LapTimeTooltip from "./LapTimeTooltip";
 import { formatSecondsToTime, isValidColor } from "../../utils/helpers";
-import { Cog } from "lucide-react";
-import { Popover, PopoverTrigger, PopoverContent, Switch } from "@nextui-org/react";
+import { ChevronDown, Cog } from "lucide-react";
+import { Popover, PopoverTrigger, PopoverContent, Switch, Input, Divider, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from "@nextui-org/react";
 import { DriverChartData } from "@/interfaces/custom";
 import { toast } from "sonner";
+import LapTimeSettings from "./LapTimeSettings";
+import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "./outlierDetection";
 
 interface LapTimesLineChartProps {
   driversData: Map<string, DriverChartData>;
@@ -33,6 +24,14 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
   onLapSelect,
 }) => {
   const [isRaceControl, setIsRaceControl] = useState<boolean>(true);
+  const [isTyres, setIsTyres] = useState<boolean>(true);
+  const [isOutlierDetection, setIsOutlierDetection] = useState<boolean>(true);
+  const [customLowerThreshold, setCustomLowerThreshold] = useState<number>(-1);
+  const [customUpperThreshold, setCustomUpperThreshold] = useState<number>(-1);
+  const [iqrMultiplier, setIqrMultiplier] = useState<number>(1.5);
+  const [zscoreThreshold, setZscoreThreshold] = useState<number>(3);
+  const [modZscoreThreshold, setModZscoreThreshold] = useState<number>(3);
+  const [outlierMethod, setOutlierMethod] = useState<string>("iqr");
 
   const maxLaps = Math.max(
     ...Array.from(driversData.values()).map(
@@ -45,35 +44,106 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
   interface LapData {
     lap_number: number;
     raceControl: RaceControlParams[];
-    [key: string]: number | RaceControlParams[] | undefined;
+    interpolated?: boolean;
+    [key: string]: number | RaceControlParams[] | string | undefined | boolean;
   }
+
+  const getLapTimes = (): number[] => {
+    return Array.from(driversData.values())
+      .flatMap((driverData) =>
+        driverData.laps
+          .filter((lap) => lap.lap_duration !== null)// && !lap.is_pit_out_lap)
+          .map((lap) => lap.lap_duration!)
+      );
+  };
+
+  const lapTimes = getLapTimes();
+
+  const getThresholds = () => {
+    switch (outlierMethod) {
+      case "z-score":
+        return getZScoreThresholds(lapTimes, zscoreThreshold);
+      case "mod-z-score":
+        return getModifiedZScoreThresholds(lapTimes, modZscoreThreshold);
+      case "chauvenet":
+        return getChauvenetThresholds(lapTimes);
+      default:
+        return getIQRThresholds(lapTimes, iqrMultiplier);
+    }
+  };
+
+  const defaultThresholds = getThresholds();
+  const lowerThreshold = customLowerThreshold !== -1 ? customLowerThreshold : defaultThresholds[0];
+  const upperThreshold = customUpperThreshold !== -1 ? customUpperThreshold : defaultThresholds[1];
+
+  const interpolate = (start: number, end: number, startLap: number, endLap: number, targetLap: number): number => {
+    return start + ((end - start) / (endLap - startLap)) * (targetLap - startLap);
+  };
 
   const chartData: LapData[] = xData.map((lap_number) => {
     const lapData: LapData = { lap_number, raceControl: [] };
 
     Array.from(driversData.values()).forEach((driverData) => {
       const lap = driverData.laps.find(
-        (lap) => lap.lap_number === lap_number && lap.lap_duration !== null
-        //&& !lap.is_pit_out_lap
+        (lap) =>
+          lap.lap_number === lap_number &&
+          lap.lap_duration !== null &&
+          //!lap.is_pit_out_lap &&
+          (!isOutlierDetection || (lap.lap_duration! >= lowerThreshold && lap.lap_duration! <= upperThreshold))
       );
 
       if (lap) {
         lapData[`time_${driverData.driver.name_acronym}` as keyof typeof lapData] = lap.lap_duration!;
+      } else if (isOutlierDetection) {
+        const previousLap = driverData.laps
+          .slice(0, lap_number)
+          .reverse()
+          .find(
+            (prevLap) =>
+              prevLap.lap_duration !== null &&
+              //!prevLap.is_pit_out_lap &&
+              prevLap.lap_duration! >= lowerThreshold &&
+              prevLap.lap_duration! <= upperThreshold
+          );
 
-        const raceControlForLap = raceControl.filter(
-          (message) => message.lap_number === lap_number
-        );
+        const nextLap = driverData.laps
+          .slice(lap_number)
+          .find(
+            (nextLap) =>
+              nextLap.lap_duration !== null &&
+              //!nextLap.is_pit_out_lap &&
+              nextLap.lap_duration! >= lowerThreshold &&
+              nextLap.lap_duration! <= upperThreshold
+          );
 
-        if (isRaceControl) {
-          if (raceControlForLap.length > 0) {
-            lapData[`raceControl` as keyof typeof lapData] = raceControlForLap;
-          }
+        if (previousLap && nextLap) {
+          const interpolatedTime = interpolate(
+            previousLap.lap_duration!,
+            nextLap.lap_duration!,
+            previousLap.lap_number!,
+            nextLap.lap_number!,
+            lap_number
+          );
+          lapData[`time_${driverData.driver.name_acronym}` as keyof typeof lapData] = interpolatedTime;
+          lapData.interpolated = true;
         }
+      }
 
+      const raceControlForLap = raceControl.filter(
+        (message) => message.lap_number === lap_number
+      );
+
+      if (isRaceControl) {
+        if (raceControlForLap.length > 0) {
+          lapData[`raceControl` as keyof typeof lapData] = raceControlForLap;
+        }
+      }
+
+      if (isTyres) {
         for (const stint of driverData.stintData) {
           if (lap_number >= stint.lap_start! && lap_number <= stint.lap_end!) {
             const tyreKey = `tyre_${driverData.driver.name_acronym}` as keyof LapData;
-            const compoundValue: number | undefined = stint.compound ? Number(stint.compound) : undefined;
+            const compoundValue = stint.compound;
             lapData[tyreKey] = compoundValue;
             break;
           }
@@ -84,7 +154,7 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
     return lapData;
   });
 
-  const lapTimes: number[] = chartData
+  const filteredLapTimes: number[] = chartData
     .map((data) =>
       Object.entries(data)
         .filter(([key, value]) => key !== "lap_number" && typeof value === "number")
@@ -93,37 +163,45 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
     .flat()
     .filter((value): value is number => typeof value === "number");
 
-  const minLapTime: number = Math.min(...lapTimes);
-  const maxLapTime: number = Math.max(...lapTimes);
+  const minLapTime: number = Math.min(...filteredLapTimes);
+  const maxLapTime: number = Math.max(...filteredLapTimes);
 
   useEffect(() => {
-    if (chartData.length == 0) {
-      {
-        toast.warning("Warning", {
-          description: "No data to display. Please select a driver or reload the page."
-        })
-      }
+    if (chartData.length === 0) {
+      toast.warning("Warning", {
+        description: "No data to display. Please select a driver or reload the page.",
+      });
     }
-  }, [chartData])
+  }, [chartData]);
+
+  const handleMethodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setOutlierMethod(event.target.value);
+  };
 
   return (
     <div className="mt-7">
       <div className="flex justify-center gap-5">
         <h2 className="text-2xl font-extralight">Lap Times</h2>
-        <div className="align-middle">
-          <Popover placement="right" showArrow={true}>
-            <PopoverTrigger>
-              <Cog className="" />
-            </PopoverTrigger>
-            <PopoverContent className="bg-gradient-to-tl from-zinc-800 to-[#111]">
-              <div className="px-1 py-2 flex flex-col font-thin">
-                <Switch isSelected={isRaceControl} onValueChange={setIsRaceControl} size="sm">
-                  Race Control
-                </Switch>
-              </div>
-            </PopoverContent>
-          </Popover>
-        </div>
+        <LapTimeSettings
+          isRaceControl={isRaceControl}
+          setIsRaceControl={setIsRaceControl}
+          isTyres={isTyres}
+          setIsTyres={setIsTyres}
+          isOutlierDetection={isOutlierDetection}
+          setIsOutlierDetection={setIsOutlierDetection}
+          outlierMethod={outlierMethod}
+          setOutlierMethod={setOutlierMethod}
+          customLowerThreshold={customLowerThreshold}
+          setCustomLowerThreshold={setCustomLowerThreshold}
+          customUpperThreshold={customUpperThreshold}
+          setCustomUpperThreshold={setCustomUpperThreshold}
+          defaultThresholds={defaultThresholds}
+          iqrMultiplier={iqrMultiplier}
+          setIqrMultiplier={setIqrMultiplier}
+          zscoreThreshold={zscoreThreshold}
+          setZscoreThreshold={setZscoreThreshold}
+          modZscoreThreshold={modZscoreThreshold}
+          setModZscoreThreshold={setModZscoreThreshold} />
       </div>
 
       {chartData.length > 0 ? (
@@ -141,9 +219,14 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
                 tickFormatter={formatSecondsToTime}
               />
               <Tooltip
-                content={
-                  <LapTimeTooltip active={false} payload={[]} label={""} />
-                }
+                content={<LapTimeTooltip active={false} payload={[]} label={""} />}
+                formatter={(value, name, props) => {
+                  const lapData = props.payload;
+                  if (lapData.interpolated) {
+                    return [`${value} (interpolated)`, name];
+                  }
+                  return [value, name];
+                }}
               />
               <Legend />
               {Array.from(driversData.values()).map((driverData) => (
@@ -166,7 +249,9 @@ const LapTimesLineChart: React.FC<LapTimesLineChartProps> = ({
         </div>
       ) : (
         <>
-          <p className="text-center font-extralight m-5 mb-10">No data to display. Please select a driver or reload the page.</p>
+          <p className="text-center font-extralight m-5 mb-10">
+            No data to display. Please select a driver or reload the page.
+          </p>
         </>
       )}
     </div>

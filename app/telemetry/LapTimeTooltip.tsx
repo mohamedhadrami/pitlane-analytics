@@ -1,4 +1,4 @@
-// Components/Telemetry/LapTimeTooltip.tsx
+// @/app/telemetry/LapTimeTooltip
 
 import React from "react";
 import {
@@ -50,7 +50,7 @@ const LapTimeTooltip: React.FC<LapTimeTooltipProps> = ({
         {payload.map((entry: any) => (
           <div className="flex gap-5 justify-between" key={`Lap-time-${entry.name}`}>
             <p key={entry.dataKey} style={{ color: entry.color }}>
-              {entry.name}: {formatSecondsToTime(entry.value)}
+              {entry.name}: {entry.payload.interpolated ? "Outlier Lap" : formatSecondsToTime(entry.value)}
             </p>
             <div className="max-w-5">
               {getCompoundComponent(entry.payload[`tyre_${entry.name}`])}
