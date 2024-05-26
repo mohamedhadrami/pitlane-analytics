@@ -1,7 +1,7 @@
 // app/dashboard/page.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     DriverParams,
     MeetingParams,
@@ -34,6 +34,7 @@ import LiveSettings from "./LiveSettings";
 import { Divider } from "@nextui-org/react";
 import { LiveSettingsProvider, useLiveSettings } from "./LiveSettingsContext";
 
+
 const Dashboard: React.FC = () => {
     const [meeting, setMeeting] = useState<MeetingParams>();
     const [session, setSession] = useState<SessionParams>();
@@ -46,8 +47,8 @@ const Dashboard: React.FC = () => {
     const [intervals, setIntervals] = useState<IntervalParams[]>([]);
     const [positions, setPositions] = useState<PositionParams[]>([]);
 
-    const meeting_test = "latest";//1234;
-    const session_test = "latest";//9507;
+    const meeting_test = "latest";
+    const session_test = "latest";
 
     const params = {
         meeting_key: meeting_test,
@@ -56,48 +57,60 @@ const Dashboard: React.FC = () => {
 
     const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+    const fetchOnceRef = useRef(false);
+
     async function fetchData() {
         const meetingParams: MeetingParams = { meeting_key: meeting_test };
 
         const fetchFunctions = [
             async () => {
                 const meetingData = await fetchMeeting(meetingParams);
+                sessionStorage.setItem('meeting', JSON.stringify(meetingData[0]));
                 setMeeting(meetingData[0]);
             },
             async () => {
                 const sessionData = await fetchSession(params);
+                sessionStorage.setItem('session', JSON.stringify(sessionData[0]));
                 setSession(sessionData[0]);
             },
             async () => {
                 const driverData = await fetchDrivers(params);
+                sessionStorage.setItem('drivers', JSON.stringify(driverData));
                 setDrivers(driverData);
             },
             async () => {
                 const controlData = await fetchRaceControl(params);
+                sessionStorage.setItem('raceControl', JSON.stringify(controlData));
                 setRaceControl(controlData);
             },
             async () => {
                 const radioData = await fetchTeamRadio(params);
+                sessionStorage.setItem('teamRadio', JSON.stringify(radioData));
                 setTeamRadio(radioData);
             },
             async () => {
                 const weatherData = await fetchWeather(params);
+                sessionStorage.setItem('weather', JSON.stringify(weatherData.pop()));
                 setWeather(weatherData.pop());
             },
             async () => {
                 const stintData = await fetchStint(params);
+                sessionStorage.setItem('stints', JSON.stringify(stintData));
                 setStints(stintData);
             },
             async () => {
                 const lapData = await fetchLaps(params);
+                sessionStorage.setItem('laps', JSON.stringify(lapData));
                 setLaps(lapData);
             },
             async () => {
                 const intervalData = await fetchIntervals(params);
+                sessionStorage.setItem('intervals', JSON.stringify(intervalData));
                 setIntervals(intervalData);
             },
             async () => {
                 const positionData = await fetchPosition(params);
+                sessionStorage.setItem('positions', JSON.stringify(positionData));
                 setPositions(positionData);
             },
         ];
@@ -110,7 +123,37 @@ const Dashboard: React.FC = () => {
         }
     }
 
-    useEffect(() => {fetchData();});
+    useEffect(() => {
+        if (fetchOnceRef.current) return;
+
+        const cachedMeeting = sessionStorage.getItem('meeting');
+        const cachedSession = sessionStorage.getItem('session');
+        const cachedDrivers = sessionStorage.getItem('drivers');
+        const cachedRaceControl = sessionStorage.getItem('raceControl');
+        const cachedTeamRadio = sessionStorage.getItem('teamRadio');
+        const cachedWeather = sessionStorage.getItem('weather');
+        const cachedStints = sessionStorage.getItem('stints');
+        const cachedLaps = sessionStorage.getItem('laps');
+        const cachedIntervals = sessionStorage.getItem('intervals');
+        const cachedPositions = sessionStorage.getItem('positions');
+
+        if (cachedMeeting) setMeeting(JSON.parse(cachedMeeting));
+        if (cachedSession) setSession(JSON.parse(cachedSession));
+        if (cachedDrivers) setDrivers(JSON.parse(cachedDrivers));
+        if (cachedRaceControl) setRaceControl(JSON.parse(cachedRaceControl));
+        if (cachedTeamRadio) setTeamRadio(JSON.parse(cachedTeamRadio));
+        if (cachedWeather) setWeather(JSON.parse(cachedWeather));
+        if (cachedStints) setStints(JSON.parse(cachedStints));
+        if (cachedLaps) setLaps(JSON.parse(cachedLaps));
+        if (cachedIntervals) setIntervals(JSON.parse(cachedIntervals));
+        if (cachedPositions) setPositions(JSON.parse(cachedPositions));
+
+        if (!cachedMeeting || !cachedSession || !cachedDrivers || !cachedRaceControl || !cachedTeamRadio || !cachedWeather || !cachedStints || !cachedLaps || !cachedIntervals || !cachedPositions) {
+            fetchData();
+        }
+
+        fetchOnceRef.current = true;
+    }, []);
 
     return (
         <LiveSettingsProvider>

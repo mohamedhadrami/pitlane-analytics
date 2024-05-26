@@ -1,5 +1,7 @@
 // intefaces/openF1.ts
 
+export type OpenF1ApiParams = CarDataParams | DateRangeParams | DriverParams | IntervalParams | LapParams | LocationParams | MeetingParams | PitParams | PositionParams | RaceControlParams | SessionParams | StintParams | TeamRadioParams | WeatherParams;
+
 /**
  * @param date_gt 
  * @param date_lt

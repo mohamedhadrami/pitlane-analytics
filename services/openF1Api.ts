@@ -1,6 +1,7 @@
 // services/api.ts
 
 import {
+  OpenF1ApiParams,
   CarDataParams,
   DateRangeParams,
   DriverParams,
@@ -19,19 +20,24 @@ import {
 
 const fetchApiData = async (
   endpoint: string,
-  params?: any,
+  params?: OpenF1ApiParams,
   dateRangeParams?: DateRangeParams
 ) => {
   try {
-    const queryParams = new URLSearchParams(params).toString();
-    let url = `https://api.openf1.org/v1${endpoint}${queryParams ? `?${queryParams}` : ""
-      }`;
+    const queryParams = new URLSearchParams(params as Record<string, string>).toString();
+    let url = `https://api.openf1.org/v1${endpoint}${queryParams ? `?${queryParams}` : ""}`;
+    
     if (dateRangeParams) {
       if (dateRangeParams.date_gt) url += `&date>=${dateRangeParams.date_gt}`;
       if (dateRangeParams.date_lt) url += `&date<=${dateRangeParams.date_lt}`;
     }
-    const response = await fetch(url, { mode: 'no-cors' });
-    //console.log(url);
+
+    const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
     return data;
   } catch (error) {
