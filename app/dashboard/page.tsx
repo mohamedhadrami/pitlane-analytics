@@ -33,6 +33,7 @@ import TeamRadios from "@/components/Dashboard/TeamRadio";
 import LiveSettings from "@/components/Dashboard/LiveSettings";
 import { Divider } from "@nextui-org/react";
 import { LiveSettingsProvider, useLiveSettings } from "@/components/Dashboard/LiveSettingsContext";
+import { delay } from "@/utils/helpers";
 
 
 const Dashboard: React.FC = () => {
@@ -47,83 +48,81 @@ const Dashboard: React.FC = () => {
     const [intervals, setIntervals] = useState<IntervalParams[]>([]);
     const [positions, setPositions] = useState<PositionParams[]>([]);
 
-    const meeting_test = "latest";
-    const session_test = "latest";
-
-    const params = {
-        meeting_key: meeting_test,
-        session_key: session_test,
-    };
-
-    const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
     const fetchOnceRef = useRef(false);
 
-    async function fetchData() {
-        const meetingParams: MeetingParams = { meeting_key: meeting_test };
+    useEffect(() => {
+        const meeting_test = "latest";
+        const session_test = "latest";
 
-        const fetchFunctions = [
-            async () => {
-                const meetingData = await fetchMeeting(meetingParams);
-                sessionStorage.setItem('meeting', JSON.stringify(meetingData[0]));
-                setMeeting(meetingData[0]);
-            },
-            async () => {
-                const sessionData = await fetchSession(params);
-                sessionStorage.setItem('session', JSON.stringify(sessionData[0]));
-                setSession(sessionData[0]);
-            },
-            async () => {
-                const driverData = await fetchDrivers(params);
-                sessionStorage.setItem('drivers', JSON.stringify(driverData));
-                setDrivers(driverData);
-            },
-            async () => {
-                const controlData = await fetchRaceControl(params);
-                sessionStorage.setItem('raceControl', JSON.stringify(controlData));
-                setRaceControl(controlData);
-            },
-            async () => {
-                const radioData = await fetchTeamRadio(params);
-                sessionStorage.setItem('teamRadio', JSON.stringify(radioData));
-                setTeamRadio(radioData);
-            },
-            async () => {
-                const weatherData = await fetchWeather(params);
-                sessionStorage.setItem('weather', JSON.stringify(weatherData.pop()));
-                setWeather(weatherData.pop());
-            },
-            async () => {
-                const stintData = await fetchStint(params);
-                sessionStorage.setItem('stints', JSON.stringify(stintData));
-                setStints(stintData);
-            },
-            async () => {
-                const lapData = await fetchLaps(params);
-                sessionStorage.setItem('laps', JSON.stringify(lapData));
-                setLaps(lapData);
-            },
-            async () => {
-                const intervalData = await fetchIntervals(params);
-                sessionStorage.setItem('intervals', JSON.stringify(intervalData));
-                setIntervals(intervalData);
-            },
-            async () => {
-                const positionData = await fetchPosition(params);
-                sessionStorage.setItem('positions', JSON.stringify(positionData));
-                setPositions(positionData);
-            },
-        ];
+        const params = {
+            meeting_key: meeting_test,
+            session_key: session_test,
+        };
 
-        for (let i = 0; i < fetchFunctions.length; i++) {
-            await fetchFunctions[i]();
-            if (i < fetchFunctions.length - 1) {
-                await delay(350); // 350 ms delay between calls to stay within rate limit
+        async function fetchData() {
+            const meetingParams: MeetingParams = { meeting_key: meeting_test };
+
+            const fetchFunctions = [
+                async () => {
+                    const meetingData = await fetchMeeting(meetingParams);
+                    sessionStorage.setItem('meeting', JSON.stringify(meetingData[0]));
+                    setMeeting(meetingData[0]);
+                },
+                async () => {
+                    const sessionData = await fetchSession(params);
+                    sessionStorage.setItem('session', JSON.stringify(sessionData[0]));
+                    setSession(sessionData[0]);
+                },
+                async () => {
+                    const driverData = await fetchDrivers(params);
+                    sessionStorage.setItem('drivers', JSON.stringify(driverData));
+                    setDrivers(driverData);
+                },
+                async () => {
+                    const controlData = await fetchRaceControl(params);
+                    sessionStorage.setItem('raceControl', JSON.stringify(controlData));
+                    setRaceControl(controlData);
+                },
+                async () => {
+                    const radioData = await fetchTeamRadio(params);
+                    sessionStorage.setItem('teamRadio', JSON.stringify(radioData));
+                    setTeamRadio(radioData);
+                },
+                async () => {
+                    const weatherData = await fetchWeather(params);
+                    sessionStorage.setItem('weather', JSON.stringify(weatherData.pop()));
+                    setWeather(weatherData.pop());
+                },
+                async () => {
+                    const stintData = await fetchStint(params);
+                    sessionStorage.setItem('stints', JSON.stringify(stintData));
+                    setStints(stintData);
+                },
+                async () => {
+                    const lapData = await fetchLaps(params);
+                    sessionStorage.setItem('laps', JSON.stringify(lapData));
+                    setLaps(lapData);
+                },
+                async () => {
+                    const intervalData = await fetchIntervals(params);
+                    sessionStorage.setItem('intervals', JSON.stringify(intervalData));
+                    setIntervals(intervalData);
+                },
+                async () => {
+                    const positionData = await fetchPosition(params);
+                    sessionStorage.setItem('positions', JSON.stringify(positionData));
+                    setPositions(positionData);
+                },
+            ];
+
+            for (let i = 0; i < fetchFunctions.length; i++) {
+                await fetchFunctions[i]();
+                if (i < fetchFunctions.length - 1) {
+                    await delay(350); // 350 ms delay between calls to stay within rate limit
+                }
             }
         }
-    }
 
-    useEffect(() => {
         if (fetchOnceRef.current) return;
 
         const cachedMeeting = sessionStorage.getItem('meeting');
@@ -153,7 +152,7 @@ const Dashboard: React.FC = () => {
         }
 
         fetchOnceRef.current = true;
-    }, []);
+    }, [ setMeeting, setSession, setDrivers, setRaceControl, setTeamRadio, setWeather, setStints, setLaps, setIntervals, setPositions]);
 
     return (
         <LiveSettingsProvider>
