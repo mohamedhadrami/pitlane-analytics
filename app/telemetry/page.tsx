@@ -1,19 +1,29 @@
+// @/app/telemtry/page.tsx
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import SessionSelector from "./SessionSelector";
-import { CarDataParams, DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, WeatherParams } from "@/interfaces/openF1";
-import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
-import SessionStats from "./SessionStats";
-import DriverSelection from "./DriverSelection";
 import { useSearchParams } from "next/navigation";
-import LapTimesLineChart from "@/app/telemetry/LapTimesLineChart";
-import { DriverChartData } from "@/interfaces/custom";
-import { calculateLapTime } from "@/utils/telemetryUtils";
-import LapStatsLineChart from "@/app/telemetry/LapStatsLineChart";
 import { toast } from "sonner";
-import LapSummary from "./LapSummary";
+import { CarDataParams, DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, StintParams, WeatherParams } from "@/interfaces/openF1";
+import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
+import { mvCircuit } from "@/interfaces/multiviewer";
+import { fetchCircuitByKey } from "@/services/mvApi";
+import { DriverChartData } from "@/interfaces/custom";
+import { delay } from "@/utils/helpers";
+import { calculateLapTime } from "@/utils/telemetryUtils";
+
+import SessionSelector from "@/components/Telemetry/SessionSelector";
+import SessionStats from "@/components/Telemetry/SessionStats";
+import PitStrategy from "@/components/Telemetry/PitStrategy";
+import DriverSelection from "@/components/Telemetry/DriverSelection";
+import LapTimesLineChart from "@/components/Telemetry/LapTimesLineChart";
+import LapStatsLineChart from "@/components/Telemetry/TelemetryCharts";
+import TrackVisualizer from "@/components/Telemetry/TrackVisualizer";
+import LapSummary from "@/components/Telemetry/LapSummary";
+
+
 
 const Page: React.FC = () => {
     const searchParams = useSearchParams();
@@ -30,6 +40,8 @@ const Page: React.FC = () => {
 
     const [isShowSession, setIsShowSession] = useState<boolean>(false);
     const [weather, setWeather] = useState<WeatherParams[]>([]);
+    const [raceControl, setRaceControl] = useState<RaceControlParams[]>([]);
+    const [circuitData, setCircuitData] = useState<mvCircuit>();
 
     const [isShowDriverSelect, setIsShowDriverSelect] = useState<boolean>(false);
     const [drivers, setDrivers] = useState<DriverParams[]>([]);
@@ -38,13 +50,15 @@ const Page: React.FC = () => {
             string, DriverChartData
         >
     >(new Map());
-
-    const [raceControl, setRaceControl] = useState<RaceControlParams[]>([]);
+    const [stints, setStints] = useState<StintParams[]>([]);
 
     const [isShowLapTimes, setIsShowLapTimes] = useState<boolean>(false);
     const [selectedLap, setSelectedLap] = useState<number | null>(null);
 
     const [isShowTelemetry, setIsShowTelemetry] = useState<boolean>(false);
+
+
+
 
     useEffect(() => {
         if (searchParams) {
@@ -57,6 +71,9 @@ const Page: React.FC = () => {
         }
     }, [searchParams]);
 
+
+
+
     useEffect(() => {
         const currentYear = new Date().getFullYear();
         const availableYears = Array.from(
@@ -65,6 +82,9 @@ const Page: React.FC = () => {
         );
         setYears(availableYears);
     }, []);
+
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -76,6 +96,9 @@ const Page: React.FC = () => {
         };
         if (selectedYear) fetchData();
     }, [selectedYear, years]);
+
+
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -93,32 +116,36 @@ const Page: React.FC = () => {
         }
     }, [selectedYear, selectedMeetingKey, meetings]);
 
+
+
+
     useEffect(() => {
+        const params = {
+            meeting_key: selectedMeetingKey,
+            session_key: selectedSessionKey
+        };
         const fetchWeatherData = async () => {
-            const params: WeatherParams = {
-                meeting_key: selectedMeetingKey,
-                session_key: selectedSessionKey
-            };
-            const res = await fetchWeather(params);
+            const res = await fetchWeather(params as WeatherParams);
             setWeather(res);
             if (res) setIsShowSession(true);
         };
         const fetchDriverData = async () => {
-            const params: DriverParams = {
-                meeting_key: selectedMeetingKey,
-                session_key: selectedSessionKey
-            };
-            const res = await fetchDrivers(params);
+            const res = await fetchDrivers(params as DriverParams);
             setDrivers(res);
             if (res) setIsShowDriverSelect(true);
+            await delay(500);
         };
         const fetchRaceControlData = async () => {
-            const params: RaceControlParams = {
-                meeting_key: selectedMeetingKey,
-                session_key: selectedSessionKey
-            };
-            const res = await fetchRaceControl(params);
+            const res = await fetchRaceControl(params as RaceControlParams);
             setRaceControl(res);
+        };
+        const fetchStintData = async () => {
+            const res = await fetchStint(params as StintParams);
+            setStints(res);
+        }
+        const fetchCircuitData = async () => {
+            const res = await fetchCircuitByKey(selectedSession?.circuit_key!, selectedYear!);
+            setCircuitData(res);
         };
         if (selectedSessionKey) {
             const session = sessions?.find(v => v.session_key === selectedSessionKey);
@@ -126,10 +153,24 @@ const Page: React.FC = () => {
             fetchWeatherData();
             fetchDriverData();
             fetchRaceControlData();
+            fetchStintData();
+            fetchCircuitData();
         }
         setSelectedDrivers(new Map());
         setIsShowLapTimes(false);
-    }, [selectedMeetingKey, selectedSessionKey, sessions]);
+        setIsShowTelemetry(false);
+    }, [selectedYear, selectedMeetingKey, selectedSessionKey, selectedSession, sessions]);
+
+
+
+
+    useEffect(() => {
+        if (selectedDrivers.size > 0) setIsShowLapTimes(true);
+        setIsShowTelemetry(false)
+    }, [selectedDrivers]);
+
+
+
 
     const toggleDriverSelect = async (driver: DriverParams) => {
         const driverKey = driver.driver_number?.toString();
@@ -176,12 +217,10 @@ const Page: React.FC = () => {
         if (selectedDrivers?.size !== 0) setSelectedLap(null);
     };
 
-    useEffect(() => {
-        if (selectedDrivers.size > 0) setIsShowLapTimes(true);
-    }, [selectedDrivers]);
 
-    
-    const fetchData = useCallback(async () => {
+
+
+    const fetchTelemetryData = useCallback(async () => {
         const lapDataRequests = Array.from(selectedDrivers, async ([_, driverData]) => {
             if (driverData.selectedLap !== selectedLap || driverData.carData.length === 0) {
                 const lap: LapParams = driverData.laps.find((lap: LapParams) => lap.lap_number === selectedLap)!;
@@ -201,11 +240,11 @@ const Page: React.FC = () => {
                 };
                 const carApiData: CarDataParams[] = await fetchCarData(params, dateRangeParams);
                 const carDataWithLapTime = calculateLapTime(carApiData);
-                //const locationApiData = await fetchLocation(params, dateRangeParams);
+                const locationApiData = await fetchLocation(params, dateRangeParams);
                 return {
                     driver: driverData.driver,
                     carDataWithLapTime,
-                    //locationData: locationApiData,
+                    locationData: locationApiData,
                 };
             }
             return null;
@@ -224,7 +263,7 @@ const Page: React.FC = () => {
                         ...existingDriverData,
                         selectedLap: selectedLap,
                         carData: result?.carDataWithLapTime!,
-                        //locationData: result?.locationData,
+                        locationData: result?.locationData,
                     });
                     hasUpdate = true;
                 }
@@ -236,12 +275,21 @@ const Page: React.FC = () => {
         }
     }, [selectedDrivers, selectedLap, selectedMeetingKey, selectedSessionKey]);
 
+
+
+
     useEffect(() => {
         if (selectedLap) {
-            fetchData();
+            fetchTelemetryData();
             setIsShowTelemetry(true);
+        } else {
+            setIsShowTelemetry(false);
         }
-    }, [fetchData, selectedLap]);
+    }, [fetchTelemetryData, selectedLap]);
+
+
+
+
     return (
         <>
             <h1 className="text-3xl font-light py-5 text-center">Telemetry</h1>
@@ -263,34 +311,41 @@ const Page: React.FC = () => {
                     selectedSession={selectedSession}
                 />
             </motion.div>
-            {isShowSession && selectedMeeting && selectedSession && weather && (
-                <motion.div
-                    key="session-stats"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <SessionStats
-                        meeting={selectedMeeting}
-                        session={selectedSession}
-                        weather={weather}
-                    />
-                </motion.div>
-            )}
-            {isShowDriverSelect && selectedSession && drivers && (
-                <motion.div
-                    key="driver-selector"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <DriverSelection
-                        drivers={drivers}
-                        selectedDrivers={selectedDrivers}
-                        toggleDriverSelect={toggleDriverSelect}
-                    />
-                </motion.div>
-            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="flex flex-col space-y-4">
+                    {isShowSession && selectedMeeting && selectedSession && weather && (
+                        <motion.div
+                            key="session-stats"
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <SessionStats
+                                meeting={selectedMeeting}
+                                session={selectedSession}
+                                weather={weather}
+                            />
+                            <DriverSelection
+                                drivers={drivers}
+                                selectedDrivers={selectedDrivers}
+                                toggleDriverSelect={toggleDriverSelect}
+                            />
+                        </motion.div>
+                    )}
+                </div>
+                {isShowDriverSelect && selectedSession && drivers && (
+                    <motion.div
+                        key="driver-selector"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        <PitStrategy stints={stints} drivers={drivers} />
+
+                    </motion.div>
+                )}
+            </div>
             {isShowLapTimes && selectedDrivers && raceControl && (
                 <motion.div
                     key="lap-time-chart"
@@ -305,7 +360,7 @@ const Page: React.FC = () => {
                     />
                 </motion.div>
             )}
-            {isShowTelemetry && selectedDrivers && selectedLap && (
+            {isShowTelemetry && selectedDrivers && selectedLap && circuitData && (
                 <motion.div
                     key="lap-stats-chart"
                     initial={{ opacity: 0, y: -20 }}
@@ -316,6 +371,7 @@ const Page: React.FC = () => {
                         driversData={selectedDrivers}
                         lapSelected={selectedLap}
                     />
+                    <TrackVisualizer circuitData={circuitData} driverData={selectedDrivers} />
                     <LapSummary
                         driversData={selectedDrivers}
                         lapSelected={selectedLap}
@@ -328,10 +384,3 @@ const Page: React.FC = () => {
 
 export default Page;
 
-
-/**
- * <LapStatsLineChartOld
-                        driversData={selectedDrivers}
-                        lapSelected={selectedLap}
-                    />
- */
