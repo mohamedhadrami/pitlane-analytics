@@ -26,13 +26,13 @@ import {
     fetchTeamRadio,
     fetchWeather,
 } from "../../services/openF1Api";
-import TopBanner from "./TopBanner";
-import LiveTiming from "./LiveTiming";
-import RaceControl from "./RaceControl";
-import TeamRadios from "./TeamRadio";
-import LiveSettings from "./LiveSettings";
+import TopBanner from "@/components/Dashboard/TopBanner";
+import LiveTiming from "@/components/Dashboard/LiveTiming";
+import RaceControl from "@/components/Dashboard/RaceControl";
+import TeamRadios from "@/components/Dashboard/TeamRadio";
+import LiveSettings from "@/components/Dashboard/LiveSettings";
 import { Divider } from "@nextui-org/react";
-import { LiveSettingsProvider, useLiveSettings } from "./LiveSettingsContext";
+import { LiveSettingsProvider, useLiveSettings } from "@/components/Dashboard/LiveSettingsContext";
 
 
 const Dashboard: React.FC = () => {
@@ -217,7 +217,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 )}
                 <Divider orientation="vertical" />
                 {drivers && stints && laps && positions && (
-                    <div className="mx-2 flex align-middle">
+                    <div className="mx-2 flex align-middle ml-auto">
                         <LiveSettings />
                     </div>
                 )}
