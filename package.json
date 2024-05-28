@@ -2,15 +2,38 @@
   "name": "pitlane-analytics",
   "version": "0.1.0",
   "private": true,
+  "description": "A Next.js application for analyzing pitlane data.",
+  "author": "Mohamed Hadrami <mohamedhadrami9@gmail.com>",
+  "license": "GNU",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohamedhadrami/pitlane-analytics"
+  },
+  "bugs": {
+    "url": "https://github.com/mohamedhadrami/pitlane-analytics/issues"
+  },
+  "homepage": "https://pitlane-analytics.vercel.app",
+  "keywords": [
+    "Next.js",
+    "TypeScript",
+    "React",
+    "Telemetry",
+    "Pitlane",
+    "Analytics",
+    "Formula 1",
+    "F1"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit",
     "seed": "node -r dotenv/config ./db/ergast/seed.js"
   },
   "dependencies": {
-    "@emotion/styled": "^11.11.5",
     "@nextui-org/react": "^2.3.6",
     "@nextui-org/use-infinite-scroll": "^2.1.3",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -39,7 +62,32 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "^14.2.3",
+    "prettier": "^3.2.5",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
+  },
+  "eslintConfig": {
+    "extends": [
+      "next",
+      "next/core-web-vitals",
+      "prettier"
+    ],
+    "rules": {
+      "semi": [
+        "error",
+        "never"
+      ],
+      "quotes": [
+        "error",
+        "single"
+      ]
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,css,scss,md}": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
