@@ -1,7 +1,28 @@
 import React from "react";
 
-export const getCompoundComponent = (compoundText: string) => {
-  switch (compoundText) {
+export const getCompoundColor = (compound: string) => {
+  switch (compound) {
+      case "SOFT":
+          return "#f00";
+      case "MEDIUM":
+          return "#ff0";
+      case "HARD":
+          return "#fff";
+      case "INTERMEDIATE":
+          return "#0a0";
+      case "WET":
+          return "#00f";
+      case "UNKNOWN":
+          return "#000";
+      case "TEST_UNKNOWN":
+          return "#000";
+      default:
+          return null;
+  }
+}
+
+export const getCompoundComponent = (compound: string) => {
+  switch (compound) {
       case "SOFT":
           return <SoftCompound />;
       case "MEDIUM":
