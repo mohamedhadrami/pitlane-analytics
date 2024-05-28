@@ -158,8 +158,8 @@ export const segmentColor: Record<number, string> = {
 export interface LocationParams {
     date?: string;
     driver_number?: number;
-    meeting_key?: number;
-    session_key?: number;
+    meeting_key?: number | string;
+    session_key?: number | string;
     x?: number;
     y?: number;
     z?: number;
@@ -206,9 +206,9 @@ export interface PitParams {
     date?: string;
     driver_number?: number;
     lap_number?: number;
-    meeting_key?: number;
+    meeting_key?: number | string;
     pit_duration?: number;
-    session_key?: number;
+    session_key?: number | string;
 }
 
 /**
