@@ -1,6 +1,9 @@
 // @/utils/helper.ts
 
 /* TIME */
+
+export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function formatSecondsToTime(seconds: any) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
