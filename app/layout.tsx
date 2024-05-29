@@ -4,6 +4,7 @@ import "./globals.css";
 import CustomNavbar from "@/components/CustomNavbar";
 import { Providers } from "./providers";
 import NetworkStatusClient from "@/components/NetworkStatusClient";
+import { Toaster } from "@/components/ui/sonner";
 import { Metadata } from "next";
 import { Link } from "@nextui-org/react";
 
@@ -53,6 +54,7 @@ export default function RootLayout({
           </p>
         </footer>
         <NetworkStatusClient />
+        <Toaster />
       </body>
     </html>
   );
