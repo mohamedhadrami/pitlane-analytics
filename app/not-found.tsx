@@ -2,6 +2,12 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Divider, Button } from '@nextui-org/react';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Not Found',
+    description: 'This page doesn\'t exist'
+}
 
 export default function NotFound() {
     return (
