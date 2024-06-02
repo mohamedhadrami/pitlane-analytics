@@ -4,8 +4,8 @@
 import { MeetingParams } from "@/interfaces/openF1";
 import { fetchCurrentSeason } from "@/services/ergastApi";
 import { fetchMeeting } from "@/services/openF1Api";
-import { findNextRace } from "@/utils/helpers";
-import { Spacer } from "@nextui-org/react";
+import { findNextRace, parseISODateAndTime } from "@/utils/helpers";
+import { Card, CardBody, Image } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { Watch } from "react-loader-spinner";
 import Link from 'next/link';
@@ -45,7 +45,7 @@ const CountdownTimer: React.FC<{ timeRemaining: CountdownTimerProps }> = ({ time
           <span>{timeRemaining.minutes === 1 ? "Minute" : "Minutes"}</span>
         </div>
       )}
-      {timeRemaining.seconds > 0 && (
+      {timeRemaining.seconds >= 0 && (
         <div className="flex flex-col items-center">
           <span>{timeRemaining.seconds}</span>
           <span>{timeRemaining.seconds === 1 ? "Second" : "Seconds"}</span>
@@ -63,6 +63,8 @@ const Home: React.FC = () => {
   const [gmtOffset, setGmtOffset] = useState<any>(null);
   const [timeUntilNextRace, setTimeUntilNextRace] = useState<CountdownTimerProps>();
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
+  const [eventTracker, setEventTracker] = useState<any>();
+  const [news, setNews] = useState<any>();
 
   useEffect(() => {
     const fetchDataFromApi = async () => {
@@ -70,6 +72,11 @@ const Home: React.FC = () => {
         const apiData = await fetchCurrentSeason();
         setData(apiData);
         findNextRace(apiData.MRData.RaceTable.Races);
+        const eventTrackData = await fetch('/api/formula1/event-tracker');
+        const eventTrackJson = await eventTrackData.json();
+        setEventTracker(eventTrackJson);
+        setNews(eventTrackJson.curatedSection);
+        console.log(eventTrackJson.curatedSection)
       } catch (error) {
         console.error("Error fetching data", error);
       }
@@ -127,7 +134,7 @@ const Home: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-10">
       <h1 className="text-center text-4xl font-light mb-10">Welcome to Pitlane Analytics!</h1>
-      {timeUntilNextRace && (
+      {timeUntilNextRace && eventTracker && (
         <div className="flex justify-center items-center mb-10">
           <div className="p-5 rounded shadow-lg">
             <div className="flex items-center mb-4">
@@ -139,7 +146,7 @@ const Home: React.FC = () => {
               />
               <div className="ml-5">
                 <h2 className="text-2xl">Time until the</h2>
-                <h2 className="text-2xl font-bold">{meeting?.meeting_name}</h2>
+                <h2 className="text-2xl font-bold">{eventTracker.race.meetingOfficialName}</h2>
                 <CountdownTimer timeRemaining={timeUntilNextRace} />
               </div>
             </div>
@@ -149,37 +156,55 @@ const Home: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
         <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
           <Link href="/analytics">
-            
-              <h3 className="text-xl font-semibold mb-2">Analytics</h3>
-              <p>Explore in-depth race analytics and data.</p>
-            
+
+            <h3 className="text-xl font-semibold mb-2">Analytics</h3>
+            <p>Explore in-depth race analytics and data.</p>
+
           </Link>
         </div>
         <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
           <Link href="/schedule">
-            
-              <h3 className="text-xl font-semibold mb-2">Schedule</h3>
-              <p>Check the full race schedule and upcoming events.</p>
-            
+
+            <h3 className="text-xl font-semibold mb-2">Schedule</h3>
+            <p>Check the full race schedule and upcoming events.</p>
+
           </Link>
         </div>
         <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
           <Link href="/championship">
-          
-              <h3 className="text-xl font-semibold mb-2">Championship</h3>
-              <p>View the latest standings in the championship.</p>
-          
+
+            <h3 className="text-xl font-semibold mb-2">Championship</h3>
+            <p>View the latest standings in the championship.</p>
+
           </Link>
         </div>
       </div>
       <div className="p-5 border rounded shadow-lg">
-        <h2 className="text-2xl font-semibold mb-4">Latest News</h2>
-        <div>
-          {/* Integrate news fetching logic here */}
+        {news ? (
+          <>
+            <h2 className="text-2xl font-semibold mb-4">{news.title}</h2>
+            {news.items.map((article: any) => (
+              <Link href={`https://www.formula1.com/en/latest/article/${article.slug}.${article.id}`}>
+                <Card className="my-4 p-3 bg-zinc-700 hover:bg-zinc-400">
+                  <CardBody className="font-extralight flex flex-row">
+                    <div className="w-1/2 pr-2">
+                      <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
+                      <p className="font-thin mb-5">{parseISODateAndTime(article.updatedAt)}</p>
+                      <p>{article.metaDescription}</p>
+                    </div>
+                    <div className="w-1/2">
+                      <Image src={article.thumbnail.image.url} className="w-full h-auto object-cover" alt="Article Thumbnail" />
+                    </div>
+                  </CardBody>
+                </Card>
+              </Link>
+            ))}
+          </>
+        ) :
           <p>No news available at the moment.</p>
-        </div>
+        }
       </div>
-    </div>
+    </div >
   );
 };
 
