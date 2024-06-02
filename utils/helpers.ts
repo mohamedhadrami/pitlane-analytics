@@ -117,10 +117,21 @@ export const teamNameConvertor = (name: string) => {
 export const trackImage = (cityName: string | undefined, countryName: string | undefined) => {
     let name: string | undefined = countryName;
     if (name == "UK") name = "Great Britain";
+    else if(cityName == "Imola") name = "Emilia Romagna";
     else if (name == "UAE") name = "Abu Dhabi";
     else if (name == "United States" || name == "USA") name = cityName;
     if (cityName == "Austin") name = "USA";
     return `https://media.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/${name}.png.transform/2col/image.png`;
+};
+
+export const trackDetailedImage = (cityName: string | undefined, countryName: string | undefined) => {
+    let name: string | undefined = countryName;
+    if (name == "USA" || name == "United States" && cityName != "Austin" || name == "Azerbaijan") name = cityName;
+    else if (name == "Monaco") name = "Monoco";
+    else if (name == "UK") name = "Great Britain";
+    else if (name == "UAE") name = "Abu Dhabi";
+    else if(cityName == "Imola") name = "Emilia Romagna";
+    return `https://media.formula1.com/image/upload/f_auto/q_auto/v1677244984/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/${name?.replace(" ", "_")}_Circuit.png.transform/6col/image.png`;
 };
 
 export const flagImage = (countryName: string | undefined) => {
