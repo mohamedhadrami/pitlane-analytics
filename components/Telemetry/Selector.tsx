@@ -59,7 +59,8 @@ const Selector: React.FC<SelectorProps> = ({
         <>
             <Dropdown
                 backdrop="blur"
-                isDisabled={disabled}>
+                isDisabled={disabled}
+                shouldBlockScroll={false}>
                 <DropdownTrigger>
                     <Button
                         variant="solid"
