@@ -47,54 +47,52 @@ const TelemetryCharts: React.FC<TelemetryChartsProps> = ({ driversData, lapSelec
         const data = useTimeNormalizedData ? getTimeNormalizedData(parameter) : getDateNormalizedData(parameter);
 
         return (
-            <ResponsiveContainer key={parameter} width="100%" height={400}>
-                <LineChart
-                    width={500}
-                    height={300}
-                    data={data}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                    <XAxis
-                        dataKey={useTimeNormalizedData ? "time" : "date"}
-                        tickFormatter={(value) => {
-                            // Format the date here if useTimeNormalizedData is false
-                            return useTimeNormalizedData ? value : parseISOTimeFull(value); // formatTime is a function to format date as per your requirement
-                        }}
-                    />
-                    <YAxis
-                        label={{
-                            value: `${parameterDisplayText[parameter as keyof typeof visibleCharts]}`,
-                            angle: -90,
-                            position: "insideLeft",
-                        }}
-                    />
-                    <Tooltip
-                        content={
-                            <LapStatsTooltip
-                                active={false}
-                                payload={[]}
-                                label={""}
-                                chartType={parameter}
-                                dataNormalization={useTimeNormalizedData ? "time" : "date"}
-                            />
-                        }
-                    />
-                    <Legend />
-                    {Array.from(driversData.values()).map((driverData, index) => (
-                        <Line
-                            key={index}
-                            type="monotone"
-                            dataKey={driverData.driver.name_acronym}
-                            name={driverData.driver.name_acronym}
-                            stroke={isValidColor(`#${driverData.driver.team_colour}`)
-                                ? `#${driverData.driver.team_colour}`
-                                : "#FFFFFF"}
-                            strokeWidth={2}
-                            dot={false}
+            <LineChart
+                width={500}
+                height={300}
+                data={data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+                <XAxis
+                    dataKey={useTimeNormalizedData ? "time" : "date"}
+                    tickFormatter={(value) => {
+                        // Format the date here if useTimeNormalizedData is false
+                        return useTimeNormalizedData ? value : parseISOTimeFull(value); // formatTime is a function to format date as per your requirement
+                    }}
+                />
+                <YAxis
+                    label={{
+                        value: `${parameterDisplayText[parameter as keyof typeof visibleCharts]}`,
+                        angle: -90,
+                        position: "insideLeft",
+                    }}
+                />
+                <Tooltip
+                    content={
+                        <LapStatsTooltip
+                            active={false}
+                            payload={[]}
+                            label={""}
+                            chartType={parameter}
+                            dataNormalization={useTimeNormalizedData ? "time" : "date"}
                         />
-                    ))}
-                </LineChart>
-            </ResponsiveContainer>
+                    }
+                />
+                <Legend />
+                {Array.from(driversData.values()).map((driverData, index) => (
+                    <Line
+                        key={index}
+                        type="monotone"
+                        dataKey={driverData.driver.name_acronym}
+                        name={driverData.driver.name_acronym}
+                        stroke={isValidColor(`#${driverData.driver.team_colour}`)
+                            ? `#${driverData.driver.team_colour}`
+                            : "#FFFFFF"}
+                        strokeWidth={2}
+                        dot={false}
+                    />
+                ))}
+            </LineChart>
         );
     };
 
@@ -153,7 +151,7 @@ const TelemetryCharts: React.FC<TelemetryChartsProps> = ({ driversData, lapSelec
                     </Popover>
                 </div>
             </div>
-            <div className="lg:grid grid-rows-3 grid-flow-col gap-4">
+            <div className="lg:grid grid-rows-3 grid-flow-col gap-4 w-full">
                 {Object.entries(visibleCharts).map(([key, value]) => {
                     if (!value) return null;
                     return (
