@@ -188,15 +188,15 @@ const Page: React.FC = () => {
             };
 
             const lapApiPromise = fetchLaps(params);
-            const stintApiPromise = fetchStint(params);
+            const stintData = stints.filter((stint: LapParams) => stint.driver_number === driver.driver_number);
 
-            toast.promise(Promise.all([lapApiPromise, stintApiPromise]), {
+            toast.promise(Promise.all([lapApiPromise]), {
                 loading: `Loading data for ${driver.name_acronym}...`,
                 success: `Data for ${driver.name_acronym} loaded successfully!`,
                 error: `Error loading data for ${driver.name_acronym}`,
             });
 
-            const [lapApiData, stintApiData] = await Promise.all([lapApiPromise, stintApiPromise]);
+            const [lapApiData] = await Promise.all([lapApiPromise]);
 
             setSelectedDrivers((prevMap) => {
                 const updatedMap = new Map(prevMap);
@@ -206,7 +206,7 @@ const Page: React.FC = () => {
                     laps: lapApiData,
                     carData: [],
                     locationData: [],
-                    stintData: stintApiData,
+                    stintData: stintData,
                     raceControl: raceControl,
                     chartData: []
                 });
