@@ -140,7 +140,7 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
                             {eventTracker.seasonContext.timetables.map((session: any) => {
                                 const formattedTime = formatSessionTimeDetails(session.startTime, session.endTime, session.gmtOffset)
                                 return (
-                                    <div className="flex flex-row justify-evenly my-2">
+                                    <div className="flex flex-row justify-evenly my-2" key={session.session}>
                                         <span>{session.description.toString().toUpperCase()}</span>
                                         <span className="font-thin">{formattedTime.dayOfWeek}</span>
                                         <Chip>{formattedTime.formattedStartTimeInLocal}-{formattedTime.formattedEndTimeInLocal}</Chip>

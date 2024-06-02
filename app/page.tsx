@@ -184,7 +184,7 @@ const Home: React.FC = () => {
           <>
             <h2 className="text-2xl font-semibold mb-4">{news.title}</h2>
             {news.items.map((article: any) => (
-              <Link href={`https://www.formula1.com/en/latest/article/${article.slug}.${article.id}`}>
+              <Link href={`https://www.formula1.com/en/latest/article/${article.slug}.${article.id}`} key={`article-${article.id}`}>
                 <Card className="my-4 p-3 bg-zinc-700 hover:bg-zinc-400">
                   <CardBody className="font-extralight flex flex-row">
                     <div className="w-1/2 pr-2">
