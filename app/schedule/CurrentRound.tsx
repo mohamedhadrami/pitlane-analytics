@@ -3,8 +3,8 @@ import { MeetingParams } from "../../interfaces/openF1";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { fetchRaceResults } from "../../services/ergastApi";
 import { fetchMeeting } from "../../services/openF1Api";
-import { trackImage } from "../../utils/helpers";
-import { Divider, Image, Spacer } from "@nextui-org/react";
+import { trackDetailedImage, trackImage } from "../../utils/helpers";
+import { Chip, Divider, Image, Spacer } from "@nextui-org/react";
 import { Minus } from "lucide-react";
 
 function formatDateRange(startDate: string, endDate: string) {
@@ -16,24 +16,57 @@ function formatDateRange(startDate: string, endDate: string) {
     return (startMonthDay + (startMonthDay === endMonthDay ? "" : ` - ${endMonthDay}`));
 }
 
-function formatSessionDateAndTime(timeObject: any) {
-    return `${timeObject.date} at ${timeObject.time}`
+function formatSessionTimeDetails(startTime: string, endTime: string, gmtOffset: string) {
+    // Parse the GMT time
+    const startDate = new Date(startTime);
+    const endDate = new Date(endTime);
+
+    // Apply the GMT offset
+    const offsetSign = gmtOffset[0];
+    const offsetHours = parseInt(gmtOffset.slice(1, 3), 10);
+    const offsetMinutes = parseInt(gmtOffset.slice(4, 6), 10);
+    const offsetMilliseconds = (offsetHours * 60 + offsetMinutes) * 60 * 1000;
+    const adjustedStartTime = new Date(startDate.getTime() + (offsetSign === '+' ? -offsetMilliseconds : offsetMilliseconds));
+    const adjustedEndTime = new Date(endDate.getTime() + (offsetSign === '+' ? -offsetMilliseconds : offsetMilliseconds));
+
+    // Format the adjusted time
+    const formattedDate = adjustedStartTime.toLocaleDateString('en-US');
+    const dayOfWeek = adjustedStartTime.toLocaleDateString('en-US', { weekday: 'long' }).slice(0, 3).toUpperCase();
+    const formattedStartTimeWithOffset = adjustedStartTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const formattedEndTimeWithOffset = adjustedEndTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+    // Get the time in the local timezone
+    const localStartTime = new Date(startTime);
+    const localEndTime = new Date(endTime);
+    const formattedStartTimeInLocal = localStartTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const formattedEndTimeInLocal = localEndTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+    return {
+        formattedDate,
+        dayOfWeek,
+        formattedStartTimeWithOffset,
+        formattedEndTimeWithOffset,
+        formattedStartTimeInLocal,
+        formattedEndTimeInLocal
+    };
 }
 
 const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceData, meetings }) => {
     const [results, setResults] = useState<any>(null);
     const [meeting, setMeeting] = useState<MeetingParams>();
-    const [raceDates, setRaceDates] = useState<any>(null);
+    const [raceDates, setRaceDates] = useState<string | null>(null);
+    const [eventTracker, setEventTracker] = useState<any>();
     const [flagData, setFlagData] = useState<any>(null);
 
-    const [firstPracticeDate, setFirstPracticeDate] = useState<any>();
-    const [secondPracticeDate, setSecondPracticeDate] = useState<any>();
-    const [thirdPracticeDate, setThirdPracticeDate] = useState<any>();
-    const [qualifyingDate, setQualifyingDate] = useState<any>();
-    const [raceDate, setRaceDate] = useState<any>();
-    const [sprintShootoutDate, setSprintShootoutDate] = useState<any>();
-    const [sprintDate, setSprintDate] = useState<any>();
-
+    useEffect(() => {
+        const fetchData = async () => {
+            const eventTrackData = await fetch('/api/formula1/event-tracker');
+            const eventTrackJson = await eventTrackData.json();
+            setEventTracker(eventTrackJson);
+            console.log(eventTrackJson)
+        }
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -67,16 +100,6 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
                 console.error("Error fetching race results", error);
             }
         };
-        if (raceData.FirstPractice) setFirstPracticeDate(raceData.FirstPractice);
-        if (raceData.SecondPractice) setSecondPracticeDate(raceData.SecondPractice);
-        if (raceData.ThirdPractice) setThirdPracticeDate(raceData.ThirdPractice);
-        if (raceData.Qualifying) setQualifyingDate(raceData.Qualifying);
-        if (raceData) setRaceDate({"date": raceData.date, "time": raceData.time});
-        if (raceData.Sprint) {
-            setSecondPracticeDate(null)
-            setSprintShootoutDate(raceData.SecondPractice);
-            setSprintDate(raceData.Sprint);
-        }
 
         getFlag();
         setRaceDates(formatDateRange(raceData.FirstPractice.date, raceData.date));
@@ -93,70 +116,57 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
 
     return (
         <div
-            className="bg-zinc-800 p-5 w-full"
+            className="bg-gradient-to-t from-zinc-700 to-[#222] p-5 w-full"
             key={`${raceData.round}-container`}
             onClick={handleCardClick}
         >
-            <div className="flex flex-row items-center justify-between">
-                <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
-                <Image src={flagData?.png} className="w-12 h-auto rounded" alt="flag image" />
-            </div>
-            <span key={`${raceData.round}-title`} className="flex justify-center">
-                <span className="font-extralight">{`Round ${raceData.round}`}</span>
-                <Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                <span className="font-light">{raceData.raceName}</span>
-            </span>
-            <p className="text-center font-small">{meeting?.meeting_official_name}</p>
-
-            <Divider className="my-3" />
-
-            <div className="flex flex-row">
-                <div className="">
-                {firstPracticeDate != null && (<div className="flex flex-row justify-evenly">
-                        <span>First Practice</span><Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span>{formatSessionDateAndTime(firstPracticeDate)}</span>
-                    </div>)}
-                    {secondPracticeDate != null && (<div className="flex flex-row justify-evenly">
-                        <span>Second Practice</span><Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span>{formatSessionDateAndTime(secondPracticeDate)}</span>
-                    </div>)}
-                    {thirdPracticeDate != null && (<div className="flex flex-row justify-evenly">
-                        <span>Third Practice</span><Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span>{formatSessionDateAndTime(thirdPracticeDate)}</span>
-                    </div>)}
-                    {qualifyingDate != null && (<div className="flex flex-row justify-evenly">
-                        <span>Third Practice</span><Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span>{formatSessionDateAndTime(qualifyingDate)}</span>
-                    </div>)}
-                    {sprintShootoutDate != null && (<div className="flex flex-row justify-evenly">
-                        <span>Sprint Shootout</span><Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span>{formatSessionDateAndTime(sprintShootoutDate)}</span>
-                    </div>)}
-                    {sprintDate != null && (<div className="flex flex-row justify-evenly">
-                        <span>Sprint</span><Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span>{formatSessionDateAndTime(sprintDate)}</span>
-                    </div>)}
-                    {raceDate != null && (<div className="flex flex-row justify-evenly">
-                        <span>Race</span><Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span>{formatSessionDateAndTime(raceDate)}</span>
-                    </div>)}
-                </div>
-                <Divider orientation="vertical" className="mx-1 h-50" />
-                <div className="border-white border-1">
+            {raceData && eventTracker && (
+                <>
                     <div className="flex flex-row items-center justify-between">
-                        <p key={`${raceData.Circuit.Location.locality}`}>
-                            {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
-                        </p>
-                        <p>{raceData.Circuit.circuitName}</p>
+                        <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
+                        <Image src={flagData?.png} className="w-12 h-auto rounded" alt="flag image" />
                     </div>
-                    <div className="flex justify-center">
-                        <Image src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
+                    <span key={`${raceData.round}-title`} className="flex justify-center">
+                        <span className="font-extralight">{`Round ${raceData.round}`}</span>
+                        <Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
+                        <span className="font-light">{raceData.raceName}</span>
+                    </span>
+                    <p className="text-center font-small">{eventTracker.race.meetingOfficialName}</p>
+
+                    <Divider className="my-3" />
+
+                    <div className="flex flex-row">
+                        <div className="w-1/4">
+                            {eventTracker.seasonContext.timetables.map((session: any) => {
+                                const formattedTime = formatSessionTimeDetails(session.startTime, session.endTime, session.gmtOffset)
+                                return (
+                                    <div className="flex flex-row justify-evenly my-2">
+                                        <span>{session.description.toString().toUpperCase()}</span>
+                                        <span className="font-thin">{formattedTime.dayOfWeek}</span>
+                                        <Chip>{formattedTime.formattedStartTimeInLocal}-{formattedTime.formattedEndTimeInLocal}</Chip>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                        <Divider orientation="vertical" className="mx-1 h-50" />
+                        <div className="mx-auto">
+                            <div className="flex flex-row items-center justify-between">
+                                <p key={`${raceData.Circuit.Location.locality}`}>
+                                    {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
+                                </p>
+                                <p>{raceData.Circuit.circuitName}</p>
+                            </div>
+                            <div className="flex justify-center">
+                                <Image src={trackDetailedImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </>
+            )}
         </div>
+
+
     );
 };
-
 
 export default CurrentRound;

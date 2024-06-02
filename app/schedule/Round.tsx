@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { fetchRaceResults } from "../../services/ergastApi";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { MeetingParams } from "../../interfaces/openF1";
-import { driverImage, trackImage } from "../../utils/helpers";
+import { driverImage, trackDetailedImage, trackImage } from "../../utils/helpers";
 import { Minus, X } from "lucide-react";
 import { Image, Divider, Spacer, Button, Table, TableHeader, TableColumn, TableBody, TableCell, TableRow, Pagination, Link, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerTitle } from "@/components/ui/drawer";
@@ -81,7 +81,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
     <>
       <div
         className="flex flex-col justify-evenly 
-                  bg-gradient-to-b from-zinc-800 to-red-900
+                  bg-gradient-to-b from-zinc-800 to-[#111]
                   hover:scale-[0.99] 
                   ml-auto w-full md:w-5/12 rounded-lg p-5"
         key={`${raceData.round}-container`}
