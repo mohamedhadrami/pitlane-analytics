@@ -38,7 +38,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
         : sortedRaceControl.filter(event => event.flag !== "BLUE");
 
     return (
-        <div style={{ scrollbarWidth: "none" }} className="overflow-y-scroll h-[50vh]">
+        <div className="overflow-y-scroll">
             <div className="m-3 min-w-[400px] font-extralight">
                 <ScrollShadow className="min-w-[300px] h-[400px]" size={100}>
                     {filteredRaceControl && filteredRaceControl.map((event: RaceControlParams, id: number) => (

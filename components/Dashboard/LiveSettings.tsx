@@ -18,7 +18,7 @@ const LiveSettings: React.FC = () => {
 
     return (
         <Sheet>
-            <SheetTrigger className="my-auto"><Cog /></SheetTrigger>
+            <SheetTrigger className="my-auto"><Cog className="rotate-0 hover:rotate-180 transition-transform duration-700 ease-in-out" /></SheetTrigger>
             <SheetContent className="bg-gradient-to-tl to-zinc-800 from-[#111] border-transparent">
                 <SheetHeader>
                     <h2 className="font-thin text-2xl">Dashboard Settings</h2>
