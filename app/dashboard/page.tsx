@@ -208,7 +208,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
 
     return (
         <div className="mx-auto">
-            <div className="flex flex-row items-center w-full h-10">
+            <div className="flex flex-row items-center w-full h-10 border-b-1 border-zinc-800">
                 {isBanner && meeting && session && weather && (
                     <div className="flex-grow overflow-hidden my-auto">
                         <TopBanner meeting={meeting} session={session} weather={weather} />
@@ -216,7 +216,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                 )}
                 <Divider orientation="vertical" />
                 {drivers && stints && laps && positions && (
-                    <div className="mx-2 flex align-middle ml-auto">
+                    <div className="flex align-middle mx-5">
                         <LiveSettings />
                     </div>
                 )}
@@ -233,14 +233,14 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                         />
                     </div>
                 )}
-                <div className="grid grid-cols-2 gap-3 xl:grid-cols-1">
+                <div className="grid grid-cols-2 gap-3 xl:grid-cols-1 xl:border-l-1 border-zinc-800">
                     {raceControl && isRace && (
-                        <div className="col-span-2 md:col-span-1">
+                        <div className="col-span-2 md:col-span-1 xl:p-5 xl:border-b-1 border-zinc-800">
                             <RaceControl drivers={drivers} raceControl={raceControl} />
                         </div>
                     )}
                     {teamRadio && isRadio && (
-                        <div className="col-span-2 md:col-span-1">
+                        <div className="col-span-2 md:col-span-1 xl:p-5">
                             <TeamRadios drivers={drivers} teamRadio={teamRadio} />
                         </div>
                     )}
