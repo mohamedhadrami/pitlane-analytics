@@ -162,7 +162,7 @@ const TrackVisualizer: React.FC<TrackVisualizerProps> = ({ circuitData, driverDa
                                     name={`Car Location - ${driver.driver.full_name}`}
                                     data={rotatedLocationData}
                                     fill={isValidColor(`#${driver.driver.team_colour}`) ? `#${driver.driver.team_colour}` : "#FFFFFF"}
-                                    line={{ strokeWidth: 3 }}
+                                    line={{ strokeWidth: 1 }}
                                     shape={() => <div />}
                                 />
                             );
