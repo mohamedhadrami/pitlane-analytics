@@ -6,13 +6,16 @@ import SectorSegment from '@/components/Dashboard/SectorSegments';
 import { formatSecondsToTime, isValidColor } from '@/utils/helpers';
 import { Table, TableHeader, TableColumn, TableBody, TableCell, TableRow } from '@nextui-org/react';
 import { getCompoundComponent } from '@/components/Tyres';
+import { CarDataParams } from '@/interfaces/openF1';
 
-const headers = [
-    { name: "Driver", uid: "driver" },
-    { name: "Lap Time", uid: "lapTime" },
-    { name: "Tyres", uid: "tyre" },
-    { name: "Sectors", uid: "sectors" },
-]
+
+function calculateAverageSpeed(carData: CarDataParams[]): number {
+    if (!carData.length) return 0;
+    
+    const totalSpeed = carData.reduce((sum, data) => sum + (data.speed || 0), 0);
+    return Math.round(totalSpeed / carData.length);
+}
+
 
 interface LapSummaryProps {
     driversData: Map<string, DriverChartData>;
@@ -20,6 +23,13 @@ interface LapSummaryProps {
 }
 
 const LapSummary: React.FC<LapSummaryProps> = ({ driversData, lapSelected }) => {
+    const headers = [
+        { name: "Driver", uid: "driver" },
+        { name: "Lap Time", uid: "lapTime" },
+        { name: "Tyres", uid: "tyre" },
+        { name: "Average Speed", uid: "avgSpeed" },
+        { name: "Sectors", uid: "sectors" },
+    ]
 
     const classNames = useMemo(
         () => ({
@@ -54,6 +64,7 @@ const LapSummary: React.FC<LapSummaryProps> = ({ driversData, lapSelected }) => 
                     {Array.from(driversData.values()).map((driverData) => {
                         const driverLap = driverData.laps.find((lap) => lap.lap_number === lapSelected);
                         const stint = driverData.stintData.find(stint => lapSelected >= stint.lap_start! && (stint.lap_end ? lapSelected <= stint.lap_end : true));
+                        const avgSpeed = calculateAverageSpeed(driverData.carData);
                         const tyreAge = driverLap?.lap_number! - stint?.lap_start! + stint?.tyre_age_at_start!;
                         return (
                             <TableRow key={driverData.driver.driver_number} className="text-center items-center">
@@ -76,6 +87,9 @@ const LapSummary: React.FC<LapSummaryProps> = ({ driversData, lapSelected }) => 
                                         </div>
                                         <div className="font-thin text-center">Pit {stint?.stint_number}</div>
                                     </div>
+                                </TableCell>
+                                <TableCell>
+                                    {avgSpeed}
                                 </TableCell>
                                 <TableCell className="flex justify-center"><SectorSegment lap={driverLap!} /></TableCell>
                             </TableRow>
