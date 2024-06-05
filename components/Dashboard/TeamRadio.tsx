@@ -3,7 +3,8 @@ import { DriverParams, SessionParams, TeamRadioParams } from "../../interfaces/o
 import { driverImage, numberImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
 import { Image, ScrollShadow } from "@nextui-org/react";
-import { useLiveSettings } from "./LiveSettingsContext";
+import { useLiveSettings } from "../../context/LiveSettingsContext";
+import Radio from "./Radio";
 
 const TeamRadios: React.FC<{ drivers: DriverParams[], teamRadio: TeamRadioParams[] }> = ({ drivers, teamRadio }) => {
     const [gmtOffset, setGmtOffset] = useState<string | null>(null);
@@ -26,19 +27,17 @@ const TeamRadios: React.FC<{ drivers: DriverParams[], teamRadio: TeamRadioParams
     const sortedTeamRadio = [...teamRadio].sort((a, b) => Date.parse(b.date!) - Date.parse(a.date!));
 
     return (
-        <div style={{ scrollbarWidth: "none" }} className="overflow-y-scroll h-[50vh]">
-            <div className="p-0 m-3">
-                <ScrollShadow className="min-w-[300px] h-[400px]" size={100}>
+        <div style={{ scrollbarWidth: "none" }} className="overflow-y-scroll">
+                <ScrollShadow className="min-w-[300px] h-[50vh] m-1" size={50}>
                     {sortedTeamRadio && gmtOffset && sortedTeamRadio.map((radio: TeamRadioParams, index: number) => (
-                        <Radio key={index} drivers={drivers} radio={radio} gmtOffset={gmtOffset} />
+                        <RadioItem key={index} drivers={drivers} radio={radio} gmtOffset={gmtOffset} />
                     ))}
                 </ScrollShadow>
-            </div>
         </div>
     );
 };
 
-const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffset: string }> = ({ drivers, radio, gmtOffset }) => {
+const RadioItem: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffset: string }> = ({ drivers, radio, gmtOffset }) => {
     const { settings } = useLiveSettings();
     const findSetting = (name: string) => settings.find(setting => setting.name === name);
     const isShowTeamRadioTime = findSetting('Show Team Radio Time')?.value;
@@ -47,10 +46,10 @@ const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffs
 
     return (
         <div className="flex items-center h-[50px] font-extralight gap-3">
-            {isShowTeamRadioTime && (<div className="text-[#999] text-left font-extralight w-1/6">
+            {isShowTeamRadioTime && (<div className="text-[#999] text-left font-extralight w-[12%]">
                 {parseISOTimeFull(radio.date, gmtOffset)}
             </div>)}
-            <div style={{ backgroundColor: `#${driver?.team_colour}` }} className={`flex text-left h-auto w-[75px] rounded-full bg-[#${driver?.team_colour}]`}>
+            <div style={{ backgroundColor: `#${driver?.team_colour}` }} className={`flex text-left h-auto w-[75px] rounded-full`}>
                 <Image
                     src={driverImage(driver?.first_name!, driver?.last_name!)}
                     alt={`${driver?.first_name} ${driver?.last_name}`}
@@ -58,12 +57,7 @@ const Radio: React.FC<{ drivers: DriverParams[], radio: TeamRadioParams, gmtOffs
                 />
                 <p className="font-light text-center ml-1">{driver?.name_acronym}</p>
             </div>
-            <div className="items-right w-[200px]">
-                <audio controls controlsList="nodownload noplaybackrate" className="w-ful">
-                    <source src={radio.recording_url} type="audio/mpeg" />
-                    Your browser does not support the audio element.
-                </audio>
-            </div>
+            <Radio key={radio.date} radio={radio} teamColor={`#${driver?.team_colour}`} />
         </div>
     );
 }
