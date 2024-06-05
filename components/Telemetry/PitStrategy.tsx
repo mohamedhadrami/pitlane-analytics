@@ -12,30 +12,36 @@ interface PitStrategyProps {
 }
 
 const PitStrategy: React.FC<PitStrategyProps> = ({ stints, drivers }) => {
-    const stintsByDriver: { [key: number]: StintParams[] } = {};
-
-    stints.forEach((stint) => {
-        if (stint.driver_number) {
-            if (!stintsByDriver[stint.driver_number]) {
-                stintsByDriver[stint.driver_number] = [];
+    const stintsByDriver = useMemo(() => {
+        return stints.reduce((acc, stint) => {
+            if (stint.driver_number) {
+                if (!acc[stint.driver_number]) {
+                    acc[stint.driver_number] = [];
+                }
+                acc[stint.driver_number].push(stint);
             }
-            stintsByDriver[stint.driver_number].push(stint);
-        }
-    });
+            return acc;
+        }, {} as { [key: number]: StintParams[] });
+    }, [stints]);
 
-    const driverNameMap: { [key: number]: string | undefined } = {};
-    drivers.forEach((driver) => {
-        if (driver.driver_number) {
-            driverNameMap[driver.driver_number] = driver.name_acronym;
-        }
-    });
+    const driverNameMap = useMemo(() => {
+        return drivers.reduce((acc, driver) => {
+            if (driver.driver_number) {
+                acc[driver.driver_number] = driver.name_acronym;
+            }
+            return acc;
+        }, {} as { [key: number]: string | undefined });
+    }, [drivers]);
 
     const maxLap = useMemo(() => {
         return Math.max(...stints.map(stint => stint.lap_end || 0));
     }, [stints]);
 
+    console.log(stintsByDriver);
+    console.log(driverNameMap); 
+
     return (
-        <div className="max-w-screen-xl mx-auto p-4">
+        <div className="max-w-screen-xl mx-auto p-4 w-full">
             {Object.entries(stintsByDriver).map(([driverNumber, driverStints]) => (
                 <div key={driverNumber} className="flex items-center mb-1">
                     <div className="w-16 text-xl font-semibold">{driverNameMap[parseInt(driverNumber)]}</div>
@@ -53,6 +59,7 @@ const PitStrategy: React.FC<PitStrategyProps> = ({ stints, drivers }) => {
                                 <p className="align-middle">{stint.lap_end! - stint.lap_start!}</p>
                             </div>
                         ))}
+
                     </div>
                 </div>
             ))}
