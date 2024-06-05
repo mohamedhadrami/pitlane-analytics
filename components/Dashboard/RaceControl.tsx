@@ -3,7 +3,7 @@ import { DriverParams, RaceControlParams, SessionParams } from "../../interfaces
 import { driverImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
 import { Image, ScrollShadow } from "@nextui-org/react";
-import { useLiveSettings } from "./LiveSettingsContext";
+import { useLiveSettings } from "@/context/LiveSettingsContext";
 
 const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlParams[] }> = ({ drivers, raceControl }) => {
     const { settings } = useLiveSettings();
@@ -40,11 +40,11 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
     return (
         <div className="overflow-y-scroll">
             <div className="m-3 min-w-[400px] font-extralight">
-                <ScrollShadow className="min-w-[300px] h-[400px]" size={100}>
+                <ScrollShadow className="min-w-[300px] h-[400px]" size={50}>
                     {filteredRaceControl && filteredRaceControl.map((event: RaceControlParams, id: number) => (
                         <div key={`${event.date}-${event.category}-${id}`} className="flex items-center my-1">
                             {isShowRaceControlTime && gmtOffset && (
-                                <div className="text-[#999] font-extralight w-1/4 text-left">
+                                <div className="text-[#999] font-extralight w-[12%] text-left">
                                     {parseISOTimeFull(event?.date, gmtOffset)}
                                 </div>
                             )}

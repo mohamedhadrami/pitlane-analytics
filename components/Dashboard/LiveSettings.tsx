@@ -1,8 +1,8 @@
 // app/dashboard/LiveSettings.tsx
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionItem, Switch, Input } from "@nextui-org/react";
-import { Cog, Headset, Info, ListOrdered, TowerControl } from "lucide-react";
-import { LiveSetting, useLiveSettings } from "./LiveSettingsContext";
+import { Cog, Headset, Info, ListOrdered, Map, TowerControl } from "lucide-react";
+import { LiveSetting, useLiveSettings } from "@/context/LiveSettingsContext";
 
 const LiveSettings: React.FC = () => {
     const { settings } = useLiveSettings();
@@ -128,6 +128,8 @@ const getCategoryIcon = (category: string) => {
             return <TowerControl className="mx-2" />;
         case 'team-radio':
             return <Headset className="mx-2" />;
+        case 'track':
+            return <Map className="mx-2" />;
         default:
             return <Cog className="mx-2" />;
     }
