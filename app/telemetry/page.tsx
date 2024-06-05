@@ -1,18 +1,13 @@
-// @/app/telemtry/page.tsx
+// @/app/telemetry/page.tsx
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { CarDataParams, DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, StintParams, WeatherParams } from "@/interfaces/openF1";
-import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
-import { mvCircuit } from "@/interfaces/multiviewer";
-import { fetchCircuitByKey } from "@/services/mvApi";
-import { DriverChartData } from "@/interfaces/custom";
-import { delay } from "@/utils/helpers";
-import { calculateLapTime } from "@/utils/telemetryUtils";
+import { DriverParams, LapParams } from "@/interfaces/openF1";
+import { fetchLaps } from "@/services/openF1Api";
 
 import SessionSelector from "@/components/Telemetry/SessionSelector";
 import SessionStats from "@/components/Telemetry/SessionStats";
@@ -22,44 +17,38 @@ import LapTimesLineChart from "@/components/Telemetry/LapTimesLineChart";
 import LapStatsLineChart from "@/components/Telemetry/TelemetryCharts";
 import TrackVisualizer from "@/components/Telemetry/TrackVisualizer";
 import LapSummary from "@/components/Telemetry/LapSummary";
+import { TelemetryProvider, useTelemetry } from "@/context/TelemetryContext";
+import { useFetchMeetings, useFetchSessionData, useFetchSessions, useFetchTelemetryData, useFetchYears, useHandleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
+import Loading from "@/components/Loading";
 
 
+const PageContent: React.FC = () => {
 
-const Page: React.FC = () => {
+    const {
+        //years, setYears,
+        //meetings, setMeetings,
+        //sessions, setSessions,
+        selectedYear, setSelectedYear,
+        selectedMeeting, setSelectedMeeting,
+        selectedMeetingKey, setSelectedMeetingKey,
+        selectedSession, setSelectedSession,
+        selectedSessionKey, setSelectedSessionKey,
+        isShowSession, setIsShowSession,
+        //weather, setWeather,
+        //raceControl, setRaceControl,
+        //circuitData, setCircuitData,
+        isShowDriverSelect, setIsShowDriverSelect,
+        //drivers, setDrivers,
+        selectedDrivers, setSelectedDrivers,
+        isShowPitStrategy, setIsShowPitStrategy,
+        //stints, setStints,
+        isShowLapTimes, setIsShowLapTimes,
+        selectedLap, setSelectedLap,
+        isShowTelemetry, setIsShowTelemetry
+    } = useTelemetry();
+
+
     const searchParams = useSearchParams();
-
-    const [years, setYears] = useState<string[]>([]);
-    const [meetings, setMeetings] = useState<MeetingParams[]>([]);
-    const [sessions, setSessions] = useState<SessionParams[]>([]);
-
-    const [selectedYear, setSelectedYear] = useState<string>();
-    const [selectedMeeting, setSelectedMeeting] = useState<MeetingParams>();
-    const [selectedMeetingKey, setSelectedMeetingKey] = useState<number>();
-    const [selectedSession, setSelectedSession] = useState<SessionParams>();
-    const [selectedSessionKey, setSelectedSessionKey] = useState<number>();
-
-    const [isShowSession, setIsShowSession] = useState<boolean>(false);
-    const [weather, setWeather] = useState<WeatherParams[]>([]);
-    const [raceControl, setRaceControl] = useState<RaceControlParams[]>([]);
-    const [circuitData, setCircuitData] = useState<mvCircuit>();
-
-    const [isShowDriverSelect, setIsShowDriverSelect] = useState<boolean>(false);
-    const [drivers, setDrivers] = useState<DriverParams[]>([]);
-    const [selectedDrivers, setSelectedDrivers] = useState<
-        Map<
-            string, DriverChartData
-        >
-    >(new Map());
-    const [stints, setStints] = useState<StintParams[]>([]);
-
-    const [isShowLapTimes, setIsShowLapTimes] = useState<boolean>(false);
-    const [selectedLap, setSelectedLap] = useState<number | null>(null);
-
-    const [isShowTelemetry, setIsShowTelemetry] = useState<boolean>(false);
-
-
-
-
     useEffect(() => {
         if (searchParams) {
             const queryYear = searchParams.get("year");
@@ -69,108 +58,16 @@ const Page: React.FC = () => {
             if (queryMeeting) setSelectedMeetingKey(parseInt(queryMeeting));
             if (querySession) setSelectedSessionKey(parseInt(querySession));
         }
-    }, [searchParams]);
+    }, [searchParams, setSelectedYear, setSelectedMeetingKey, setSelectedSessionKey]);
 
-
-
-
-    useEffect(() => {
-        const currentYear = new Date().getFullYear();
-        const availableYears = Array.from(
-            { length: currentYear - 2022 },
-            (_, index) => (currentYear - index).toString()
-        );
-        setYears(availableYears);
-    }, []);
-
-
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const params: MeetingParams = {
-                year: selectedYear
-            };
-            const res = await fetchMeeting(params);
-            setMeetings(res);
-        };
-        if (selectedYear) fetchData();
-    }, [selectedYear, years]);
-
-
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const params: SessionParams = {
-                year: selectedYear,
-                meeting_key: selectedMeetingKey
-            };
-            const res = await fetchSession(params);
-            setSessions(res);
-        };
-        if (selectedMeetingKey) {
-            fetchData();
-            const meeting = meetings?.find(v => v.meeting_key === selectedMeetingKey);
-            setSelectedMeeting(meeting);
-        }
-    }, [selectedYear, selectedMeetingKey, meetings]);
-
-
-
-
-    useEffect(() => {
-        const params = {
-            meeting_key: selectedMeetingKey,
-            session_key: selectedSessionKey
-        };
-        const fetchWeatherData = async () => {
-            const res = await fetchWeather(params as WeatherParams);
-            setWeather(res);
-            if (res) setIsShowSession(true);
-        };
-        const fetchDriverData = async () => {
-            const res = await fetchDrivers(params as DriverParams);
-            setDrivers(res);
-            if (res) setIsShowDriverSelect(true);
-            await delay(500);
-        };
-        const fetchRaceControlData = async () => {
-            const res = await fetchRaceControl(params as RaceControlParams);
-            setRaceControl(res);
-        };
-        const fetchStintData = async () => {
-            const res = await fetchStint(params as StintParams);
-            setStints(res);
-        }
-        const fetchCircuitData = async () => {
-            const res = await fetchCircuitByKey(selectedSession?.circuit_key!, selectedYear!);
-            setCircuitData(res);
-        };
-        if (selectedSessionKey) {
-            const session = sessions?.find(v => v.session_key === selectedSessionKey);
-            setSelectedSession(session);
-            fetchWeatherData();
-            fetchDriverData();
-            fetchRaceControlData();
-            fetchStintData();
-            fetchCircuitData();
-        }
-        setSelectedDrivers(new Map());
-        setIsShowLapTimes(false);
-        setIsShowTelemetry(false);
-    }, [selectedYear, selectedMeetingKey, selectedSessionKey, selectedSession, sessions]);
-
-
-
-
-    useEffect(() => {
-        if (selectedDrivers.size > 0) setIsShowLapTimes(true);
-        setIsShowTelemetry(false)
-    }, [selectedDrivers]);
-
-
-
+    const years = useFetchYears();
+    const { meetings, loadingMeetings, errorMeetings } = useFetchMeetings(selectedYear);
+    const { sessions, loadingSessions, errorSessions } = useFetchSessions(meetings, selectedMeetingKey, setSelectedMeeting);
+    const { weather, drivers, raceControl, stints, circuitData, loadingSessionData, errorSessionData } = useFetchSessionData(
+        selectedYear, selectedMeetingKey, selectedSessionKey, sessions,
+        setSelectedSession, setIsShowSession, setIsShowDriverSelect,
+        setIsShowPitStrategy, setSelectedDrivers, setIsShowLapTimes, setIsShowTelemetry
+    );
 
     const toggleDriverSelect = async (driver: DriverParams) => {
         const driverKey = driver.driver_number?.toString();
@@ -217,77 +114,20 @@ const Page: React.FC = () => {
         if (selectedDrivers?.size !== 0) setSelectedLap(null);
     };
 
+    useHandleDriverSelect(selectedDrivers, setIsShowLapTimes, setIsShowTelemetry);
 
+    const { loadingTelemetry, errorTelemetry } = useFetchTelemetryData(
+        selectedMeetingKey,
+        selectedSessionKey,
+        selectedDrivers,
+        setSelectedDrivers,
+        selectedLap,
+        setIsShowTelemetry
+    );
 
-
-    const fetchTelemetryData = useCallback(async () => {
-        const lapDataRequests = Array.from(selectedDrivers, async ([_, driverData]) => {
-            if (driverData.selectedLap !== selectedLap || driverData.carData.length === 0) {
-                const lap: LapParams = driverData.laps.find((lap: LapParams) => lap.lap_number === selectedLap)!;
-                const date_gt: string = lap.date_start!;
-                const lapDurationMilliseconds: number = lap.lap_duration! * 1000;
-                const date_gtObject: Date = new Date(date_gt);
-                const date_ltObject: Date = new Date(date_gtObject.getTime() + lapDurationMilliseconds);
-                const date_lt: string = date_ltObject.toISOString();
-                const dateRangeParams: DateRangeParams = {
-                    date_gt: date_gt,
-                    date_lt: date_lt,
-                };
-                const params = {
-                    meeting_key: selectedMeetingKey,
-                    session_key: selectedSessionKey,
-                    driver_number: driverData.driver.driver_number,
-                };
-                const carApiData: CarDataParams[] = await fetchCarData(params, dateRangeParams);
-                const carDataWithLapTime = calculateLapTime(carApiData);
-                const locationApiData = await fetchLocation(params, dateRangeParams);
-                return {
-                    driver: driverData.driver,
-                    carDataWithLapTime,
-                    locationData: locationApiData,
-                };
-            }
-            return null;
-        });
-
-        const lapDataResults = await Promise.all(lapDataRequests);
-        const updatedSelectedDrivers = new Map(selectedDrivers);
-
-        let hasUpdate = false;
-        for (const result of lapDataResults) {
-            if (result !== null) {
-                const driverKey = result?.driver.driver_number!.toString();
-                const existingDriverData = updatedSelectedDrivers.get(driverKey!);
-                if (existingDriverData) {
-                    updatedSelectedDrivers.set(driverKey!, {
-                        ...existingDriverData,
-                        selectedLap: selectedLap,
-                        carData: result?.carDataWithLapTime!,
-                        locationData: result?.locationData,
-                    });
-                    hasUpdate = true;
-                }
-            }
-        }
-
-        if (hasUpdate) {
-            setSelectedDrivers(updatedSelectedDrivers);
-        }
-    }, [selectedDrivers, selectedLap, selectedMeetingKey, selectedSessionKey]);
-
-
-
-
-    useEffect(() => {
-        if (selectedLap) {
-            fetchTelemetryData();
-            setIsShowTelemetry(true);
-        } else {
-            setIsShowTelemetry(false);
-        }
-    }, [fetchTelemetryData, selectedLap]);
-
-
+    if (errorMeetings || errorSessions || errorSessionData || errorTelemetry) {
+        toast.error('Error loading data');
+    }
 
 
     return (
@@ -312,75 +152,51 @@ const Page: React.FC = () => {
                 />
             </motion.div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-4">
-                    {isShowSession && selectedMeeting && selectedSession && weather && (
-                        <motion.div
-                            key="session-stats"
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <SessionStats
-                                meeting={selectedMeeting}
-                                session={selectedSession}
-                                weather={weather}
-                            />
+            {loadingSessionData ? <Loading /> :
+                (<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="flex flex-col space-y-4">
+                        {isShowSession && selectedMeeting && selectedSession && weather && (
+                            <SessionStats meeting={selectedMeeting} session={selectedSession} weather={weather} />
+                        )}
+                        {isShowDriverSelect && drivers && selectedDrivers && (
                             <DriverSelection
                                 drivers={drivers}
                                 selectedDrivers={selectedDrivers}
                                 toggleDriverSelect={toggleDriverSelect}
                             />
-                        </motion.div>
-                    )}
-                </div>
-                {isShowDriverSelect && selectedSession && drivers && (
-                    <motion.div
-                        key="driver-selector"
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
-                    >
+                        )}
+                    </div>
+                    {isShowPitStrategy && stints && drivers && (
                         <PitStrategy stints={stints} drivers={drivers} />
-
-                    </motion.div>
-                )}
-            </div>
+                    )}
+                </div>)
+            }
             {isShowLapTimes && selectedDrivers && raceControl && (
-                <motion.div
-                    key="lap-time-chart"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <LapTimesLineChart
-                        driversData={selectedDrivers}
-                        raceControl={raceControl}
-                        onLapSelect={setSelectedLap}
-                    />
-                </motion.div>
+                <LapTimesLineChart
+                    driversData={selectedDrivers}
+                    raceControl={raceControl}
+                    onLapSelect={setSelectedLap}
+                />
             )}
             {isShowTelemetry && selectedDrivers && selectedLap && circuitData && (
-                <motion.div
-                    key="lap-stats-chart"
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    <LapStatsLineChart
-                        driversData={selectedDrivers}
-                        lapSelected={selectedLap}
-                    />
+                <>
+                    <LapStatsLineChart driversData={selectedDrivers} lapSelected={selectedLap} />
                     <TrackVisualizer circuitData={circuitData} driverData={selectedDrivers} />
-                    <LapSummary
-                        driversData={selectedDrivers}
-                        lapSelected={selectedLap}
-                    />
-                </motion.div>
+                    <LapSummary driversData={selectedDrivers} lapSelected={selectedLap} />
+                </>
             )}
         </>
     );
 };
 
-export default Page;
 
+const Page: React.FC = () => {
+    return (
+        <TelemetryProvider>
+            <PageContent />
+        </TelemetryProvider>
+    );
+};
+
+
+export default Page;
