@@ -1,7 +1,7 @@
-// app/dashboard/page.tsx
+// @/app/dashboard/page.tsx
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
     DriverParams,
     MeetingParams,
@@ -32,8 +32,11 @@ import RaceControl from "@/components/Dashboard/RaceControl";
 import TeamRadios from "@/components/Dashboard/TeamRadio";
 import LiveSettings from "@/components/Dashboard/LiveSettings";
 import { Divider } from "@nextui-org/react";
-import { LiveSettingsProvider, useLiveSettings } from "@/components/Dashboard/LiveSettingsContext";
+import { LiveSettingsProvider, useLiveSettings } from "@/context/LiveSettingsContext";
 import { delay } from "@/utils/helpers";
+import { mvCircuit } from "@/interfaces/multiviewer";
+import TrackMap from "@/components/Dashboard/TrackMap";
+import { fetchCircuitByKey } from "@/services/mvApi";
 
 
 const Dashboard: React.FC = () => {
@@ -47,18 +50,29 @@ const Dashboard: React.FC = () => {
     const [laps, setLaps] = useState<LapParams[]>([]);
     const [intervals, setIntervals] = useState<IntervalParams[]>([]);
     const [positions, setPositions] = useState<PositionParams[]>([]);
+    const [circuitData, setCircuitData] = useState<mvCircuit>();
 
     const fetchOnceRef = useRef(false);
 
+    const meeting_test = "latest";
+    const session_test = "latest";
+
+    const params = useMemo(() => ({
+        meeting_key: meeting_test,
+        session_key: session_test,
+    }), [meeting_test, session_test]);
+
     useEffect(() => {
-        const meeting_test = "latest";
-        const session_test = "latest";
-
-        const params = {
-            meeting_key: meeting_test,
-            session_key: session_test,
+        const fetchCircuitData = async () => {
+            if (meeting?.circuit_key && meeting?.year) {
+                const res = await fetchCircuitByKey(meeting.circuit_key, meeting.year.toString());
+                setCircuitData(res);
+            }
         };
+        fetchCircuitData();
+    }, [meeting]);
 
+    useEffect(() => {
         async function fetchData() {
             const meetingParams: MeetingParams = { meeting_key: meeting_test };
 
@@ -118,7 +132,7 @@ const Dashboard: React.FC = () => {
             for (let i = 0; i < fetchFunctions.length; i++) {
                 await fetchFunctions[i]();
                 if (i < fetchFunctions.length - 1) {
-                    await delay(350); // 350 ms delay between calls to stay within rate limit
+                    await delay(350);
                 }
             }
         }
@@ -152,7 +166,7 @@ const Dashboard: React.FC = () => {
         }
 
         fetchOnceRef.current = true;
-    }, [ setMeeting, setSession, setDrivers, setRaceControl, setTeamRadio, setWeather, setStints, setLaps, setIntervals, setPositions]);
+    }, [setMeeting, setSession, setDrivers, setRaceControl, setTeamRadio, setWeather, setStints, setLaps, setIntervals, setPositions, params]);
 
     return (
         <LiveSettingsProvider>
@@ -167,6 +181,7 @@ const Dashboard: React.FC = () => {
                 laps={laps}
                 intervals={intervals}
                 positions={positions}
+                circuitData={circuitData!}
             />
         </LiveSettingsProvider>
     );
@@ -183,6 +198,7 @@ interface DashboardContentProps {
     laps: LapParams[];
     intervals: IntervalParams[];
     positions: PositionParams[];
+    circuitData: mvCircuit;
 }
 
 const DashboardContent: React.FC<DashboardContentProps> = ({
@@ -196,6 +212,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     laps,
     intervals,
     positions,
+    circuitData,
 }) => {
     const { settings } = useLiveSettings();
 
@@ -205,6 +222,7 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     const isLive = findSetting('Show Live Table')?.value;
     const isRace = findSetting('Show Race Control')?.value;
     const isRadio = findSetting('Show Team Radio')?.value;
+    const isTrack = findSetting('Show Track')?.value;
 
     return (
         <div className="mx-auto">
@@ -233,17 +251,22 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                         />
                     </div>
                 )}
-                <div className="grid grid-cols-2 gap-3 xl:grid-cols-1 xl:border-l-1 border-zinc-800">
+                <div className="grid grid-cols-3 gap-3 xl:grid-cols-1 xl:border-l-1 border-zinc-800 max-h-full">
                     {raceControl && isRace && (
-                        <div className="col-span-2 md:col-span-1 xl:p-5 xl:border-b-1 border-zinc-800">
+                        <div className="col-span-3 lg:col-span-1 xl:p-5 xl:border-b-1 border-zinc-800">
                             <RaceControl drivers={drivers} raceControl={raceControl} />
                         </div>
                     )}
                     {teamRadio && isRadio && (
-                        <div className="col-span-2 md:col-span-1 xl:p-5">
+                        <div className="col-span-3 lg:col-span-1 xl:p-5">
                             <TeamRadios drivers={drivers} teamRadio={teamRadio} />
                         </div>
                     )}
+                    {/*circuitData && isTrack && (
+                        <div className="col-span-3 lg:col-span-1 xl:p-5 xl:border-t-1 border-zinc-800">
+                            <TrackMap circuitData={circuitData} />
+                        </div>
+                    )*/}
                 </div>
             </div>
         </div>

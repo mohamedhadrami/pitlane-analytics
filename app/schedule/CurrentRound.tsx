@@ -116,7 +116,9 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
 
     return (
         <div
-            className="bg-gradient-to-t from-zinc-700 to-[#222] p-5 w-full"
+            className="bg-gradient-to-t from-zinc-700 to-[#222]
+                        p-5 w-full
+                        border-r-1 border-l-1"
             key={`${raceData.round}-container`}
             onClick={handleCardClick}
         >

@@ -181,7 +181,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
             className={driverImageClasses}
           />
           <span key={`${results.round}-2`} className="flex items-center">
-            <span className="font-extralight">2</span>
+            <span className="font-extralight">3</span>
             <Spacer x={2} />
             <Divider orientation="vertical" className="h-5" />
             <Spacer x={2} />
