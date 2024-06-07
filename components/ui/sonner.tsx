@@ -13,7 +13,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      closeButton expand pauseWhenPageIsHidden offset={16}
+      closeButton expand pauseWhenPageIsHidden offset={16} visibleToasts={9}
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       toastOptions={{
@@ -25,8 +25,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           cancelButton: "bg-red-500",
           success: `from-success-400 to-success-100 ${generalClasses}`,
           info: `from-zinc-800 to-[#111] ${generalClasses}`,
-          loading: `from-[#006FEE] to-danger-300 ${generalClasses}`,
-          error: `from-danger-500 to-danger-100 ${generalClasses}`,
+          loading: `from-secondary-500 to-danger-500 ${generalClasses}`,
+          error: `from-danger-700 to-danger-300 ${generalClasses}`,
           warning: `from-warning-400 to-warning-100 ${generalClasses}`,
         },
       }}
