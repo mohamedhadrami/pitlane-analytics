@@ -8,7 +8,7 @@ import { MeetingParams, SessionParams, WeatherParams } from "@/interfaces/openF1
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind, Cloudy, CalendarFold } from "lucide-react";
 import { calculateWeatherStats } from "@/utils/telemetryUtils";
 import { fetchCountryFlagByName } from "@/services/countryApi";
-import { parseISODateAndTime, trackImage } from "@/utils/helpers";
+import { parseISODateAndTime, trackDetailedImage, trackImage } from "@/utils/helpers";
 import { fetchRaceResultsByCircuit } from "@/services/ergastApi";
 import CustomTable from "@/components/tables/CustomTable";
 import { RaceHeaders } from "@/utils/const";
@@ -105,7 +105,7 @@ const CircuitStatsContainer: React.FC<{ flag: any, meeting: MeetingParams }> = (
                 <Image
                     className=""
                     alt="track image"
-                    src={trackImage(meeting?.location, meeting?.country_name)}
+                    src={trackDetailedImage(meeting?.location, meeting?.country_name)}
                 />
             </div>
         </>
