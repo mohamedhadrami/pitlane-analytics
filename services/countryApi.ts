@@ -12,7 +12,11 @@ const fetchRestCountryApi = async (endpoint: string) => {
 }
 
 export const fetchCountryFlagByName = async (country: string) => {
-    const endpoint = `/name/${country}`;
+    let countryName = country;
+    if (countryName === "UK") countryName = "United Kingdom";
+    else if (countryName === "China") countryName = "Zhōngguó";
+    else if (countryName === "Netherlands") countryName = "Kingdom of the Netherlands";
+    const endpoint = `/name/${countryName}`;
     const data = await fetchRestCountryApi(endpoint);
     const flagData = data[0]?.flags;
     return flagData;

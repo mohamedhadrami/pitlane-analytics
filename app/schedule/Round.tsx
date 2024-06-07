@@ -54,9 +54,6 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
     const getFlag = async () => {
       try {
         let countryName = raceData.Circuit.Location.country;
-        if (countryName === "UK") countryName = "United Kingdom";
-        else if (countryName === "China") countryName = "Zhōngguó";
-        else if (countryName === "Netherlands") countryName = "Kingdom of the Netherlands";
         const flagApiData = await fetchCountryFlagByName(countryName);
         setFlagData(flagApiData);
       } catch (error) {
