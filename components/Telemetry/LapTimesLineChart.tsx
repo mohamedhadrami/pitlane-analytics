@@ -204,56 +204,49 @@ const LapTimes: React.FC<LapTimesLineChartProps> = ({
           setModZscoreThreshold={setModZscoreThreshold} />
       </div>
 
-      {chartData.length > 0 ? (
-        <div className="flex justify-center">
-          <ResponsiveContainer width={800} aspect={1.75}>
-            <LineChart
-              data={chartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-              onClick={(data, index) => onLapSelect(parseInt(data.activeLabel!))}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="lap_number" tick={false} />
-              <YAxis
-                domain={[minLapTime, maxLapTime]}
-                tickFormatter={formatSecondsToTime}
+      <div className="flex justify-center">
+        <ResponsiveContainer width={800} aspect={1.75}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+            onClick={(data, index) => onLapSelect(parseInt(data.activeLabel!))}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="lap_number" tick={false} />
+            <YAxis
+              domain={[minLapTime, maxLapTime]}
+              tickFormatter={formatSecondsToTime}
+            />
+            <Tooltip
+              content={<LapTimeTooltip active={false} payload={[]} label={""} />}
+              formatter={(value, name, props) => {
+                const lapData = props.payload;
+                if (lapData.interpolated) {
+                  return [`${value} (interpolated)`, name];
+                }
+                return [value, name];
+              }}
+            />
+            <Legend />
+            {Array.from(driversData.values()).map((driverData) => (
+              <Line
+                key={driverData.driver.name_acronym}
+                type="monotone"
+                dataKey={`time_${driverData.driver.name_acronym}`}
+                name={driverData.driver.name_acronym}
+                stroke={
+                  isValidColor(`#${driverData.driver.team_colour}`)
+                    ? `#${driverData.driver.team_colour}`
+                    : "#FFFFFF"
+                }
+                strokeWidth={2}
+                dot={false}
               />
-              <Tooltip
-                content={<LapTimeTooltip active={false} payload={[]} label={""} />}
-                formatter={(value, name, props) => {
-                  const lapData = props.payload;
-                  if (lapData.interpolated) {
-                    return [`${value} (interpolated)`, name];
-                  }
-                  return [value, name];
-                }}
-              />
-              <Legend />
-              {Array.from(driversData.values()).map((driverData) => (
-                <Line
-                  key={driverData.driver.name_acronym}
-                  type="monotone"
-                  dataKey={`time_${driverData.driver.name_acronym}`}
-                  name={driverData.driver.name_acronym}
-                  stroke={
-                    isValidColor(`#${driverData.driver.team_colour}`)
-                      ? `#${driverData.driver.team_colour}`
-                      : "#FFFFFF"
-                  }
-                  strokeWidth={2}
-                  dot={false}
-                />
-              ))}
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      ) : (
-        <>
-          <p className="text-center font-extralight m-5 mb-10">
-            No data to display. Please select a driver or reload the page.
-          </p>
-        </>
-      )}
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
     </div>
   );
 };
