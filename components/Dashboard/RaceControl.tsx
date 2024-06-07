@@ -25,7 +25,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
     }, [raceControl]);
 
     const driverData = (driver_number: number) => {
-        const driver = drivers?.find(driver => driver.driver_number === driver_number);
+        const driver: DriverParams | undefined = drivers?.find(driver => driver.driver_number === driver_number);
         if (driver) return [driver?.first_name, driver?.last_name]
         else return [undefined, undefined]
     }
