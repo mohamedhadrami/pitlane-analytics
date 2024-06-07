@@ -1,4 +1,5 @@
 // @/app/telemetry/page.tsx
+// Create breadcrumbs instead of dynamically loading
 
 "use client";
 
@@ -11,7 +12,7 @@ import { fetchLaps } from "@/services/openF1Api";
 
 import SessionSelector from "@/components/Telemetry/SessionSelector";
 import SessionStats from "@/components/Telemetry/SessionStats";
-import PitStrategy from "@/components/Telemetry/PitStrategy";
+import TyreStrategy from "@/components/Telemetry/TyreStrategy";
 import DriverSelection from "@/components/Telemetry/DriverSelection";
 import LapTimesLineChart from "@/components/Telemetry/LapTimesLineChart";
 import LapStatsLineChart from "@/components/Telemetry/TelemetryCharts";
@@ -19,7 +20,7 @@ import TrackVisualizer from "@/components/Telemetry/TrackVisualizer";
 import LapSummary from "@/components/Telemetry/LapSummary";
 import { TelemetryProvider, useTelemetry } from "@/context/TelemetryContext";
 import { useFetchMeetings, useFetchSessionData, useFetchSessions, useFetchTelemetryData, useFetchYears, useHandleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
-import Loading from "@/components/Loading";
+import { Tab, Tabs } from "@nextui-org/react";
 
 
 const PageContent: React.FC = () => {
@@ -61,9 +62,9 @@ const PageContent: React.FC = () => {
     }, [searchParams, setSelectedYear, setSelectedMeetingKey, setSelectedSessionKey]);
 
     const years = useFetchYears();
-    const { meetings, loadingMeetings, errorMeetings } = useFetchMeetings(selectedYear);
-    const { sessions, loadingSessions, errorSessions } = useFetchSessions(meetings, selectedMeetingKey, setSelectedMeeting);
-    const { weather, drivers, raceControl, stints, circuitData, loadingSessionData, errorSessionData } = useFetchSessionData(
+    const { meetings } = useFetchMeetings(selectedYear);
+    const { sessions } = useFetchSessions(meetings, selectedMeetingKey, setSelectedMeeting);
+    const { weather, drivers, raceControl, stints, circuitData } = useFetchSessionData(
         selectedYear, selectedMeetingKey, selectedSessionKey, sessions,
         setSelectedSession, setIsShowSession, setIsShowDriverSelect,
         setIsShowPitStrategy, setSelectedDrivers, setIsShowLapTimes, setIsShowTelemetry
@@ -88,9 +89,9 @@ const PageContent: React.FC = () => {
             const stintData = stints.filter((stint: LapParams) => stint.driver_number === driver.driver_number);
 
             toast.promise(Promise.all([lapApiPromise]), {
-                loading: `Loading data for ${driver.name_acronym}...`,
-                success: `Data for ${driver.name_acronym} loaded successfully!`,
-                error: `Error loading data for ${driver.name_acronym}`,
+                loading: `Loading lap times for ${driver.name_acronym}...`,
+                success: `Lap times for ${driver.name_acronym} loaded successfully!`,
+                error: `Error loading lap times for ${driver.name_acronym}`,
             });
 
             const [lapApiData] = await Promise.all([lapApiPromise]);
@@ -116,7 +117,7 @@ const PageContent: React.FC = () => {
 
     useHandleDriverSelect(selectedDrivers, setIsShowLapTimes, setIsShowTelemetry);
 
-    const { loadingTelemetry, errorTelemetry } = useFetchTelemetryData(
+    useFetchTelemetryData(
         selectedMeetingKey,
         selectedSessionKey,
         selectedDrivers,
@@ -125,13 +126,9 @@ const PageContent: React.FC = () => {
         setIsShowTelemetry
     );
 
-    if (errorMeetings || errorSessions || errorSessionData || errorTelemetry) {
-        toast.error('Error loading data');
-    }
-
 
     return (
-        <>
+        <div className="p-3">
             <h1 className="text-3xl font-light py-5 text-center">Telemetry</h1>
             <motion.div
                 key="session-selector"
@@ -139,45 +136,55 @@ const PageContent: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <SessionSelector
-                    years={years}
-                    meetings={meetings}
-                    sessions={sessions}
-                    setSelectedYear={setSelectedYear}
-                    setSelectedMeetingKey={setSelectedMeetingKey}
-                    setSelectedSessionKey={setSelectedSessionKey}
-                    selectedYear={selectedYear}
-                    selectedMeeting={selectedMeeting}
-                    selectedSession={selectedSession}
-                />
+                <div className="p-3">
+                    <SessionSelector
+                        years={years}
+                        meetings={meetings}
+                        sessions={sessions}
+                        setSelectedYear={setSelectedYear}
+                        setSelectedMeetingKey={setSelectedMeetingKey}
+                        setSelectedSessionKey={setSelectedSessionKey}
+                        selectedYear={selectedYear}
+                        selectedMeeting={selectedMeeting}
+                        selectedSession={selectedSession}
+                    />
+                </div>
             </motion.div>
 
-            {loadingSessionData ? <Loading /> :
-                (<div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <div className="flex flex-col space-y-4">
-                        {isShowSession && selectedMeeting && selectedSession && weather && (
-                            <SessionStats meeting={selectedMeeting} session={selectedSession} weather={weather} />
-                        )}
-                        {isShowDriverSelect && drivers && selectedDrivers && (
-                            <DriverSelection
-                                drivers={drivers}
-                                selectedDrivers={selectedDrivers}
-                                toggleDriverSelect={toggleDriverSelect}
-                            />
-                        )}
-                    </div>
-                    {isShowPitStrategy && stints && drivers && (
-                        <PitStrategy stints={stints} drivers={drivers} />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="flex flex-col space-y-4">
+                    {isShowSession && selectedMeeting && selectedSession && weather && (
+                        <SessionStats meeting={selectedMeeting} session={selectedSession} weather={weather} />
                     )}
-                </div>)
-            }
-            {isShowLapTimes && selectedDrivers && raceControl && (
-                <LapTimesLineChart
-                    driversData={selectedDrivers}
-                    raceControl={raceControl}
-                    onLapSelect={setSelectedLap}
-                />
-            )}
+                    {isShowPitStrategy && stints && drivers && (
+                        <div className="m-5">
+                            <Tabs className="" color="primary">
+                                <Tab key="tyre-strategy" title="Tyre Strategy" className="">
+                                    <TyreStrategy stints={stints} drivers={drivers} />
+                                </Tab>
+                                <Tab key="results" title="Results" className="">
+                                </Tab>
+                            </Tabs>
+                        </div>
+                    )}
+                </div>
+                <div className="flex flex-col space-y-4 p-3">
+                    {isShowDriverSelect && drivers && selectedDrivers && (
+                        <DriverSelection
+                            drivers={drivers}
+                            selectedDrivers={selectedDrivers}
+                            toggleDriverSelect={toggleDriverSelect}
+                        />
+                    )}
+                    {isShowLapTimes && selectedDrivers && raceControl && (
+                        <LapTimesLineChart
+                            driversData={selectedDrivers}
+                            raceControl={raceControl}
+                            onLapSelect={setSelectedLap}
+                        />
+                    )}
+                </div>
+            </div>
             {isShowTelemetry && selectedDrivers && selectedLap && circuitData && (
                 <>
                     <LapStatsLineChart driversData={selectedDrivers} lapSelected={selectedLap} />
@@ -185,7 +192,7 @@ const PageContent: React.FC = () => {
                     <LapSummary driversData={selectedDrivers} lapSelected={selectedLap} />
                 </>
             )}
-        </>
+        </div>
     );
 };
 
