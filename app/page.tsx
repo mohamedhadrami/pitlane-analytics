@@ -155,27 +155,21 @@ const Home: React.FC = () => {
       )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
         <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
-          <Link href="/analytics">
-
-            <h3 className="text-xl font-semibold mb-2">Analytics</h3>
-            <p>Explore in-depth race analytics and data.</p>
-
-          </Link>
-        </div>
-        <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
-          <Link href="/schedule">
-
-            <h3 className="text-xl font-semibold mb-2">Schedule</h3>
-            <p>Check the full race schedule and upcoming events.</p>
-
-          </Link>
-        </div>
-        <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
           <Link href="/championship">
-
             <h3 className="text-xl font-semibold mb-2">Championship</h3>
             <p>View the latest standings in the championship.</p>
-
+          </Link>
+        </div>
+        <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
+          <Link href="/telemetry">
+            <h3 className="text-xl font-semibold mb-2">Telemetry</h3>
+            <p>Explore in-depth race analytics and data.</p>
+          </Link>
+        </div>
+        <div className="p-5 border rounded shadow-lg hover:shadow-2xl transition-shadow">
+          <Link href="/archive">
+            <h3 className="text-xl font-semibold mb-2">Archive</h3>
+            <p>Access all the historical Formula 1 data.</p>
           </Link>
         </div>
       </div>
@@ -185,7 +179,7 @@ const Home: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4">{news.title}</h2>
             {news.items.map((article: any) => (
               <Link href={`https://www.formula1.com/en/latest/article/${article.slug}.${article.id}`} key={`article-${article.id}`}>
-                <Card className="my-4 p-3 bg-zinc-700 hover:bg-zinc-400">
+                <Card className="my-4 p-3 bg-zinc-700 hover:bg-zinc-600">
                   <CardBody className="font-extralight flex flex-row">
                     <div className="w-1/2 pr-2">
                       <h2 className="text-xl font-semibold mb-2">{article.title}</h2>
