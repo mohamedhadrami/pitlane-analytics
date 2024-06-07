@@ -19,34 +19,39 @@ const LiveSettingsContext = createContext<LiveSettingsContextType | undefined>(u
 
 export const LiveSettingsProvider = ({ children }: { children: ReactNode }) => {
     // MAIN page
-    const [isBanner, setIsBanner] = useState(true);
-    const [isLive, setIsLive] = useState(true);
-    const [isRace, setIsRace] = useState(true);
-    const [isRadio, setIsRadio] = useState(true);
+    const [isBanner, setIsBanner] = useState<boolean>(true);
+    const [isLive, setIsLive] = useState<boolean>(true);
+    const [isRace, setIsRace] = useState<boolean>(true);
+    const [isRadio, setIsRadio] = useState<boolean>(true);
+
+    // BANNER
+    const [isShowWeather, setIsShowWeather] = useState<boolean>(true);
+    const [isShowSessionInfo, setIsShowSessionInfo] = useState<boolean>(true);
 
     // LIVE Timing
-    const [isShowFastestLap, setIsShowFastestLap] = useState(true);
-    const [isShowTyre, setIsShowTyre] = useState(true);
-    const [isShowGapToLeader, setIsShowGapToLeader] = useState(true);
-    const [isShowStintNumber, setIsShowStintNumber] = useState(true);
-    const [isShowLapColumn, setIsShowLapColumn] = useState(true);
-    const [isShowSectors, setIsShowSectors] = useState(true);
+    const [isShowFastestLap, setIsShowFastestLap] = useState<boolean>(true);
+    const [isShowTyre, setIsShowTyre] = useState<boolean>(true);
+    const [isShowGapToLeader, setIsShowGapToLeader] = useState<boolean>(true);
+    const [isShowStintNumber, setIsShowStintNumber] = useState<boolean>(true);
+    const [isShowLapColumn, setIsShowLapColumn] = useState<boolean>(true);
+    const [isShowSectors, setIsShowSectors] = useState<boolean>(true);
 
     // RACE Control
-    const [isShowRaceControlTime, setIsShowRaceControlTime] = useState(true);
-    const [isShowRedFlag, setIsShowRedFlag] = useState(true);
-    const [isShowBlueFlag, setIsShowBlueFlag] = useState(true);
+    const [isShowRaceControlTime, setIsShowRaceControlTime] = useState<boolean>(true);
+    const [isShowRedFlag, setIsShowRedFlag] = useState<boolean>(true);
+    const [isShowBlueFlag, setIsShowBlueFlag] = useState<boolean>(true);
 
     // TEAM Radio
-    const [isShowTeamRadioTime, setIsShowTeamRadioTime] = useState(true);
-    const [fastestLapColor, setFastestLapColor] = useState('#ff0000');
+    const [isShowTeamRadioTime, setIsShowTeamRadioTime] = useState<boolean>(true);
     
     // TRACK
-    const [isShowTrack, setIsShowTrack] = useState(true);
+    const [isShowTrack, setIsShowTrack] = useState<boolean>(true);
     
 
     const settings: LiveSetting<any>[] = [
         { category: "stats-banner", name: 'Show Stats Banner', type: 'boolean', value: isBanner, setValue: setIsBanner },
+        { category: "stats-banner", name: 'Show Weather', type: 'boolean', value: isShowWeather, setValue: setIsShowWeather },
+        { category: "stats-banner", name: 'Show Session Info', type: 'boolean', value: isShowSessionInfo, setValue: setIsShowSessionInfo },
         { category: "live-table", name: 'Show Live Table', type: 'boolean', value: isLive, setValue: setIsLive },
         { category: "live-table", name: 'Show Fastest Lap', type: 'boolean', value: isShowFastestLap, setValue: setIsShowFastestLap },
         { category: "live-table", name: 'Show Tyre', type: 'boolean', value: isShowTyre, setValue: setIsShowTyre },
@@ -60,7 +65,6 @@ export const LiveSettingsProvider = ({ children }: { children: ReactNode }) => {
         { category: "race-control", name: 'Show Blue Flag', type: 'boolean', value: isShowBlueFlag, setValue: setIsShowBlueFlag },
         { category: "team-radio", name: 'Show Team Radio', type: 'boolean', value: isRadio, setValue: setIsRadio },
         { category: "team-radio", name: 'Show Team Radio Time', type: 'boolean', value: isShowTeamRadioTime, setValue: setIsShowTeamRadioTime },
-        { category: "team-radio", name: 'Fastest Lap Color', type: 'string', value: fastestLapColor, setValue: setFastestLapColor },
         { category: "track", name: 'Show Track', type: 'boolean', value: isShowTrack, setValue: setIsShowTrack },
     ];
 
