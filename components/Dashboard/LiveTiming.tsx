@@ -57,13 +57,13 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
         setIsShowLapColumn(findSetting('Show Lap Column') ?? defaultSettings.showLapColumn);
         setIsShowSectors(findSetting('Show Sectors') ?? defaultSettings.showSectors);
         setTableKey(prevKey => prevKey + 1);
-    }, [ settings, 
-        defaultSettings.showFastestLap, 
-        defaultSettings.showTyre, 
-        defaultSettings.showGapToLeader, 
-        defaultSettings.showStintNumber, 
-        defaultSettings.showLapColumn, 
-        defaultSettings.showSectors ]);
+    }, [settings,
+        defaultSettings.showFastestLap,
+        defaultSettings.showTyre,
+        defaultSettings.showGapToLeader,
+        defaultSettings.showStintNumber,
+        defaultSettings.showLapColumn,
+        defaultSettings.showSectors]);
 
     const [sortedDrivers, setSortedDrivers] = useState<DriverParams[]>([]);
     const [currentLap, setCurrentLap] = useState<number | undefined>(0);
@@ -93,6 +93,20 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
         }),
         [],
     );
+
+    const [overallFastestLap, setOverallFastestLap] = useState<LapParams | null>(null);
+
+    useEffect(() => {
+        const fastestLap = laps.reduce((fastest: LapParams | null, current) => {
+            if (current.lap_duration == null) {
+                return fastest;
+            }
+            return !fastest || (current.lap_duration < fastest.lap_duration!) ? current : fastest;
+        }, null);
+        setOverallFastestLap(fastestLap);
+        console.log(fastestLap?.lap_duration)
+    }, [laps]);
+
 
     const renderCell = (driver: DriverParams, columnKey: React.Key, laps: LapParams[], stints: StintParams[]): React.ReactNode => {
         const lap = laps?.filter(lap => lap.driver_number === driver.driver_number).pop();
@@ -126,9 +140,15 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                             <div className="mx-auto"><Minus /></div>
                         )}
                         {isShowFastestLap ? (fastestLap && fastestLap?.lap_duration ? (
-                            <div className="font-thin flex flex-row justify-center gap-1">
-                            {formatSecondsToTime(fastestLap?.lap_duration)} {`(${fastestLap?.lap_number})`}
-                            </div>
+                            fastestLap.lap_duration === overallFastestLap?.lap_duration ? (
+                                <div className="flex flex-row justify-center gap-1 text-[#FF00FF]">
+                                    {formatSecondsToTime(fastestLap?.lap_duration)} {`(${fastestLap?.lap_number})`}
+                                </div>
+                            ) : (
+                                <div className="font-thin flex flex-row justify-center gap-1">
+                                    {formatSecondsToTime(fastestLap?.lap_duration)} {`(${fastestLap?.lap_number})`}
+                                </div>
+                            )
                         ) : (
                             <div className="mx-auto"><Minus /></div>
                         )) : ""}
@@ -164,7 +184,10 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                 )
             case "sectors":
                 return (
-                    <SectorSegment lap={lap!} />
+                    <>
+                        <SectorSegment lap={lap!} />
+                        {isShowFastestLap ? <SectorSegment lap={fastestLap!} /> : ""}
+                    </>
                 );
         }
     }
