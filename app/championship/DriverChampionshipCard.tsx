@@ -66,7 +66,9 @@ const DriverChampionshipCard: React.FC<{
       {driver && flagUrl && (
         <CardContainer
           key={`${driver.Driver.code}_card`}
-          className="bg-gradient-to-br from-zinc-800 to-zinc-800 border-[#111] rounded-lg p-3 min-w-80 shadow-md transition duration-300 border border-transparent"
+          className="bg-gradient-to-br from-zinc-800 to-zinc-800 
+                  border-[#111] rounded-lg p-3 min-w-80 shadow-md 
+                  transition duration-300 border border-transparent"
           bordercolor={teamColor || "#fff"}
           onClick={handleDriverSelect}
         >

@@ -62,12 +62,14 @@ const Page: React.FC = () => {
             <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-8 px-15 pb-30">
                 {drivers.length > 1 && constructorData?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map(
                     (constructor: any, index: number) => (
-                        <ConstructorChampionshipCard
-                            key={`${constructor.Constructor.constructorId}_champ-card`}
-                            constructor={constructor}
-                            drivers={drivers}
-                            year={year}
-                        />
+                        <div key={index} className="flex justify-center">
+                            <ConstructorChampionshipCard
+                                key={`${constructor.Constructor.constructorId}_champ-card`}
+                                constructor={constructor}
+                                drivers={drivers}
+                                year={year}
+                            />
+                        </div>
                     )
                 )}
             </div>
