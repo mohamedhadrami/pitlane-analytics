@@ -37,6 +37,7 @@ import { delay } from "@/utils/helpers";
 import { mvCircuit } from "@/interfaces/multiviewer";
 import TrackMap from "@/components/Dashboard/TrackMap";
 import { fetchCircuitByKey } from "@/services/mvApi";
+import Loading from "@/components/Loading";
 
 
 const Dashboard: React.FC = () => {
@@ -227,21 +228,19 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
     return (
         <div className="mx-auto">
             <div className="flex flex-row items-center w-full h-10 border-b-1 border-zinc-800">
-                {isBanner && meeting && session && weather && (
-                    <div className="flex-grow overflow-hidden my-auto">
+                <div className="flex-grow overflow-hidden my-auto">
+                    {isBanner && meeting && session && weather && (
                         <TopBanner meeting={meeting} session={session} weather={weather} />
-                    </div>
-                )}
+                    )}
+                </div>
                 <Divider orientation="vertical" />
-                {drivers && stints && laps && positions && (
-                    <div className="flex align-middle mx-5">
-                        <LiveSettings />
-                    </div>
-                )}
+                <div className="flex justify-end align-middle mx-5">
+                    {drivers && stints && laps && positions && (<LiveSettings />)}
+                </div>
             </div>
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-1 xl:grid-cols-2">
-                {drivers && stints && laps && positions && isLive && (
-                    <div className="col-span-1 xl:col-span-1 m-3">
+                <div className="col-span-1 xl:col-span-1 m-3">
+                    {drivers && stints && laps && positions && isLive && (
                         <LiveTiming
                             drivers={drivers}
                             stints={stints}
@@ -249,19 +248,19 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
                             positions={positions}
                             intervals={intervals}
                         />
-                    </div>
-                )}
-                <div className="grid grid-cols-3 gap-3 xl:grid-cols-1 xl:border-l-1 border-zinc-800 max-h-full">
-                    {raceControl && isRace && (
-                        <div className="col-span-3 lg:col-span-1 xl:p-5 xl:border-b-1 border-zinc-800">
+                    )}
+                </div>
+                <div className="grid grid-cols-3 gap-3 xl:grid-rows-3 xl:grid-cols-1 xl:border-l-1 border-zinc-800 max-h-full">
+                    <div className="col-span-2 xl:col-span-1 xl:row-span-1 xl:p-5 xl:border-b-1 border-zinc-800">
+                        {isRace && raceControl.length > 0 ? (
                             <RaceControl drivers={drivers} raceControl={raceControl} />
-                        </div>
-                    )}
-                    {teamRadio && isRadio && (
-                        <div className="col-span-3 lg:col-span-1 xl:p-5">
+                        ) : <Loading />}
+                    </div>
+                    <div className="col-span-1 xl:col-span-1 xl:row-span-1 xl:p-5">
+                        {isRadio && teamRadio.length > 0 ? (
                             <TeamRadios drivers={drivers} teamRadio={teamRadio} />
-                        </div>
-                    )}
+                        ) : <Loading />}
+                    </div>
                     {/*circuitData && isTrack && (
                         <div className="col-span-3 lg:col-span-1 xl:p-5 xl:border-t-1 border-zinc-800">
                             <TrackMap circuitData={circuitData} />
