@@ -8,6 +8,7 @@ import { delay } from "@/utils/helpers";
 import { DriverChartData } from "@/interfaces/custom";
 import { mvCircuit } from "@/interfaces/multiviewer";
 import { calculateLapTime } from "@/utils/telemetryUtils";
+import { toast } from "sonner";
 
 
 
@@ -30,29 +31,27 @@ export const useFetchYears = () => {
 
 export const useFetchMeetings = (selectedYear: string | undefined) => {
     const [meetings, setMeetings] = useState<MeetingParams[]>([]);
-    const [loadingMeetings, setLoading] = useState<boolean>(false);
-    const [errorMeetings, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!selectedYear) return;
 
         const fetchData = async () => {
-            setLoading(true);
             const params: MeetingParams = { year: selectedYear };
-            try {
-                const fetchedMeetings = await fetchMeeting(params);
-                setMeetings(fetchedMeetings);
-            } catch (err) {
-                setError("Failed to fetch meetings");
-            } finally {
-                setLoading(false);
-            }
+            const fetchedMeetings = await fetchMeeting(params);
+            if (fetchedMeetings.length === 0) throw new Error("No meetings fetched. Checked if year is within the correct range")
+            setMeetings(fetchedMeetings);
         };
 
-        fetchData();
+        const dataPromise = fetchData();
+        toast.promise(Promise.all([dataPromise]), {
+            loading: `Loading meetings...`,
+            success: `Meetings loaded successfully!`,
+            error: (e: any) => `${e.message}`,
+        });
+
     }, [selectedYear]);
 
-    return { meetings, loadingMeetings, errorMeetings };
+    return { meetings };
 };
 
 
@@ -60,31 +59,28 @@ export const useFetchMeetings = (selectedYear: string | undefined) => {
 
 export const useFetchSessions = (meetings: MeetingParams[], selectedMeetingKey: number | undefined, setSelectedMeeting: (v: any) => void) => {
     const [sessions, setSessions] = useState<SessionParams[]>([]);
-    const [loadingSessions, setLoading] = useState<boolean>(false);
-    const [errorSessions, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (!selectedMeetingKey) return;
 
         const fetchData = async () => {
-            setLoading(true);
             const params: SessionParams = { meeting_key: selectedMeetingKey };
-            try {
-                const fetchedSessions = await fetchSession(params);
-                setSessions(fetchedSessions);
-                const meeting = meetings?.find(v => v.meeting_key === selectedMeetingKey);
-                setSelectedMeeting(meeting);
-            } catch (err) {
-                setError("Failed to fetch sessions");
-            } finally {
-                setLoading(false);
-            }
+            const fetchedSessions = await fetchSession(params);
+            if (fetchedSessions.length === 0) throw new Error("No sessions fetched. Checked if meeting key is correct.")
+            setSessions(fetchedSessions);
+            const meeting = meetings?.find(v => v.meeting_key === selectedMeetingKey);
+            setSelectedMeeting(meeting);
         };
 
-        fetchData();
+        const dataPromise = fetchData();
+        toast.promise(Promise.all([dataPromise]), {
+            loading: `Loading sessions...`,
+            success: `Sessions loaded successfully!`,
+            error: (e: any) => `${e.message}`,
+        });
     }, [selectedMeetingKey, meetings]);
 
-    return { sessions, loadingSessions, errorSessions };
+    return { sessions };
 };
 
 
@@ -108,66 +104,57 @@ export const useFetchSessionData = (
     const [raceControl, setRaceControl] = useState<[]>([]);
     const [stints, setStints] = useState<[]>([]);
     const [circuitData, setCircuitData] = useState<mvCircuit>();
-    const [loadingSessionData, setLoading] = useState<boolean>(false);
-    const [errorSessionData, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        setLoading(true);
         const fetchData = async () => {
-            try {
-                const session = sessions?.find(v => v.session_key === selectedSessionKey);
-                setSelectedSession(session!);
-                const params = {
-                    meeting_key: selectedMeetingKey,
-                    session_key: selectedSessionKey
-                };
-                const fetchWeatherData = async () => {
-                    const res = await fetchWeather(params as WeatherParams);
-                    setWeather(res);
-                    if (res) setIsShowSession(true);
-                };
-                const fetchDriverData = async () => {
-                    const res = await fetchDrivers(params as DriverParams);
-                    setDrivers(res);
-                    await delay(500);
-                };
-                const fetchRaceControlData = async () => {
-                    const res = await fetchRaceControl(params as RaceControlParams);
-                    setRaceControl(res);
-                };
-                const fetchStintData = async () => {
-                    const res = await fetchStint(params as StintParams);
-                    setStints(res);
-                    await delay(1000);
-                }
-                const fetchCircuitData = async () => {
-                    const res = await fetchCircuitByKey(session?.circuit_key!, selectedYear!);
-                    setCircuitData(res);
-                };
-                if (selectedSessionKey) {
-                    fetchStintData();
-                    fetchWeatherData();
-                    fetchDriverData();
-                    fetchRaceControlData();
-                    fetchCircuitData();
-                }
-                setSelectedDrivers(new Map());
-                setIsShowLapTimes(false);
-                setIsShowTelemetry(false);
-                setIsShowDriverSelect(true);
-                setIsShowPitStrategy(true);
-            } catch (err) {
-                setError("Failed to fetch session data");
-            } finally {
-                setLoading(false);
-            }
+            const session = sessions?.find(v => v.session_key === selectedSessionKey);
+            setSelectedSession(session!);
+            const params = {
+                meeting_key: selectedMeetingKey,
+                session_key: selectedSessionKey
+            };
+
+            const weatherRes = await fetchWeather(params as WeatherParams);
+            if (!weatherRes) throw new Error("Error fetching weather");
+            setWeather(weatherRes);
+            setIsShowSession(true);
+
+            const driverRes = await fetchDrivers(params as DriverParams);
+            if (!driverRes) throw new Error("Error fetching driver data");
+            setDrivers(driverRes);
+            await delay(500);
+            setIsShowDriverSelect(true);
+
+            const raceControlRes = await fetchRaceControl(params as RaceControlParams);
+            if (!raceControlRes) throw new Error("Error fetching race control data");
+            setRaceControl(raceControlRes);
+
+            const stintRes = await fetchStint(params as StintParams);
+            if (!stintRes) throw new Error("Error fetching stints");
+            setStints(stintRes);
+            await delay(1000);
+            setIsShowPitStrategy(true);
+
+            const circuitRes = await fetchCircuitByKey(session?.circuit_key!, selectedYear!);
+            if (!circuitRes) throw new Error("Error fetching circuit data");
+            setCircuitData(circuitRes);
+            setSelectedDrivers(new Map());
+            setIsShowLapTimes(false);
+            setIsShowTelemetry(false);
         }
 
-        fetchData();
+        if (selectedSessionKey) {
+            const dataPromise = fetchData();
+            toast.promise(Promise.all([dataPromise]), {
+                loading: `Loading sessions...`,
+                success: `Sessions loaded successfully!`,
+                error: (e: any) => `${e.message}. Make sure the session key is correct`,
+            });
+        }
 
     }, [selectedYear, selectedMeetingKey, selectedSessionKey, sessions]);
 
-    return { weather, drivers, raceControl, stints, circuitData, loadingSessionData, errorSessionData };
+    return { weather, drivers, raceControl, stints, circuitData };
 };
 
 
@@ -183,15 +170,13 @@ export const useHandleDriverSelect = (selectedDrivers: Map<string, DriverChartDa
 
 
 export const useFetchTelemetryData = (
-    selectedMeetingKey: number | undefined, 
-    selectedSessionKey: number | undefined, 
-    selectedDrivers: Map<string, DriverChartData>, 
+    selectedMeetingKey: number | undefined,
+    selectedSessionKey: number | undefined,
+    selectedDrivers: Map<string, DriverChartData>,
     setSelectedDrivers: (v: Map<string, DriverChartData>) => void,
-    selectedLap: number | null, 
+    selectedLap: number | null,
     setIsShowTelemetry: (v: boolean) => void
 ) => {
-    const [loadingTelemetry, setLoading] = useState<boolean>(false);
-    const [errorTelemetry, setError] = useState<string | null>(null);
 
     const fetchTelemetryData = useCallback(async () => {
         const lapDataRequests = Array.from(selectedDrivers, async ([_, driverData]) => {
@@ -211,9 +196,17 @@ export const useFetchTelemetryData = (
                     session_key: selectedSessionKey,
                     driver_number: driverData.driver.driver_number,
                 };
-                const carApiData: CarDataParams[] = await fetchCarData(params, dateRangeParams);
+                const carApiPromise = fetchCarData(params, dateRangeParams);
+                const locationApiPromise = fetchLocation(params, dateRangeParams);
+                toast.promise(Promise.all([carApiPromise, locationApiPromise]), {
+                    loading: `Loading telemetry for ${driverData.driver.name_acronym}...`,
+                    success: `Telemetry for ${driverData.driver.name_acronym} loaded successfully!`,
+                    error: `Error loading telemetry for ${driverData.driver.name_acronym}`,
+                });
+
+                const [carApiData, locationApiData] = await Promise.all([carApiPromise, locationApiPromise]);
+
                 const carDataWithLapTime = calculateLapTime(carApiData);
-                const locationApiData = await fetchLocation(params, dateRangeParams);
                 return {
                     driver: driverData.driver,
                     carDataWithLapTime,
@@ -249,19 +242,11 @@ export const useFetchTelemetryData = (
     }, [selectedDrivers, selectedLap, selectedMeetingKey, selectedSessionKey]);
 
     useEffect(() => {
-        try {
-            if (selectedLap) {
-                fetchTelemetryData();
-                setIsShowTelemetry(true);
-            } else {
-                setIsShowTelemetry(false);
-            }
-        } catch (err) {
-            setError("Failed to fetch telemetry data");
-        } finally {
-            setLoading(false);
+        if (selectedLap) {
+            fetchTelemetryData();
+            setIsShowTelemetry(true);
+        } else {
+            setIsShowTelemetry(false);
         }
     }, [fetchTelemetryData, selectedLap]);
-
-    return { loadingTelemetry, errorTelemetry };
 };
