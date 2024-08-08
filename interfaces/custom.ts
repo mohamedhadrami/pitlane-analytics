@@ -1,3 +1,6 @@
+// @/interface/custom.ts
+
+import { LucideIcon } from "lucide-react";
 import { CarDataParams, DriverParams, LapParams, LocationParams, RaceControlParams, StintParams } from "./openF1";
 
 
@@ -14,4 +17,13 @@ export interface DriverChartData {
 
 export interface ExtendedCarDataParams extends CarDataParams {
     lap_time?: number;
+}
+
+export type NavigationItem = {
+    key: string;
+    label: string;
+    href: string;
+    icon: JSX.Element;
+    description: string;
+    isDisabled: boolean;
 }

@@ -4,10 +4,15 @@
 import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, NavbarMenu, Link, NavbarMenuItem, Spacer } from "@nextui-org/react";
 import { useState } from "react";
 import Image from 'next/image';
+import { NavigationItem } from "@/interfaces/custom";
 
 const titleClasses = "font-light text-lg"
 
-const CustomNavbar: React.FC = () => {
+interface CustomNavbarProps {
+  items: NavigationItem[];
+}
+
+const CustomNavbar: React.FC<CustomNavbarProps> = ({ items }) => {
 
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
@@ -25,7 +30,7 @@ const CustomNavbar: React.FC = () => {
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
       isBlurred={true}
-      className="bg-[#e10600]/75 w-full"
+      className="bg-[#e10600]/75 w-full border-b border-white"
     >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle aria-label={isMenuOpen ? "Close menu" : "Open menu"} />
@@ -33,10 +38,10 @@ const CustomNavbar: React.FC = () => {
 
       <NavbarContent className="sm:hidden pr-3" justify="center">
         <NavbarBrand className="space-x-4">
-        <Link href="/" color="foreground">
+          <Link href="/" color="foreground">
             <Image
               src="/checkered-wave-flag.png"
-              style={{width: "50px", height: "auto"}}
+              style={{ width: "50px", height: "auto" }}
               width={50}
               height={50}
               alt="logo"
@@ -54,27 +59,27 @@ const CustomNavbar: React.FC = () => {
             <Spacer x={4} />
             <Image
               src="/checkered-wave-flag.png"
-              style={{width: "50px", height: "auto"}}
+              style={{ width: "50px", height: "auto" }}
               width={50}
               height={50}
               alt="logo"
             />
           </Link>
         </NavbarBrand>
-        {Object.entries(menuItems).map(([label, href], index) => (
-          <NavbarItem key={`${label}-${index}`} className="font-extralight">
-            <Link href={href} color="foreground">
-              {label}
+        {items.map((item: NavigationItem) => (
+          <NavbarItem key={item.key} className="font-extralight">
+            <Link href={item.href} color="foreground" size="lg" isDisabled={item.isDisabled}>
+              {item.label}
             </Link>
           </NavbarItem>
         ))}
       </NavbarContent>
 
       <NavbarMenu>
-        {Object.entries(menuItems).map(([label, href], index) => (
-          <NavbarMenuItem key={`${label}-${index}`} className="font-extralight">
-            <Link href={href} color="foreground" size="lg">
-              {label}
+        {items.map((item: NavigationItem) => (
+          <NavbarMenuItem key={item.key} className="font-extralight">
+            <Link href={item.href} color="foreground" size="lg" isDisabled={item.isDisabled}>
+              {item.label}
             </Link>
           </NavbarMenuItem>
         ))}
