@@ -1,6 +1,6 @@
 {
   "name": "pitlane-analytics",
-  "version": "0.1.0",
+  "version": "1.5.2",
   "private": true,
   "description": "A Next.js application for analyzing pitlane data.",
   "author": "Mohamed Hadrami <mohamedhadrami9@gmail.com>",
@@ -42,7 +42,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.1.5",
-    "lucide-react": "^0.371.0",
+    "lucide-react": "^0.424.0",
     "next": "^14.2.3",
     "next-themes": "^0.3.0",
     "pg": "^8.11.5",

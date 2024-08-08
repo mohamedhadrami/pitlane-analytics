@@ -43,10 +43,45 @@ const config = {
     require("tailwindcss-animate"),
     nextui({
       themes: {
+        light: {
+          colors: {
+            primary: {
+              DEFAULT: "#E10600",
+              50: "#fde7e6",
+              100: "#ffc6b7",
+              200: "#ffa089",
+              300: "#ff795a",
+              400: "#ff5637",
+              500: "#ff2b10",
+              600: "#fd240c",
+              700: "#ef1905",
+              800: "#e10700",
+              900: "#c90000",
+              foreground: "#FFFFFF"
+            },
+            secondary: {
+              DEFAULT: "#f3e600"
+            },
+            danger: {
+              DEFAULT: "#ff0505"
+            },
+            focus: "#00FF00",
+          },
+        },
         dark: {
           colors: {
             primary: {
               DEFAULT: "#E10600",
+              50: "#fde7e6",
+              100: "#ffc6b7",
+              200: "#ffa089",
+              300: "#ff795a",
+              400: "#ff5637",
+              500: "#ff2b10",
+              600: "#fd240c",
+              700: "#ef1905",
+              800: "#e10700",
+              900: "#c90000",
               foreground: "#FFFFFF"
             },
             secondary: {
