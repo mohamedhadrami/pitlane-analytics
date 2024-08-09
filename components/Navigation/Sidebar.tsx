@@ -58,8 +58,8 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
         <div className="relative">
             <motion.div
                 ref={sidebarRef}
-                className={`flex flex-col p-4 gap-4 
-                  fixed h-full z-30 border-r border-white
+                className={`flex flex-col p-4 fixed gap-4 top-0 left-0
+                  h-full z-30 border-r border-white
                   ${isOpen ?
                         'bg-gradient-to-r from-primary-300 to-primary-200 dark:from-primary-800 dark:to-primary-900'
                         :

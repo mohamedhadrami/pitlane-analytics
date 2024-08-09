@@ -19,7 +19,7 @@ const TopBanner: React.FC<{ meeting: MeetingParams, session: SessionParams, weat
     const trackImageSrc = trackImage(meeting.location, meeting.country_name);
 
     return (
-        <Marquee pauseOnHover={true} loop={0} speed={100}>
+        <Marquee pauseOnHover={true} loop={0} speed={100} className="z-50">
             {weather && (
                 <div className="flex items-center space-x-4 text-small pl-4 py-1">
                     {isShowSessionInfo && (

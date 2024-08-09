@@ -45,7 +45,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
                         <div key={`${event.date}-${event.category}-${id}`} className="flex items-center my-1">
                             {isShowRaceControlTime && gmtOffset && (
                                 <div className="text-[#999] font-extralight w-[12%] text-left">
-                                    {parseISOTimeFull(event?.date, gmtOffset)}
+                                    {parseISOTimeFull(event?.date, gmtOffset)} Lap {event.lap_number}
                                 </div>
                             )}
                             <div className="flex items-center w-3/4 text-left font-extralight">
