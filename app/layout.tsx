@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Metadata } from "next";
 import { Link } from "@nextui-org/react";
 import Sidebar from "@/components/Navigation/Sidebar";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,15 +46,7 @@ export default function RootLayout({
           <CustomNavbar />
           <div className="sm:ml-16">
             {children}
-            <footer className="m-2 text-center mt-5">
-              <hr />
-              <p className="m-3">
-                Powered by{" "}
-                <Link isExternal href="https://openf1.org/">OpenF1 API</Link>{" "}
-                and{" "}
-                <Link isExternal href="https://ergast.com/mrd/">Ergast API</Link>
-              </p>
-            </footer>
+            <Footer />
           </div>
           <NetworkStatusClient />
           <Toaster />

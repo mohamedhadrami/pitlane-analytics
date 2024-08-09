@@ -1,12 +1,15 @@
 // app/providers.tsx
 'use client'
 
-import {NextUIProvider} from '@nextui-org/react'
+import { FooterProvider } from '@/context/FooterContext'
+import { NextUIProvider } from '@nextui-org/react'
 
-export function Providers({children}: { children: React.ReactNode }) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <NextUIProvider>
-      {children}
+      <FooterProvider>
+        {children}
+      </FooterProvider>
     </NextUIProvider>
   )
 }
