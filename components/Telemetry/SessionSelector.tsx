@@ -4,31 +4,21 @@
 
 import React from "react";
 import Selector from "@/components/Telemetry/Selector";
-import { MeetingParams, SessionParams } from "@/interfaces/openF1";
+import { useTelemetry } from "@/context/TelemetryContext";
 
-interface SessionSelectorsProps {
-    years: string[],
-    meetings: MeetingParams[],
-    sessions: SessionParams[],
-    setSelectedYear: (value: any) => void,
-    setSelectedMeetingKey: (value: any) => void,
-    setSelectedSessionKey: (value: any) => void,
-    selectedYear: string | undefined,
-    selectedMeeting: MeetingParams | undefined,
-    selectedSession: SessionParams | undefined,
-}
+const SessionSelector: React.FC = () => {
 
-const SessionSelector: React.FC<SessionSelectorsProps> = ({
-    years,
-    meetings,
-    sessions,
-    setSelectedYear,
-    setSelectedMeetingKey,
-    setSelectedSessionKey,
-    selectedYear,
-    selectedMeeting,
-    selectedSession
-}) => {
+    const {
+        years,
+        meetings,
+        sessions,
+        setSelectedYear,
+        setSelectedMeetingKey,
+        setSelectedSessionKey,
+        selectedYear,
+        selectedMeeting,
+        selectedSession
+    } = useTelemetry();
 
     const selections = {
         "year": {
@@ -68,11 +58,11 @@ const SessionSelector: React.FC<SessionSelectorsProps> = ({
                 break;
             case "meeting":
                 const meeting = meetings?.find(v => v.meeting_official_name === value);
-                setSelectedMeetingKey(meeting?.meeting_key);
+                setSelectedMeetingKey(Number(meeting?.meeting_key!));
                 break;
             case "session":
                 const session = sessions?.find(v => v.session_name === value);
-                setSelectedSessionKey(session?.session_key)
+                setSelectedSessionKey(Number(session?.session_key!))
                 break;
             default:
                 break;
