@@ -2,19 +2,14 @@
 
 "use client"
 
-import { DriverChartData } from "@/interfaces/custom";
 import { DriverParams } from "@/interfaces/openF1";
 import { driverImage, isValidColor } from "@/utils/helpers";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useTelemetry } from "@/context/TelemetryContext";
+import { useToggleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
 
-interface DriverSelectionProps {
-  drivers: DriverParams[],
-  selectedDrivers: Map<string, DriverChartData>
-  toggleDriverSelect: (driver: DriverParams) => void
-}
 
 const DriverImage = styled(motion.img) <{ isselected: string; bordercolor: string }>`
   width: 100px;
@@ -35,21 +30,14 @@ const DriverImage = styled(motion.img) <{ isselected: string; bordercolor: strin
   }
 `;
 
-const DriverSelection: React.FC<DriverSelectionProps> = ({
-  drivers,
-  selectedDrivers,
-  toggleDriverSelect
-}) => {
-  const [isMobile, setIsMobile] = useState(false);
+const DriverSelection: React.FC = () => {
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 600);
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const {
+    drivers,
+    selectedDrivers,
+  } = useTelemetry();
+  
+  const toggleDriverSelect = useToggleDriverSelect();
 
   const handleDriverSelection = (driver: DriverParams) => {
     toggleDriverSelect(driver);
@@ -61,30 +49,30 @@ const DriverSelection: React.FC<DriverSelectionProps> = ({
   }
 
   return (
-    <div className="max-w-screen-lg mx-auto flex flex-wrap justify-center gap-3 px-15 pb-30">
+    <div className="max-w-screen-lg mx-auto flex flex-wrap justify-center gap-3 px-15 py-30">
       {drivers.map((driver: DriverParams) => {
-          const borderColor = isValidColor(`#${driver.team_colour}`)
-            ? `#${driver.team_colour}`
-            : "#fff";
-          return (
-            <DriverImage
-              key={driver.driver_number}
-              src={driverImage(driver.full_name!)}
-              alt={`${driver.first_name} ${driver.last_name}`}
-              bordercolor={borderColor}
-              isselected={
-                (selectedDrivers &&
-                  selectedDrivers.has(driver.driver_number?.toString()!)).toString()
-              }
-              onClick={() => {
-                handleDriverSelection(driver);
-              }}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1}}
-            />
-          );
-        })
+        const borderColor = isValidColor(`#${driver.team_colour}`)
+          ? `#${driver.team_colour}`
+          : "#fff";
+        return (
+          <DriverImage
+            key={driver.driver_number}
+            src={driverImage(driver.full_name!)}
+            alt={`${driver.first_name} ${driver.last_name}`}
+            bordercolor={borderColor}
+            isselected={
+              (selectedDrivers &&
+                selectedDrivers.has(driver.driver_number?.toString()!)).toString()
+            }
+            onClick={() => {
+              handleDriverSelection(driver);
+            }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+          />
+        );
+      })
       }
     </div>
   );

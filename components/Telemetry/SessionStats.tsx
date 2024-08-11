@@ -1,43 +1,29 @@
-// @/components/Telemetry/SessionStats.tsx
+// @/components/Telemetry2/SessionStats.tsx
 
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { Card, CardHeader, CardBody, Divider, Image, Accordion, AccordionItem } from "@nextui-org/react";
-import { MeetingParams, SessionParams, WeatherParams } from "@/interfaces/openF1";
+import { Image, Accordion, AccordionItem } from "@nextui-org/react";
+import { MeetingParams, SessionParams } from "@/interfaces/openF1";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind, Cloudy, CalendarFold } from "lucide-react";
 import { calculateWeatherStats } from "@/utils/telemetryUtils";
 import { fetchCountryFlagByName } from "@/services/countryApi";
-import { parseISODateAndTime, trackDetailedImage, trackImage } from "@/utils/helpers";
-import { fetchRaceResultsByCircuit } from "@/services/ergastApi";
+import { parseISODateAndTime, trackDetailedImage } from "@/utils/helpers";
 import CustomTable from "@/components/tables/CustomTable";
 import { RaceHeaders } from "@/utils/const";
+import { useTelemetry } from "@/context/TelemetryContext";
 
-interface SessionStatsProps {
-    meeting: MeetingParams | undefined,
-    session: SessionParams,
-    weather: WeatherParams[],
-}
+const SessionStats: React.FC = () => {
 
-const SessionStats: React.FC<SessionStatsProps> = ({
-    meeting,
-    session,
-    weather,
-}) => {
+    const {
+        selectedMeeting,
+        selectedSession,
+        weather,
+    } = useTelemetry();
 
     const [weatherAvg, setWeatherAvg] = useState<any>(null);
     const [flag, setFlag] = useState<any>(null);
-    const [isMobile, setIsMobile] = useState(false);
     const [results, setResults] = useState<any>();
-
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 768);
-        };
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     useEffect(() => {
         setWeatherAvg(calculateWeatherStats(weather));
@@ -45,24 +31,21 @@ const SessionStats: React.FC<SessionStatsProps> = ({
 
     useEffect(() => {
         const fetchData = async () => {
-            const flagApiData = await fetchCountryFlagByName(meeting?.country_name!);
+            const flagApiData = await fetchCountryFlagByName(selectedMeeting?.country_name!);
             setFlag(flagApiData);
-            //const res = await fetch(`/api/db/tables/results?year=${meeting?.year}&name=${meeting?.meeting_name}`);
+            //const res = await fetch(`/api/db/tables/results?year=${selectedMeeting?.year}&name=${selectedMeeting?.selectedMeeting_name}`);
             //const data = await res.json();
             //setResults(data.data);
         }
-        if (meeting) fetchData();
-    }, [meeting])
+        if (selectedMeeting) fetchData();
+    }, [selectedMeeting])
 
     const show: boolean = true;
 
     return (
         <div className="flex justify-center w-full max-w-screen-lg mx-auto">
-            {isMobile ?
-                <SessionStatsAccordian session={session} meeting={meeting!} flag={flag} weatherAvg={weatherAvg} />
-                :
-                <SessionStatsCards session={session} meeting={meeting!} flag={flag} weatherAvg={weatherAvg} />
-            }
+            <SessionStatsAccordian selectedSession={selectedSession!} selectedMeeting={selectedMeeting!} flag={flag} weatherAvg={weatherAvg} />
+
             {results && show && (
                 <CustomTable rawData={results} headers={RaceHeaders} type='race2' />
             )}
@@ -72,40 +55,40 @@ const SessionStats: React.FC<SessionStatsProps> = ({
 
 export default SessionStats;
 
-const SessionStatsContainer: React.FC<{ session: SessionParams, meeting: MeetingParams }> = ({ session, meeting }) => {
+const SessionStatsContainer: React.FC<{ selectedSession: SessionParams, selectedMeeting: MeetingParams }> = ({ selectedSession, selectedMeeting }) => {
     return (
         <>
-            <span className="text-center">{meeting?.meeting_official_name}</span>
-            <p>{session.session_name}</p>
+            <span className="text-center">{selectedMeeting?.meeting_official_name}</span>
+            <p>{selectedSession.session_name}</p>
             <p>
                 Start:{" "}
                 {parseISODateAndTime(
-                    session.date_start!,
-                    session.gmt_offset
+                    selectedSession.date_start!,
+                    selectedSession.gmt_offset
                 )}
             </p>
             <p>
                 End:{" "}
                 {parseISODateAndTime(
-                    session.date_end!,
-                    session.gmt_offset
+                    selectedSession.date_end!,
+                    selectedSession.gmt_offset
                 )}
             </p>
         </>
     )
 }
 
-const CircuitStatsContainer: React.FC<{ flag: any, meeting: MeetingParams }> = ({ flag, meeting }) => {
+const CircuitStatsContainer: React.FC<{ flag: any, selectedMeeting: MeetingParams }> = ({ flag, selectedMeeting }) => {
     return (
         <>
             <p>
-                {meeting?.location}, {meeting?.country_name}
+                {selectedMeeting?.location}, {selectedMeeting?.country_name}
             </p>
             <div className="flex justify-center">
                 <Image
                     className=""
                     alt="track image"
-                    src={trackDetailedImage(meeting?.location, meeting?.country_name)}
+                    src={trackDetailedImage(selectedMeeting?.location, selectedMeeting?.country_name)}
                 />
             </div>
         </>
@@ -144,65 +127,15 @@ const WeatherStatsContainer: React.FC<{ weatherAvg: any }> = ({ weatherAvg }) =>
     )
 }
 
-const SessionStatsCards: React.FC<{
-    session: SessionParams,
-    meeting: MeetingParams,
-    flag: any,
-    weatherAvg: any
-}> = ({
-    session,
-    meeting,
-    flag,
-    weatherAvg
-}) => {
-        return (
-            <div className="flex md:flex-row flex-col gap-3 m-5 w-full">
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
-                    <CardHeader className="flex justify-between items-center">
-                        <h1 className="text-lg font-light">Session</h1>
-                        <CalendarFold />
-                    </CardHeader>
-                    <Divider />
-                    <CardBody className="font-extralight">
-                        <SessionStatsContainer session={session!} meeting={meeting!} />
-                    </CardBody>
-                </Card>
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
-                    <CardHeader className="flex justify-between items-center">
-                        <h1 className="text-lg font-light">Circuit</h1>
-                        <Image
-                            className="rounded-lg"
-                            alt="flag image"
-                            width={40}
-                            src={flag?.png} />
-                    </CardHeader>
-                    <Divider />
-                    <CardBody className="flex flex-col items-center font-extralight">
-                        <CircuitStatsContainer flag={flag} meeting={meeting!} />
-                    </CardBody>
-                </Card>
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
-                    <CardHeader className="flex justify-between items-center">
-                        <h1 className="text-lg font-light">Weather</h1>
-                        <Cloudy />
-                    </CardHeader>
-                    <Divider />
-                    <CardBody className="font-extralight">
-                        <WeatherStatsContainer weatherAvg={weatherAvg} />
-                    </CardBody>
-                </Card>
-            </div>
-        )
-    }
 
 const SessionStatsAccordian: React.FC<{
-    session: SessionParams,
-    meeting: MeetingParams,
+    selectedSession: SessionParams,
+    selectedMeeting: MeetingParams,
     flag: any,
     weatherAvg: any
 }> = ({
-    session,
-    meeting,
+    selectedSession,
+    selectedMeeting,
     flag,
     weatherAvg
 }) => {
@@ -248,11 +181,11 @@ const SessionStatsAccordian: React.FC<{
                     }}
                 >
                     <AccordionItem
-                        key="session" aria-label="Session" title="Session"
+                        key="selectedSession" aria-label="Session" title="Session"
                         startContent={<CalendarFold className="mx-2" />}
-                        subtitle={`Get information about the ${meeting.meeting_name} ${session.session_name}`}
+                        subtitle={`Get information about the ${selectedMeeting.meeting_name} ${selectedSession.session_name}`}
                     >
-                        <SessionStatsContainer session={session!} meeting={meeting!} />
+                        <SessionStatsContainer selectedSession={selectedSession!} selectedMeeting={selectedMeeting!} />
                     </AccordionItem>
                     <AccordionItem
                         key="circuit" aria-label="Circuit" title="Circuit"
@@ -261,9 +194,9 @@ const SessionStatsAccordian: React.FC<{
                             alt="flag image"
                             width={40}
                             src={flag?.png} />}
-                        subtitle={`Get information about ${meeting.circuit_short_name}`}
+                        subtitle={`Get information about ${selectedMeeting.circuit_short_name}`}
                     >
-                        <CircuitStatsContainer flag={flag} meeting={meeting!} />
+                        <CircuitStatsContainer flag={flag} selectedMeeting={selectedMeeting!} />
                     </AccordionItem>
                     <AccordionItem
                         key="weather" aria-label="Weather" title="Weather"

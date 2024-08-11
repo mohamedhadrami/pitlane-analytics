@@ -11,18 +11,17 @@ import { DriverChartData } from "@/interfaces/custom";
 import { toast } from "sonner";
 import LapTimeSettings from "./LapTimeSettings";
 import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "@/components/Telemetry/outlierDetection";
+import { useTelemetry } from "@/context/TelemetryContext";
 
-interface LapTimesLineChartProps {
-  driversData: Map<string, DriverChartData>;
-  raceControl: RaceControlParams[];
-  onLapSelect: (lap_number: number) => void;
-}
 
-const LapTimes: React.FC<LapTimesLineChartProps> = ({
-  driversData,
-  raceControl,
-  onLapSelect,
-}) => {
+const LapTimes: React.FC = () => {
+
+  const {
+    raceControl,
+    selectedDrivers: driversData,
+    setSelectedLap: onLapSelect,
+  } = useTelemetry();
+
   const [isRaceControl, setIsRaceControl] = useState<boolean>(true);
   const [isTyres, setIsTyres] = useState<boolean>(true);
   const [isOutlierDetection, setIsOutlierDetection] = useState<boolean>(true);
@@ -181,7 +180,6 @@ const LapTimes: React.FC<LapTimesLineChartProps> = ({
   return (
     <div className="mt-7">
       <div className="flex justify-center gap-5">
-        <h2 className="text-2xl font-extralight">Lap Times</h2>
         <LapTimeSettings
           isRaceControl={isRaceControl}
           setIsRaceControl={setIsRaceControl}

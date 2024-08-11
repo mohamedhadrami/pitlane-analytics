@@ -1,4 +1,4 @@
-// @/components/Telemetry/Selector.tsx
+// @/components/Telemetry2/BreadcrumbSelector.tsx
 
 "use client"
 
@@ -38,7 +38,7 @@ const organizeValues = (label: string, values: any[] | null, isDisabled: boolean
     return verifiedValues;
 }
 
-const Selector: React.FC<SelectorProps> = ({
+const BreadcrumbSelector: React.FC<SelectorProps> = ({
     id,
     label,
     values,
@@ -64,9 +64,12 @@ const Selector: React.FC<SelectorProps> = ({
                 shouldBlockScroll={false}>
                 <DropdownTrigger>
                     <Button
-                        variant="solid"
-                        color="primary"
-                        className="capitalize rounded-small"
+                        variant="light"
+                        color="default"
+                        size="sm"
+                        radius="sm"
+                        endContent={<ChevronDownIcon className="text-default-500" />}
+                        className="capitalize"
                     >
                         {label ? displayValue(label) : ''}
                     </Button>
@@ -90,4 +93,4 @@ const Selector: React.FC<SelectorProps> = ({
     )
 }
 
-export default Selector;
+export default BreadcrumbSelector;
