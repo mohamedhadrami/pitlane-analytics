@@ -49,7 +49,7 @@ interface TelemetryContextProps {
 
 const TelemetryContext = createContext<TelemetryContextProps | undefined>(undefined);
 
-export const useTelemetry = () => {
+export const useTelemetry = () : TelemetryContextProps => {
     const context = useContext(TelemetryContext);
     if (!context) {
         throw new Error("useTelemetry must be used within a TelemetryProvider");

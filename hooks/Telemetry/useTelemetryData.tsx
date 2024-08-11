@@ -1,19 +1,19 @@
 // @/hooks/useTelemetryData.tsx
 
-import { useState, useEffect, useCallback } from "react";
-import { fetchCarData, fetchDrivers, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
-import { CarDataParams, DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, StintParams, WeatherParams } from "@/interfaces/openF1";
+import { useEffect, useCallback } from "react";
+import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
+import { DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, StintParams, WeatherParams } from "@/interfaces/openF1";
 import { fetchCircuitByKey } from "@/services/mvApi";
 import { delay } from "@/utils/helpers";
-import { DriverChartData } from "@/interfaces/custom";
-import { mvCircuit } from "@/interfaces/multiviewer";
 import { calculateLapTime } from "@/utils/telemetryUtils";
 import { toast } from "sonner";
+import { useTelemetry } from "@/context/TelemetryContext";
+import { DriverChartData } from "@/interfaces/custom";
 
 
 
 export const useFetchYears = () => {
-    const [years, setYears] = useState<string[]>([]);
+    const { setYears } = useTelemetry();
 
     useEffect(() => {
         const currentYear = new Date().getFullYear();
@@ -24,16 +24,19 @@ export const useFetchYears = () => {
         setYears(availableYears);
     }, []);
 
-    return years;
 };
 
 
 
-export const useFetchMeetings = (selectedYear: string | undefined) => {
-    const [meetings, setMeetings] = useState<MeetingParams[]>([]);
+export const useFetchMeetings = () => {
+    const { selectedYear, setMeetings, setSelectedMeetingKey } = useTelemetry();
 
     useEffect(() => {
-        if (!selectedYear) return;
+        if (!selectedYear) {
+            setMeetings([]);
+            setSelectedMeetingKey(undefined);
+            return;
+        }
 
         const fetchData = async () => {
             const params: MeetingParams = { year: selectedYear };
@@ -51,17 +54,27 @@ export const useFetchMeetings = (selectedYear: string | undefined) => {
 
     }, [selectedYear]);
 
-    return { meetings };
 };
 
 
 
 
-export const useFetchSessions = (meetings: MeetingParams[], selectedMeetingKey: number | undefined, setSelectedMeeting: (v: any) => void) => {
-    const [sessions, setSessions] = useState<SessionParams[]>([]);
+export const useFetchSessions = () => {
+    const {
+        meetings,
+        selectedMeetingKey,
+        setSelectedMeeting,
+        setSessions,
+        setSelectedSessionKey
+    } = useTelemetry();
 
     useEffect(() => {
-        if (!selectedMeetingKey) return;
+        if (!selectedMeetingKey || !meetings) {
+            setSelectedMeeting(undefined);
+            setSessions([]);
+            setSelectedSessionKey(undefined);
+            return;
+        }
 
         const fetchData = async () => {
             const params: SessionParams = { meeting_key: selectedMeetingKey };
@@ -80,32 +93,36 @@ export const useFetchSessions = (meetings: MeetingParams[], selectedMeetingKey: 
         });
     }, [selectedMeetingKey, meetings]);
 
-    return { sessions };
 };
 
 
 
 
-export const useFetchSessionData = (
-    selectedYear: string | undefined,
-    selectedMeetingKey: number | undefined,
-    selectedSessionKey: number | undefined,
-    sessions: SessionParams[],
-    setSelectedSession: (v: SessionParams) => void,
-    setIsShowSession: (v: boolean) => void,
-    setIsShowDriverSelect: (v: boolean) => void,
-    setIsShowPitStrategy: (v: boolean) => void,
-    setSelectedDrivers: (v: Map<string, DriverChartData>) => void,
-    setIsShowLapTimes: (v: boolean) => void,
-    setIsShowTelemetry: (v: boolean) => void
-) => {
-    const [weather, setWeather] = useState<WeatherParams[]>([]);
-    const [drivers, setDrivers] = useState<DriverParams[]>([]);
-    const [raceControl, setRaceControl] = useState<[]>([]);
-    const [stints, setStints] = useState<[]>([]);
-    const [circuitData, setCircuitData] = useState<mvCircuit>();
+export const useFetchSessionData = () => {
+    const {
+        selectedYear,
+        selectedMeetingKey,
+        selectedSessionKey,
+        sessions,
+        setSelectedSession,
+        setSelectedLap,
+        setIsShowSession,
+        setIsShowDriverSelect,
+        setIsShowPitStrategy,
+        setSelectedDrivers,
+        setIsShowLapTimes,
+        setIsShowTelemetry,
+
+        setWeather,
+        setDrivers,
+        setRaceControl,
+        setStints,
+        setCircuitData,
+    } = useTelemetry()
 
     useEffect(() => {
+
+
         const fetchData = async () => {
             const session = sessions?.find(v => v.session_key === selectedSessionKey);
             setSelectedSession(session!);
@@ -143,24 +160,98 @@ export const useFetchSessionData = (
             setIsShowTelemetry(false);
         }
 
-        if (selectedSessionKey) {
-            const dataPromise = fetchData();
-            toast.promise(Promise.all([dataPromise]), {
-                loading: `Loading sessions...`,
-                success: `Sessions loaded successfully!`,
-                error: (e: any) => `${e.message}. Make sure the session key is correct`,
-            });
+        if (!selectedYear || !selectedMeetingKey || !selectedSessionKey || !sessions) {
+            setSelectedSession(undefined)
+            setSelectedLap(null)
+            setIsShowSession(false)
+            setIsShowDriverSelect(false)
+            setIsShowPitStrategy(false)
+            setSelectedDrivers(new Map<string, DriverChartData>)
+            setIsShowLapTimes(false)
+            setIsShowTelemetry(false)
+            setWeather([])
+            setDrivers([])
+            setRaceControl([])
+            setStints([])
+            setCircuitData(undefined)
+            return;
+        } else {
+            if (selectedSessionKey) {
+                const dataPromise = fetchData();
+                toast.promise(Promise.all([dataPromise]), {
+                    loading: `Loading session data...`,
+                    success: `Session data loaded successfully!`,
+                    error: (e: any) => `${e.message}. Make sure the session key is correct`,
+                });
+            }
         }
 
     }, [selectedYear, selectedMeetingKey, selectedSessionKey, sessions]);
 
-    return { weather, drivers, raceControl, stints, circuitData };
 };
 
 
+export const useToggleDriverSelect = () => {
+    const {
+        selectedMeetingKey,
+        selectedSessionKey,
+        raceControl,
+        selectedDrivers,
+        setSelectedDrivers,
+        stints,
+        setSelectedLap,
+    } = useTelemetry();
+    
+    const toggleDriverSelect = async (driver: DriverParams) => {
+        const driverKey = driver.driver_number?.toString();
+        const isDriverSelected = selectedDrivers?.has(driverKey!);
 
+        if (isDriverSelected) {
+            const updatedDrivers = new Map(selectedDrivers);
+            updatedDrivers.delete(driverKey!);
+            setSelectedDrivers(updatedDrivers);
+        } else {
+            const params = {
+                meeting_key: selectedMeetingKey,
+                session_key: selectedSessionKey,
+                driver_number: driver.driver_number,
+            };
 
-export const useHandleDriverSelect = (selectedDrivers: Map<string, DriverChartData>, setIsShowLapTimes: (v: boolean) => void, setIsShowTelemetry: (v: boolean) => void) => {
+            const lapApiPromise = fetchLaps(params);
+            const stintData = stints.filter((stint: LapParams) => stint.driver_number === driver.driver_number);
+
+            toast.promise(Promise.all([lapApiPromise]), {
+                loading: `Loading lap times for ${driver.name_acronym}...`,
+                success: `Lap times for ${driver.name_acronym} loaded successfully!`,
+                error: `Error loading lap times for ${driver.name_acronym}`,
+            });
+
+            const [lapApiData] = await Promise.all([lapApiPromise]);
+
+            setSelectedDrivers((prevMap) => {
+                const updatedMap = new Map(prevMap);
+                updatedMap.set(driverKey!, {
+                    selectedLap: null,
+                    driver,
+                    laps: lapApiData,
+                    carData: [],
+                    locationData: [],
+                    stintData: stintData,
+                    raceControl: raceControl,
+                    chartData: []
+                });
+                return updatedMap;
+            });
+        }
+
+        if (selectedDrivers?.size !== 0) setSelectedLap(null);
+    };
+    return toggleDriverSelect;
+};
+
+export const useHandleDriverSelect = () => {
+    const { selectedDrivers, setIsShowLapTimes, setIsShowTelemetry } = useTelemetry();
+
     useEffect(() => {
         if (selectedDrivers.size > 0) setIsShowLapTimes(true);
         setIsShowTelemetry(false)
@@ -169,14 +260,17 @@ export const useHandleDriverSelect = (selectedDrivers: Map<string, DriverChartDa
 
 
 
-export const useFetchTelemetryData = (
-    selectedMeetingKey: number | undefined,
-    selectedSessionKey: number | undefined,
-    selectedDrivers: Map<string, DriverChartData>,
-    setSelectedDrivers: (v: Map<string, DriverChartData>) => void,
-    selectedLap: number | null,
-    setIsShowTelemetry: (v: boolean) => void
-) => {
+export const useFetchTelemetryData = () => {
+
+    const {
+        selectedMeetingKey,
+        selectedSessionKey,
+        selectedDrivers,
+        setSelectedDrivers,
+        selectedLap,
+        setIsShowLapTimes,
+        setIsShowTelemetry,
+    } = useTelemetry();
 
     const fetchTelemetryData = useCallback(async () => {
         const lapDataRequests = Array.from(selectedDrivers, async ([_, driverData]) => {
@@ -244,6 +338,7 @@ export const useFetchTelemetryData = (
     useEffect(() => {
         if (selectedLap) {
             fetchTelemetryData();
+            setIsShowLapTimes(false);
             setIsShowTelemetry(true);
         } else {
             setIsShowTelemetry(false);
