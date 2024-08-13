@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { mvCircuit, trackElement } from "@/types/multiviewer";
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, ScatterChart, Scatter } from "recharts";
 import PindropShape from "../Telemetry/Pindrop";
-import TrackVisualizerTooltip from "../Telemetry/TrackVisualizerTooltip";
+import TrackVisualizerTooltip from "../Telemetry/TelemetryCharts/TrackVisualizerTooltip";
 
 interface DataPoint {
     x: number;
