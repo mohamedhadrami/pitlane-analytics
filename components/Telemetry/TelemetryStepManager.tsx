@@ -4,61 +4,30 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTelemetry } from "@/context/TelemetryContext";
 import SelectionPrompt from "./SelectionPrompt";
-import Dash1 from "./Dash1";
 import DriverSelection from "./DriverSelection";
-import LapTimesLineChart from "./LapTimesLineChart";
-import { Calendar } from "lucide-react";
-import TelemetryCharts from "./TelemetryCharts";
+import LapTimesLineChart from "./LapTimes/LapTimesLineChart";
+import { CalendarDays, MapPin, Timer } from "lucide-react";
+import TelemetryCharts from "./TelemetryCharts/TelemetryCharts";
+import { Divider } from "@nextui-org/react";
+import StatsDriverView from "./Views/StatsDriversView";
+import { useHandleCurrentStage } from "@/hooks/Telemetry/useTelemetryUI";
+import { TelemetryStage, useTelemetryUI } from "@/context/TelemetryUIContext";
 
 const TelemetryStepManager: React.FC = () => {
     const { 
         years,
         meetings,
         sessions,
-        selectedYear, 
-        selectedMeeting, 
-        selectedSession, 
-        selectedDrivers, 
-        selectedLap,
-        isShowLapTimes,
-        isShowTelemetry
     } = useTelemetry();
 
-    const [currentStep, setCurrentStep] = useState<string>("driver-lap");
-
-    const getCurrentStep = () => {
-        if (!selectedYear) return "year";
-        if (!selectedMeeting) return "meeting";
-        if (!selectedSession) return "session";
-        if (!selectedDrivers.size) return "stats-drivers";
-        if (isShowLapTimes) return "driver-lap";
-        if (isShowTelemetry) return "lap-telemetry";
-        return "year";
-    };
-
-    useEffect(() => {
-        setCurrentStep(getCurrentStep())
-    }, [selectedYear,
-        selectedMeeting,
-        selectedSession,
-        selectedDrivers,
-        isShowLapTimes,
-        isShowTelemetry,])
-
-    const handleNextStep = () => {
-        if (currentStep === "driver-lap") {
-            setCurrentStep("lap-telemetry");
-        } else if (currentStep === "lap-telemetry") {
-            setCurrentStep("telemetry-fullscreen");
-        }
-    };
+    const { currentStage } = useTelemetryUI();
+    useHandleCurrentStage();
 
     const renderLeftComponent = () => {
-        switch (currentStep) {
-            case "driver-lap":
+        switch (currentStage) {
+            case TelemetryStage.DriverLap:
                 return <DriverSelection />;
-            case "lap-telemetry":
-                console.log("its on")
+            case TelemetryStage.LapTelemetry:
                 return <LapTimesLineChart />;
             default:
                 return null;
@@ -66,10 +35,10 @@ const TelemetryStepManager: React.FC = () => {
     };
 
     const renderRightComponent = () => {
-        switch (currentStep) {
-            case "driver-lap":
+        switch (currentStage) {
+            case TelemetryStage.DriverLap:
                 return <LapTimesLineChart />;
-            case "lap-telemetry":
+            case TelemetryStage.LapTelemetry:
                 return <TelemetryCharts />;
             default:
                 return null;
@@ -77,34 +46,35 @@ const TelemetryStepManager: React.FC = () => {
     };
 
     const renderContent = () => {
-        switch (currentStep) {
-            case "year":
-                return <SelectionPrompt label="Year" icon={<Calendar size={50} />} data={years} />;
-            case "meeting":
-                return <SelectionPrompt label="Meeting" icon={<Calendar size={50} />} data={meetings} />;
-            case "session":
-                return <SelectionPrompt label="Session" icon={<Calendar size={50} />} data={sessions}/>;
-            case "stats-drivers":
-                return <Dash1 />;
-            case "driver-lap":
-            case "lap-telemetry":
+        switch (currentStage) {
+            case TelemetryStage.Year:
+                return <SelectionPrompt label="Year" icon={<CalendarDays size={50} />} data={years} />;
+            case TelemetryStage.Meeting:
+                return <SelectionPrompt label="Meeting" icon={<MapPin size={50} />} data={meetings} />;
+            case TelemetryStage.Session:
+                return <SelectionPrompt label="Session" icon={<Timer size={50} />} data={sessions}/>;
+            case TelemetryStage.StatsDrivers:
+                return <StatsDriverView />;
+            case TelemetryStage.DriverLap:
+            case TelemetryStage.LapTelemetry:
                 return (
                     <div className="flex flex-grow">
                         <AnimatePresence mode="wait">
                             <motion.div
-                                key={currentStep + "-left"}
-                                initial={{ opacity: 0, x: -100 }}
+                                key={currentStage + "-left"}
+                                initial={{ opacity: 0, x: 100 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 100 }}
+                                exit={{ opacity: 0, x: -100 }}
                                 transition={{ duration: 0.5 }}
                                 className="w-1/2"
                             >
                                 {renderLeftComponent()}
                             </motion.div>
                         </AnimatePresence>
+                        <Divider orientation="vertical" className="h-full" />
                         <AnimatePresence mode="wait">
                             <motion.div
-                                key={currentStep + "-right"}
+                                key={currentStage + "-right"}
                                 initial={{ opacity: 0, x: 100 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -100 }}
