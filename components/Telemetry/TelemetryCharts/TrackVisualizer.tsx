@@ -9,7 +9,7 @@ import { isValidColor } from '@/utils/helpers';
 import React, { useEffect, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import TrackVisualizerTooltip from './TrackVisualizerTooltip';
-import PindropShape from './Pindrop';
+import PindropShape from '../Pindrop';
 
 interface TrackVisualizerProps {
     circuitData: mvCircuit;

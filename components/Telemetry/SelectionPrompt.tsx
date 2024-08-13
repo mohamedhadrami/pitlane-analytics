@@ -1,9 +1,10 @@
 // @/components/Telemetry/SelectionPrompts/SelectionPrompt.tsx
 
 import React from "react";
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Listbox, ListboxItem, Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MeetingParams, SessionParams } from "@/interfaces/openF1";
+import { useTelemetry } from "@/context/TelemetryContext";
 
 interface SelectionPromptProps {
     label: string;
@@ -12,10 +13,22 @@ interface SelectionPromptProps {
 }
 
 const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) => {
+    const {
+        selectedYear, setSelectedYear,
+        selectedMeetingKey, setSelectedMeetingKey,
+        selectedSessionKey, setSelectedSessionKey
+    } = useTelemetry();
+
     const renderDataContent = () => {
         switch (label) {
             case "Year":
-                return <YearData data={data as string[]} />;
+                return (
+                    <YearData
+                        data={data as string[]}
+                        selectedValue={selectedYear!}
+                        handler={setSelectedYear}
+                    />
+                );
             case "Meeting":
                 return (
                     <DataTable
@@ -27,7 +40,10 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
                             { key: "date_start", label: "Start Date" },
                             { key: "year", label: "Year" },
                         ]}
+                        selectedValue={selectedMeetingKey!}
                         data={data as MeetingParams[]}
+                        itemKey="meeting_key"
+                        handler={(value) => setSelectedMeetingKey(parseInt(value))}
                     />
                 );
             case "Session":
@@ -40,7 +56,10 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
                             { key: "date_start", label: "Start Date" },
                             { key: "date_end", label: "End Date" },
                         ]}
+                        selectedValue={selectedSessionKey!}
                         data={data as SessionParams[]}
+                        itemKey="session_key"
+                        handler={(value) => setSelectedSessionKey(parseInt(value))}
                     />
                 );
             default:
@@ -72,37 +91,72 @@ export default SelectionPrompt;
 // Abstract DataTable component
 interface DataTableProps<T> {
     headers: { key: keyof T; label: string }[];
+    selectedValue: any;
     data: T[];
+    handler: (item: string) => void;
+    itemKey: keyof T;  // The key to use for each row
 }
 
-const DataTable = <T extends object>({ headers, data }: DataTableProps<T>) => {
+const DataTable = <T extends object>({
+    headers,
+    selectedValue,
+    data,
+    handler,
+    itemKey
+}: DataTableProps<T>) => {
+    const selectedKeyString = selectedValue?.toString() || '';
+
     return (
-        <Table>
+        <Table
+            color="primary"
+            selectionMode="single"
+            removeWrapper
+            selectedKeys={new Set([selectedKeyString])}
+        >
             <TableHeader columns={headers}>
                 {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
             </TableHeader>
             <TableBody items={data}>
-                {(item: T) => (
-                    <TableRow key={(item as any).key || Object.values(item).join("-")}>
-                        {headers.map((header) => (
-                            <TableCell key={header.key}>
-                                {item[header.key]}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                )}
+                {(item: T) => {
+                    const itemKeyValue = item[itemKey]?.toString();
+                    return (
+                        <TableRow key={itemKeyValue} onClick={() => handler(itemKeyValue!)}>
+                            {headers.map((header) => (
+                                <TableCell key={header.key}>
+                                    {item[header.key]}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    );
+                }}
             </TableBody>
         </Table>
     );
 };
 
-// YearData component remains the same
-const YearData: React.FC<{ data: string[] }> = ({ data }) => {
+
+interface YearDataProps {
+    data: string[];
+    selectedValue: string;
+    handler: (year: string) => void;
+}
+
+// YearData component
+const YearData: React.FC<YearDataProps> = ({ data, selectedValue, handler }) => {
     return (
-        <div>
-            {data.map((year, index) => (
-                <p key={index}>{year}</p>
-            ))}
+        <div className="">
+            <RadioGroup
+                aria-label="Year Selection"
+                color="primary"
+                value={selectedValue}
+                onValueChange={handler}
+            >
+                {data.map((year) => (
+                    <Radio key={year} value={year}>
+                        {year}
+                    </Radio>
+                ))}
+            </RadioGroup>
         </div>
     );
 };

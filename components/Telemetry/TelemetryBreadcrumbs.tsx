@@ -1,11 +1,11 @@
 // @/components/Telemetry2/TelemetryBreadcrumbs.tsx
 
-import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Chip } from "@nextui-org/react";
 import BreadcrumbSelector from "./BreadcrumbSelector";
 import { useTelemetry } from "@/context/TelemetryContext";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { ChevronDownIcon } from "lucide-react";
+import { CalendarDays, ChevronDownIcon, MapPin, Timer } from "lucide-react";
 import { DriverParams } from "@/interfaces/openF1";
 import { useToggleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
 
@@ -20,7 +20,10 @@ const TelemetryBreadcrumbs: React.FC = () => {
         setSelectedSessionKey,
         selectedYear,
         selectedMeeting,
+        selectedMeetingKey,
         selectedSession,
+        selectedSessionKey,
+        setSelectedLap,
 
         drivers,
         selectedDrivers,
@@ -31,16 +34,22 @@ const TelemetryBreadcrumbs: React.FC = () => {
 
     const selections = {
         "year": {
-            "values": years,
-            "disabled": years.length == 0 ? true : false,
+            values: years,
+            disabled: years.length == 0 ? true : false,
+            selectedValue: selectedYear,
+            icon: <CalendarDays size={15} />
         },
         "meeting": {
-            "values": meetings,
-            "disabled": meetings.length == 0 ? true : false,
+            values: meetings,
+            disabled: meetings.length == 0 ? true : false,
+            selectedValue: selectedMeetingKey,
+            icon: <MapPin size={15} />
         },
         "session": {
-            "values": sessions,
-            "disabled": sessions.length == 0 ? true : false,
+            values: sessions,
+            disabled: sessions.length == 0 ? true : false,
+            selectedValue: selectedSessionKey,
+            icon: <Timer size={15} />
         }
     }
 
@@ -60,17 +69,17 @@ const TelemetryBreadcrumbs: React.FC = () => {
         }
     }
 
-    const setValue = (value: any, label: any) => {
+    const setValue = (value: string, label: any) => {
         switch (label) {
             case "year":
                 setSelectedYear(value)
                 break;
             case "meeting":
-                const meeting = meetings?.find(v => v.meeting_official_name === value);
+                const meeting = meetings?.find(v => v.meeting_key === parseInt(value));
                 setSelectedMeetingKey(Number(meeting?.meeting_key!));
                 break;
             case "session":
-                const session = sessions?.find(v => v.session_name === value);
+                const session = sessions?.find(v => v.session_key === parseInt(value));
                 setSelectedSessionKey(Number(session?.session_key!))
                 break;
             default:
@@ -113,6 +122,11 @@ const TelemetryBreadcrumbs: React.FC = () => {
         }
     }
 
+    const handleCloseLapSelected = () => {
+        if (selectedLap) {
+            setSelectedLap(null)
+        }
+    }
 
 
     return (
@@ -135,8 +149,10 @@ const TelemetryBreadcrumbs: React.FC = () => {
                                 key={`${key}-dropdown`}
                                 label={key}
                                 values={selections[key as keyof typeof selections].values}
+                                icon={selections[key as keyof typeof selections].icon}
                                 onChange={setValue}
                                 displayValue={getValue}
+                                selectedValue={selections[key as keyof typeof selections].selectedValue}
                                 disabled={selections[key as keyof typeof selections].disabled}
                             />
                         </motion.div>
@@ -194,7 +210,9 @@ const TelemetryBreadcrumbs: React.FC = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        Lap: {selectedLap}
+                        <Chip onClose={handleCloseLapSelected}>
+                            Lap: {selectedLap}
+                        </Chip>
                     </motion.div>
                 </BreadcrumbItem>
             )}

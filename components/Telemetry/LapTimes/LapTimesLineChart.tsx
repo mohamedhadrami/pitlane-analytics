@@ -5,12 +5,12 @@
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
 import { RaceControlParams } from "@/interfaces/openF1";
-import LapTimeTooltip from "@/components/Telemetry/LapTimeTooltip";
-import { formatSecondsToTime, isValidColor } from "../../utils/helpers";
+import LapTimeTooltip from "@/components/Telemetry/LapTimes/LapTimeTooltip";
+import { formatSecondsToTime, isValidColor } from "../../../utils/helpers";
 import { DriverChartData } from "@/interfaces/custom";
 import { toast } from "sonner";
 import LapTimeSettings from "./LapTimeSettings";
-import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "@/components/Telemetry/outlierDetection";
+import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "@/components/Telemetry/LapTimes/outlierDetection";
 import { useTelemetry } from "@/context/TelemetryContext";
 
 
