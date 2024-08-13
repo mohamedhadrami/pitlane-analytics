@@ -49,54 +49,53 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 
     if (!mounted) return null;
 
-    const handleThemeChange = () => {
-        if (theme === 'dark') setTheme('light');
-        else setTheme('dark');
+    const itemVariants = {
+        open: { x: 0, transition: { duration: 0.5 } },
+        closed: { x: -50, transition: { duration: 0.5 } },
     };
 
     return (
         <div className="relative">
-            <motion.div
-                ref={sidebarRef}
-                className={`flex flex-col p-4 fixed gap-4 top-0 left-0
-                  h-full z-30 border-r border-white
-                  ${isOpen ?
-                        'bg-gradient-to-r from-primary-300 to-primary-200 dark:from-primary-800 dark:to-primary-900'
-                        :
-                        'bg-primary-300 dark:bg-primary-800'}
-                  transition-all duration-300`}
-                initial={{ width: '4rem' }}
-                animate={{ width: isOpen ? '16rem' : '4rem' }}
-            >
-                <div className={`flex ${isOpen ? 'justify-end' : 'justify-center'} items-center mb-5`}>
-                    <button
-                        className="text-foreground hover:text-white-800 dark:text-white-500 dark:hover:text-white-300"
-                        onClick={toggleSidebar}
-                    >
-                        {isOpen ? <PanelLeftClose size={24} /> : <PanelLeftOpen size={24} />}
-                    </button>
-                </div>
+            <AnimatePresence mode="wait">
+                <motion.div
+                    ref={sidebarRef}
+                    className={`flex flex-col p-4 fixed gap-4 top-0 left-0
+                                h-full z-30 border-r border-white
+                                ${isOpen ?
+                            'bg-gradient-to-r from-primary-300 to-primary-200 dark:from-primary-800 dark:to-primary-900'
+                            :
+                            'bg-primary-300 dark:bg-primary-800'}
+                                transition-all duration-300`}
+                    initial={{ width: '4rem' }}
+                    animate={{ width: isOpen ? '16rem' : '4rem' }}
+                    transition={{duration: 0.3, type: "spring"}}
+                >
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key="panel-button"
+                            initial="closed"
+                            animate="open"
+                            exit="closed"
+                            variants={itemVariants}
+                            transition={{ duration: 1.5 }}
+                            className={`relative w-full flex-row items-center flex ${isOpen ? 'justify-end' : 'justify-center'} items-center mb-5`}>
+                            <button
+                                className="text-white hover:text-white-800 dark:text-white-500 dark:hover:text-white-300"
+                                onClick={toggleSidebar}
+                            >
+                                {isOpen ? <PanelLeftClose size={24} /> : <PanelLeftOpen size={24} />}
+                            </button>
+                        </motion.div>
+                    </AnimatePresence>
 
-                <AnimatePresence>
                     {items.map((item: NavigationItem) => (
                         <SidebarItem key={item.key} pathname={pathname} isOpen={isOpen} item={item} />
                     ))}
-                </AnimatePresence>
 
-                <div className="flex-grow"></div>
-                {/*
-                        <Tooltip content='Theme' placement="right" closeDelay={0} showArrow>
-                        <Button onClick={handleThemeChange} isIconOnly variant="light" aria-label="Take a photo" className="font-light text-xl flex items-center align-middle cursor-pointer">
-                            <div className={`${isOpen ? '' : 'mx-auto'}`}>{theme === 'dark' ? <Sun /> : <Moon />}</div>
-                        </Button>
-                        </Tooltip>
-                        <SidebarItem pathname={pathname} name="Releases" url="/releases" icon={<Rocket />} isOpen={isOpen} isDisabled />
-                        <SidebarItem pathname={pathname} name="About" url="/about" icon={<Info />} isOpen={isOpen} isDisabled />
-                        <SidebarItem pathname={pathname} name="Account" url="/account" icon={<UserRound />} isOpen={isOpen} isDisabled/>
-                        <SidebarItem pathname={pathname} name="Settings" url="/settings" icon={<Settings />} isOpen={isOpen} />
-                */}
+                    <div className="flex-grow"></div>
 
-            </motion.div>
+                </motion.div>
+            </AnimatePresence>
 
             <div className="ml-16"></div>
         </div>
@@ -104,3 +103,15 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 }
 
 export default Sidebar;
+
+/*
+        <Tooltip content='Theme' placement="right" closeDelay={0} showArrow>
+        <Button onClick={handleThemeChange} isIconOnly variant="light" aria-label="Take a photo" className="font-light text-xl flex items-center align-middle cursor-pointer">
+            <div className={`${isOpen ? '' : 'mx-auto'}`}>{theme === 'dark' ? <Sun /> : <Moon />}</div>
+        </Button>
+        </Tooltip>
+        <SidebarItem pathname={pathname} name="Releases" url="/releases" icon={<Rocket />} isOpen={isOpen} isDisabled />
+        <SidebarItem pathname={pathname} name="About" url="/about" icon={<Info />} isOpen={isOpen} isDisabled />
+        <SidebarItem pathname={pathname} name="Account" url="/account" icon={<UserRound />} isOpen={isOpen} isDisabled/>
+        <SidebarItem pathname={pathname} name="Settings" url="/settings" icon={<Settings />} isOpen={isOpen} />
+*/
