@@ -4,8 +4,8 @@
 
 import type React from "react";
 import { useEffect, useState } from "react";
-import { Image, Accordion, AccordionItem } from "@heroui/react";
-import type { OFMeeting, OFSession } from "@/types/openF1.types";
+import { Image, Accordion, AccordionItem, Card, CardBody, CardHeader, Divider } from "@heroui/react";
+import type { OFSession, OFMeeting } from "@/types/openF1.types";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind, Cloudy, CalendarFold } from "lucide-react";
 import { calculateWeatherStats } from "@/utils/telemetry/telemetryUtils";
 import { fetchCountryFlagByName } from "@/services/countryApi";
@@ -46,14 +46,14 @@ const SessionStats: React.FC = () => {
 
     return (
         <div className="flex justify-center w-full max-w-screen-lg mx-auto">
-            {selectedSession && selectedMeeting && (
-                <SessionStatsAccordian
+            {selectedSession && selectedMeeting &&
+                <SessionStatsCards
                     selectedSession={selectedSession}
                     selectedMeeting={selectedMeeting}
                     flag={flag}
                     weatherAvg={weatherAvg}
                 />
-            )}
+            }
             {results && show && (
                 <CustomTable rawData={results} headers={RaceHeaders} type='race2' />
             )}
@@ -134,6 +134,58 @@ const WeatherStatsContainer: React.FC<{ weatherAvg: any }> = ({ weatherAvg }) =>
         </div>
     )
 }
+
+const SessionStatsCards: React.FC<{
+    selectedSession: OFSession,
+    selectedMeeting: OFMeeting,
+    flag: any,
+    weatherAvg: any
+}> = ({
+    selectedSession,
+    selectedMeeting,
+    flag,
+    weatherAvg
+}) => {
+        return (
+            <div className="flex md:flex-row flex-col gap-3 m-5 w-full">
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
+                    <CardHeader className="flex justify-between items-center">
+                        <h1 className="text-lg font-light">Session</h1>
+                        <CalendarFold />
+                    </CardHeader>
+                    <Divider />
+                    <CardBody className="font-extralight">
+                        <SessionStatsContainer selectedSession={selectedSession} selectedMeeting={selectedMeeting} />
+                    </CardBody>
+                </Card>
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
+                    <CardHeader className="flex justify-between items-center">
+                        <h1 className="text-lg font-light">Circuit</h1>
+                        <Image
+                            className="rounded-lg"
+                            alt="flag image"
+                            width={40}
+                            src={flag?.png} />
+                    </CardHeader>
+                    <Divider />
+                    <CardBody className="flex flex-col items-center font-extralight">
+                        <CircuitStatsContainer flag={flag} selectedMeeting={selectedMeeting} />
+                    </CardBody>
+                </Card>
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
+                    <CardHeader className="flex justify-between items-center">
+                        <h1 className="text-lg font-light">Weather</h1>
+                        <Cloudy />
+                    </CardHeader>
+                    <Divider />
+                    <CardBody className="font-extralight">
+                        <WeatherStatsContainer weatherAvg={weatherAvg} />
+                    </CardBody>
+                </Card>
+            </div>
+        )
+    }
+
 
 
 const SessionStatsAccordian: React.FC<{

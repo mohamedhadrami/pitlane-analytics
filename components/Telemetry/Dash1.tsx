@@ -5,7 +5,7 @@ import SessionStats from "./SessionStats";
 import { useTelemetry } from "@/context/TelemetryContext";
 import DriverSelection from "./DriverSelection";
 import TyreStrategy from "./TyreStrategy";
-import LapTimesLineChart from "../Telemetry/LapTimesLineChart";
+import LapTimesLineChart from "../Telemetry/LapTimes/LapTimesLineChart";
 import { TelemetryStep } from "@/utils/telemetry/telemetrySteps";
 
 
