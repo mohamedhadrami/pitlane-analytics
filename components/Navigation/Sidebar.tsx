@@ -50,9 +50,9 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 
     if (!mounted) return null;
 
-    const handleThemeChange = () => {
-        if (theme === 'dark') setTheme('light');
-        else setTheme('dark');
+    const itemVariants = {
+        open: { x: 0, transition: { duration: 0.5 } },
+        closed: { x: -50, transition: { duration: 0.5 } },
     };
 
     return (
@@ -79,25 +79,11 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
                     </button>
                 </div>
 
-                <AnimatePresence>
-                    {items.map((item: NavigationItem) => (
-                        <SidebarItem key={item.key} pathname={pathname} isOpen={isOpen} item={item} />
-                    ))}
-                </AnimatePresence>
+                {items.map((item: NavigationItem) => (
+                    <SidebarItem key={item.key} pathname={pathname} isOpen={isOpen} item={item} />
+                ))}
 
                 <div className="flex-grow" />
-                {/*
-                        <Tooltip content='Theme' placement="right" closeDelay={0} showArrow>
-                        <Button onClick={handleThemeChange} isIconOnly variant="light" aria-label="Take a photo" className="font-light text-xl flex items-center align-middle cursor-pointer">
-                            <div className={`${isOpen ? '' : 'mx-auto'}`}>{theme === 'dark' ? <Sun /> : <Moon />}</div>
-                        </Button>
-                        </Tooltip>
-                        <SidebarItem pathname={pathname} name="Releases" url="/releases" icon={<Rocket />} isOpen={isOpen} isDisabled />
-                        <SidebarItem pathname={pathname} name="About" url="/about" icon={<Info />} isOpen={isOpen} isDisabled />
-                        <SidebarItem pathname={pathname} name="Account" url="/account" icon={<UserRound />} isOpen={isOpen} isDisabled/>
-                        <SidebarItem pathname={pathname} name="Settings" url="/settings" icon={<Settings />} isOpen={isOpen} />
-                */}
-
             </motion.div>
 
             <div className="ml-16" />
@@ -106,3 +92,15 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 }
 
 export default Sidebar;
+
+/*
+        <Tooltip content='Theme' placement="right" closeDelay={0} showArrow>
+        <Button onClick={handleThemeChange} isIconOnly variant="light" aria-label="Take a photo" className="font-light text-xl flex items-center align-middle cursor-pointer">
+            <div className={`${isOpen ? '' : 'mx-auto'}`}>{theme === 'dark' ? <Sun /> : <Moon />}</div>
+        </Button>
+        </Tooltip>
+        <SidebarItem pathname={pathname} name="Releases" url="/releases" icon={<Rocket />} isOpen={isOpen} isDisabled />
+        <SidebarItem pathname={pathname} name="About" url="/about" icon={<Info />} isOpen={isOpen} isDisabled />
+        <SidebarItem pathname={pathname} name="Account" url="/account" icon={<UserRound />} isOpen={isOpen} isDisabled/>
+        <SidebarItem pathname={pathname} name="Settings" url="/settings" icon={<Settings />} isOpen={isOpen} />
+*/
