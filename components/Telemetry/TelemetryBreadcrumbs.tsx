@@ -154,7 +154,7 @@ const TelemetryBreadcrumbs: React.FC = () => {
                                     icon={selections[key as keyof typeof selections].icon}
                                     onChange={setValue}
                                     displayValue={getValue}
-                                    selectedValue={selections[key as keyof typeof selections].selectedValue}
+                                    selectedValue={selections[key as keyof typeof selections].selectedValue!}
                                     disabled={selections[key].disabled}
                                 />
                             </motion.div>

@@ -7,7 +7,7 @@ import type { OFMeeting, OFSession } from "@/types/openF1.types";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, type Selection } from "@heroui/react";
 import { ChevronDownIcon } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { useEffect } from "react";
+import { type JSX, useEffect } from "react";
 
 type SelectorLabel = "year" | "meeting" | "session";
 
@@ -20,8 +20,10 @@ type ValueMap = {
 type SelectorProps<L extends SelectorLabel> = {
     label: L;
     values: ValueMap[L][] | null;
+    icon: JSX.Element;
     onChange: (value: string, label: L) => void;
     displayValue: (label: string | undefined) => string | undefined;
+    selectedValue: string | number;
     disabled?: boolean;
 };
 
@@ -47,8 +49,10 @@ const organizeValues = <L extends SelectorLabel>(
 const BreadcrumbSelector = <L extends SelectorLabel>({
     label,
     values,
+    icon,
     onChange,
     displayValue,
+    selectedValue,
     disabled = false,
 }: SelectorProps<L>) => {
 
