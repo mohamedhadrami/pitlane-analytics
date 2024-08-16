@@ -75,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
                         className="text-foreground hover:text-white-800 dark:text-white-500 dark:hover:text-white-300"
                         onClick={toggleSidebar}
                     >
-                        {isOpen ? <PanelLeftClose size={24} /> : <PanelLeftOpen size={24} />}
+                        {isOpen ? <PanelLeftClose size={24} strokeWidth={1.5} /> : <PanelLeftOpen size={24} strokeWidth={1.5} />}
                     </button>
                 </div>
 
