@@ -36,7 +36,7 @@ const Navigator: React.FC = () => {
     {
       key: "live",
       label: "Live",
-      href: "/dashboard",
+      href: "/live",
       icon: <Radio strokeWidth={1.5}/>,
       description: "",
       isDisabled: false,
