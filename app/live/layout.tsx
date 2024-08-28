@@ -1,6 +1,6 @@
-// @/app/dashboard/layout.tsx
+// @/app/live/layout.tsx
 
-import type { Metadata } from 'next'
+import { Metadata } from 'next'
  
 export const metadata: Metadata = {
   title: 'Live',

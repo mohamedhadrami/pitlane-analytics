@@ -1,33 +1,33 @@
 
-import type React from "react";
+import React from "react";
 import Marquee from "react-fast-marquee";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind } from "lucide-react";
-import type { OFMeeting, OFSession, OFWeather } from "../../types/openF1.types";
-import { getWindDirection } from "../../utils/telemetry/telemetryUtils";
+import { getWindDirection } from "../../utils/telemetryUtils";
 import { trackImage } from "../../utils/helpers";
-import { Divider, Image } from "@heroui/react";
+import { Divider, Image } from "@nextui-org/react";
 import { useLiveSettings } from "@/context/LiveSettingsContext";
+import { LiveSessionInfo, LiveWeatherData } from "@/interfaces/liveTiming.type";
 
 const labelClasses = "text-gray-400 mr-3";
 
-const TopBanner: React.FC<{ meeting: OFMeeting, session: OFSession, weather: OFWeather }> = ({ meeting, session, weather }) => {
+const TopBanner: React.FC<{ session: LiveSessionInfo, weather: LiveWeatherData }> = ({ session, weather }) => {
     const { settings } = useLiveSettings();
     const findSetting = (name: string) => settings.find(setting => setting.name === name);
     const isShowSessionInfo = findSetting('Show Session Info')?.value;
     const isShowWeather = findSetting('Show Weather')?.value;
 
-    const trackImageSrc = trackImage(meeting.location, meeting.country_name);
+    const trackImageSrc = trackImage(session.Meeting.Location, session.Meeting.Country.Name);
 
     return (
-        <Marquee pauseOnHover={true} loop={0} speed={100} className="z-50">
+        <Marquee pauseOnHover={true} loop={0} speed={75} className="z-50">
             {weather && (
                 <div className="flex items-center space-x-4 text-small pl-4 py-1">
                     {isShowSessionInfo && (
                         <>
                             <Image src={trackImageSrc} radius="none" className="h-7 inline-block" alt="track image" />
-                            <div className="inline-block">{session?.session_name}</div>
-                            <div className="inline-block font-extralight">{meeting?.meeting_official_name}</div>
-                            <div className="inline-block font-extralight">{meeting?.location}, {meeting?.country_name}</div>
+                            <div className="inline-block">{session?.Name}</div>
+                            <div className="inline-block font-extralight">{session?.Meeting.OfficialName}</div>
+                            <div className="inline-block font-extralight">{session?.Meeting.Location}, {session?.Meeting.Country.Name}</div>
                             <Image src={trackImageSrc} radius="none" className="h-7 inline-block" alt="track image" />
                         </>
                     )
@@ -39,46 +39,46 @@ const TopBanner: React.FC<{ meeting: OFMeeting, session: OFSession, weather: OFW
                                 <div className="inline-block">
                                     <Thermometer className="inline-block h-4" />
                                     <span className={labelClasses}>Temperature</span>
-                                    <span>{weather?.air_temperature?.toFixed(2)} °C</span>
+                                    <span>{parseInt(weather.AirTemp).toFixed(2)} °C</span>
                                 </div>
                                 <Divider orientation="vertical" />
                                 <div className="inline-block">
                                     <Droplets className="inline-block h-4" />
                                     <span className={labelClasses}>Humidity</span>
-                                    <span>{weather?.humidity?.toFixed(2)}%</span>
+                                    <span>{parseInt(weather?.Humidity).toFixed(2)}%</span>
                                 </div>
                                 <Divider orientation="vertical" />
                                 <div className="inline-block">
                                     <ThermometerSun className="inline-block h-4" />
                                     <span className={labelClasses}>Track Temp</span>
-                                    <span>{weather?.track_temperature?.toFixed(2)} °C</span>
+                                    <span>{parseInt(weather?.TrackTemp).toFixed(2)} °C</span>
                                 </div>
                                 <Divider orientation="vertical" />
                                 <div className="inline-block">
                                     <AirVent className="inline-block h-4" />
                                     <span className={labelClasses}>Pressure</span>
-                                    <span>{weather?.pressure?.toFixed(2)} mbar</span>
+                                    <span>{parseInt(weather?.Pressure).toFixed(2)} mbar</span>
                                 </div>
                                 <Divider orientation="vertical" />
                                 <div className="inline-block">
                                     <Wind className="inline-block h-4" />
                                     <span className={labelClasses}>Wind Speed</span>
-                                    <span>{weather?.wind_speed?.toFixed(2)} m/s</span>
+                                    <span>{parseInt(weather?.WindSpeed).toFixed(2)} m/s</span>
                                 </div>
                                 <Divider orientation="vertical" />
                                 <div className="inline-block">
                                     <Milestone className="inline-block h-4" />
                                     <span className={labelClasses}>Wind Direction</span>
-                                    <span>{getWindDirection(weather?.wind_direction)}
+                                    <span>{getWindDirection(parseInt(weather?.WindDirection))}
                                         <MoveUp className="inline-block h-4" style={{
-                                            transform: `rotate(${weather?.wind_direction}deg)`,
+                                            transform: `rotate(${weather?.WindDirection}deg)`,
                                         }} /></span>
                                 </div>
                                 <Divider orientation="vertical" />
                                 <div className="inline-block">
                                     <CloudRainWind className="inline-block h-4" />
                                     <span className={labelClasses}>Rain</span>
-                                    <span>{weather?.rainfall ? "Dance and you shall recieved" : "No rain"}</span>
+                                    <span>{parseInt(weather?.Rainfall)? "Dance and you shall recieved" : "No rain"}</span>
                                 </div>
                             </div>
                         </>

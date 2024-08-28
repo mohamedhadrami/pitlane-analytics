@@ -2,8 +2,6 @@
 
 // Based on Radio component in tdjsnelling's monaco
 
-
-import type { OFTeamRadio } from "@/types/openF1.types";
 import { useState, useRef, useEffect } from "react";
 
 const pad = (n: number, l: number) => {
@@ -18,7 +16,7 @@ const secondsToMinutes = (seconds: number) => {
     return `${pad(minutes, 2)}:${pad(remaining, 2)}`;
 };
 
-const Radio: React.FC<{ radio: OFTeamRadio, teamColor: string }> = ({ radio, teamColor }) => {
+const Radio: React.FC<{ url: string, teamColor: string }> = ({ url, teamColor }) => {
     const [playing, setPlaying] = useState<boolean>(false);
     const [duration, setDuration] = useState<number>(0);
     const [progress, setProgress] = useState<number>(0);
@@ -69,7 +67,6 @@ const Radio: React.FC<{ radio: OFTeamRadio, teamColor: string }> = ({ radio, tea
     return (
         <>
             <button
-                type="button"
                 onClick={() => setPlaying((p) => !p)}
                 className="inline-flex w-52 border-1 border-white px-3 py-1 mr-3"
                 style={{
@@ -80,7 +77,7 @@ const Radio: React.FC<{ radio: OFTeamRadio, teamColor: string }> = ({ radio, tea
             </button>
             <audio
                 ref={audioRef}
-                src={radio.recording_url}
+                src={url}
                 onLoadedMetadata={() => {
                     if (audioRef.current) {
                         setDuration(audioRef.current.duration);
