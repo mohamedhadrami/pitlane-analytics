@@ -25,7 +25,7 @@ export interface mvCircuit {
     marshalLights: trackElement[];
     marshalSectors: trackElement[];
     candidateLap: candidateLapProps;
-    circuitKey: 63;
+    circuitKey: number;
     circuitName: string;
     countryIocCode: string;
     countryKey: number;
