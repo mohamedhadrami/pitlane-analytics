@@ -10,12 +10,12 @@ interface FooterContextProps {
 }
 
 const FooterContext = createContext<FooterContextProps>({
-    isFooterVisible: true,
+    isFooterVisible: false,
     setFooterVisible: () => {},
 });
 
 export const FooterProvider = ({ children }: { children: ReactNode }) => {
-    const [isFooterVisible, setFooterVisible] = useState(true);
+    const [isFooterVisible, setFooterVisible] = useState(false);
 
     return (
         <FooterContext.Provider value={{ isFooterVisible, setFooterVisible }}>
