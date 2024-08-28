@@ -9,12 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Cache-Control': 'no-cache'
-      }
-    });
+    const response = await fetch(url);
     const data = await response.json();
     console.log(url)
     return NextResponse.json(data, { status: 200 });
@@ -22,3 +17,13 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
   }
 }
+
+
+/*
+, {
+      method: 'GET',
+      headers: {
+        'Cache-Control': 'no-cache'
+      }
+    }
+*/
