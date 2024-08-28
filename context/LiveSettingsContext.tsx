@@ -33,7 +33,6 @@ export const LiveSettingsProvider = ({ children }: { children: ReactNode }) => {
     const [isShowTyre, setIsShowTyre] = useState<boolean>(true);
     const [isShowGapToLeader, setIsShowGapToLeader] = useState<boolean>(true);
     const [isShowStintNumber, setIsShowStintNumber] = useState<boolean>(true);
-    const [isShowLapColumn, setIsShowLapColumn] = useState<boolean>(true);
     const [isShowSectors, setIsShowSectors] = useState<boolean>(true);
 
     // RACE Control
@@ -57,7 +56,6 @@ export const LiveSettingsProvider = ({ children }: { children: ReactNode }) => {
         { category: "live-table", name: 'Show Tyre', type: 'boolean', value: isShowTyre, setValue: setIsShowTyre },
         { category: "live-table", name: 'Show Gap To Leader', type: 'boolean', value: isShowGapToLeader, setValue: setIsShowGapToLeader },
         { category: "live-table", name: 'Show Stint Number', type: 'boolean', value: isShowStintNumber, setValue: setIsShowStintNumber },
-        { category: "live-table", name: 'Show Lap Column', type: 'boolean', value: isShowLapColumn, setValue: setIsShowLapColumn },
         { category: "live-table", name: 'Show Sectors', type: 'boolean', value: isShowSectors, setValue: setIsShowSectors },
         { category: "race-control", name: 'Show Race Control', type: 'boolean', value: isRace, setValue: setIsRace },
         { category: "race-control", name: 'Show Race Control Time', type: 'boolean', value: isShowRaceControlTime, setValue: setIsShowRaceControlTime },
