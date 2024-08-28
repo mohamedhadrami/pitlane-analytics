@@ -27,7 +27,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           info: `from-zinc-800 to-[#111] ${generalClasses}`,
           loading: `from-secondary-500 to-danger-500 ${generalClasses}`,
           error: `from-danger-700 to-danger-300 ${generalClasses}`,
-          warning: `from-warning-400 to-warning-100 ${generalClasses}`,
+          warning: `from-warning to-warning-200 ${generalClasses}`,
         },
       }}
       icons={{
