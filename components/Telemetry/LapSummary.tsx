@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import { DriverChartData } from '@/interfaces/custom';
 import SectorSegment from '@/components/Dashboard/SectorSegments';
 import { formatSecondsToTime, isValidColor } from '@/utils/helpers';
-import { Table, TableHeader, TableColumn, TableBody, TableCell, TableRow } from '@nextui-org/react';
+import { Table, TableHeader, TableColumn, TableBody, TableCell, TableRow } from '@heroui/react';
 import { getCompoundComponent } from '@/components/Tyres';
 import { CarDataParams } from '@/interfaces/openF1';
 

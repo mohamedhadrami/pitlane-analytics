@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { styled } from "styled-components";
 import { DriverParams } from "../../interfaces/openF1";
 import { carImage, isValidColor, logoImage, teamNameConvertor } from "../../utils/helpers";
-import { Divider, Image, Spacer } from "@nextui-org/react";
+import { Divider, Image, Spacer } from "@heroui/react";
 import ConstructorDrawer from "@/components/drawers/ConstructorDrawer";
 
 const CardContainer = styled.div<{ bordercolor: string }>`

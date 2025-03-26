@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { fetchCountryNameByCode } from "../../services/countryApi";
 import { DriverParams } from "../../interfaces/openF1";
-import { Image, Divider, Spacer } from "@nextui-org/react";
+import { Image, Divider, Spacer } from "@heroui/react";
 import {
   driverImage,
   flagImage,

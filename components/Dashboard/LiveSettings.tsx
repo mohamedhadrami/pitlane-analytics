@@ -1,6 +1,6 @@
 // app/dashboard/LiveSettings.tsx
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
-import { Accordion, AccordionItem, Switch, Input } from "@nextui-org/react";
+import { Accordion, AccordionItem, Switch, Input } from "@heroui/react";
 import { Cog, Headset, Info, ListOrdered, Map, TowerControl } from "lucide-react";
 import { LiveSetting, useLiveSettings } from "@/context/LiveSettingsContext";
 

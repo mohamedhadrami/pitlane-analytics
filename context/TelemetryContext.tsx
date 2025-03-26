@@ -1,8 +1,12 @@
 // @/context/TelemetryContext.tsx
-import React, { ReactNode, createContext, useContext, useState } from "react";
-import { MeetingParams, SessionParams, WeatherParams, RaceControlParams, DriverParams, StintParams } from "@/interfaces/openF1";
-import { DriverChartData } from "@/interfaces/custom";
-import { mvCircuit } from "@/interfaces/multiviewer";
+
+"use client"
+
+import type React from "react";
+import { type ReactNode, createContext, useContext, useState } from "react"
+import type { MeetingParams, SessionParams, WeatherParams, RaceControlParams, DriverParams, StintParams } from "@/interfaces/openF1";
+import type { DriverChartData } from "@/interfaces/custom";
+import type { mvCircuit } from "@/interfaces/multiviewer";
 
 interface TelemetryContextProps {
     years: string[];

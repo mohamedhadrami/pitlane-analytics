@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { DriverParams, SessionParams, TeamRadioParams } from "../../interfaces/openF1";
 import { driverImage, numberImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
-import { Image, ScrollShadow } from "@nextui-org/react";
+import { Image, ScrollShadow } from "@heroui/react";
 import { useLiveSettings } from "../../context/LiveSettingsContext";
 import Radio from "./Radio";
 

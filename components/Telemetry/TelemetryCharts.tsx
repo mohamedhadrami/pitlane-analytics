@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { isValidColor, parseISOTimeFull } from '@/utils/helpers';
 import LapStatsTooltip from './TelemetryChartsTooltip';
-import { Popover, PopoverContent, PopoverTrigger, Switch } from '@nextui-org/react';
+import { Popover, PopoverContent, PopoverTrigger, Switch } from '@heroui/react';
 import { Cog } from 'lucide-react';
 import { useTelemetry } from '@/context/TelemetryContext';
 

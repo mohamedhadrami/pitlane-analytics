@@ -4,7 +4,7 @@
 
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 import { motion } from "framer-motion";
 import { Info, RotateCcw } from "lucide-react";
 

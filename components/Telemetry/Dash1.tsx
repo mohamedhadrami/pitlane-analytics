@@ -1,6 +1,6 @@
 
 
-import { Divider, ScrollShadow, Tab, Tabs } from "@nextui-org/react";
+import { Divider, ScrollShadow, Tab, Tabs } from "@heroui/react";
 import SessionStats from "./SessionStats";
 import { useTelemetry } from "@/context/TelemetryContext";
 import DriverSelection from "./DriverSelection";

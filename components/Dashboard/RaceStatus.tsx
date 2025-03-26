@@ -1,7 +1,7 @@
 // @/components/Dashboard/RaceStatus.tsx
 
 import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/interfaces/liveTiming";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 
 interface RaceStatusProps {
     archiveStatus: LiveArchiveStatus;

@@ -1,8 +1,10 @@
 
+"use client"
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { Divider, Button } from '@nextui-org/react';
-import { Metadata } from 'next';
+import { Divider, Button } from '@heroui/react';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Not Found',

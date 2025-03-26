@@ -1,6 +1,6 @@
 import React from "react";
 import { LapParams, segmentColor } from "../../interfaces/openF1";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 
 const Segment: React.FC<{ segment: number }> = ({ segment }) => (
     <div

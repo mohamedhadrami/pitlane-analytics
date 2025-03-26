@@ -1,7 +1,7 @@
 // @/components/drawer/RaceDrawer.tsx
 
 import { MeetingParams } from "@/interfaces/openF1";
-import { Link, Button, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import { Link, Button, Tabs, Tab, Card, CardBody } from "@heroui/react";
 import { X } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "../ui/drawer";
 import CustomTable from "../tables/CustomTable";

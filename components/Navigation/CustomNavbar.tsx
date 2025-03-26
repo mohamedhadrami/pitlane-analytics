@@ -1,7 +1,7 @@
 
 "use client"
 
-import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, NavbarMenu, Link, NavbarMenuItem, Spacer } from "@nextui-org/react";
+import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, NavbarMenu, Link, NavbarMenuItem, Spacer } from "@heroui/react";
 import { useState } from "react";
 import Image from 'next/image';
 import { NavigationItem } from "@/interfaces/custom";

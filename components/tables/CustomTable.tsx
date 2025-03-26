@@ -1,7 +1,7 @@
 // @/components/table/CustomTable.tsxt
 
 import { RetiredStatuses } from "@/utils/const";
-import { Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Table, PaginationItemRenderProps, PaginationItemType, cn, getKeyValue, Skeleton } from "@nextui-org/react";
+import { Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Table, PaginationItemRenderProps, PaginationItemType, cn, getKeyValue, Skeleton } from "@heroui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";

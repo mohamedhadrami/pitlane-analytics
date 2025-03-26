@@ -1,6 +1,6 @@
 // @/components/Telemetry/LapTimeSettings.tsx
 
-import { Input, Popover, PopoverTrigger, PopoverContent, Switch, Divider, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { Input, Popover, PopoverTrigger, PopoverContent, Switch, Divider, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from "@heroui/react";
 import { Cog, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 

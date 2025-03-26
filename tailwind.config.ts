@@ -1,6 +1,6 @@
 // tailwind.config.js
 import type { Config } from "tailwindcss";
-import { nextui } from "@nextui-org/react";
+import { heroui } from "@heroui/react";
 
 /** @type {import('tailwindcss').Config} */
 const config = {
@@ -41,7 +41,7 @@ const config = {
   darkMode: "class",
   plugins: [
     require("tailwindcss-animate"),
-    nextui({
+    heroui({
       themes: {
         light: {
           colors: {

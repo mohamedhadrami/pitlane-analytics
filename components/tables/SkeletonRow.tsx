@@ -1,6 +1,6 @@
 // @/components/table/SekeltonRow.tsx
 
-import { Skeleton } from "@nextui-org/react";
+import { Skeleton } from "@heroui/react";
 
 const SkeletonRow: React.FC = () => {
     return (

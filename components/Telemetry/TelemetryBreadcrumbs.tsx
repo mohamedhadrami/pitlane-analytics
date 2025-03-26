@@ -1,6 +1,6 @@
 // @/components/Telemetry2/TelemetryBreadcrumbs.tsx
 
-import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 import BreadcrumbSelector from "./BreadcrumbSelector";
 import { useTelemetry } from "@/context/TelemetryContext";
 import { motion } from "framer-motion";

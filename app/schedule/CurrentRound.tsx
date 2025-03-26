@@ -4,7 +4,7 @@ import { fetchCountryFlagByName } from "../../services/countryApi";
 import { fetchRaceResults } from "../../services/ergastApi";
 import { fetchMeeting } from "../../services/openF1Api";
 import { trackDetailedImage, trackImage } from "../../utils/helpers";
-import { Chip, Divider, Image, Spacer } from "@nextui-org/react";
+import { Chip, Divider, Image, Spacer } from "@heroui/react";
 import { Minus } from "lucide-react";
 
 function formatDateRange(startDate: string, endDate: string) {

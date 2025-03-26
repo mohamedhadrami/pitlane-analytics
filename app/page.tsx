@@ -1,12 +1,13 @@
 
 "use client"
 
-import { MeetingParams } from "@/interfaces/openF1";
+import type { MeetingParams } from "@/interfaces/openF1";
 import { fetchCurrentSeason } from "@/services/ergastApi";
 import { fetchMeeting } from "@/services/openF1Api";
 import { findNextRace, parseISODateAndTime } from "@/utils/helpers";
-import { Card, CardBody, Image } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import { Card, CardBody, Image } from "@heroui/react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { Watch } from "react-loader-spinner";
 import Link from 'next/link';
 

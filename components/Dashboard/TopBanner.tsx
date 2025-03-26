@@ -5,7 +5,7 @@ import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp
 import { MeetingParams, SessionParams, WeatherParams } from "../../interfaces/openF1";
 import { getWindDirection } from "../../utils/telemetryUtils";
 import { trackImage } from "../../utils/helpers";
-import { Divider, Image } from "@nextui-org/react";
+import { Divider, Image } from "@heroui/react";
 import { useLiveSettings } from "@/context/LiveSettingsContext";
 
 const labelClasses = "text-gray-400 mr-3";

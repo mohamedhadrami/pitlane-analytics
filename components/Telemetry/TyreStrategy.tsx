@@ -5,7 +5,7 @@
 import { getCompoundColor } from "@/components/Tyres";
 import { DriverParams, StintParams } from "@/interfaces/openF1";
 import { driverImage } from "@/utils/helpers";
-import { Image } from "@nextui-org/react";
+import { Image } from "@heroui/react";
 import React, { useMemo } from 'react';
 
 interface TyreStrategyProps {

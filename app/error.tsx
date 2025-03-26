@@ -2,10 +2,10 @@
 
 "use client"
 
-import { Button, Card, CardBody, Divider, ScrollShadow } from "@nextui-org/react"
+import { Button, Card, CardBody, Divider, ScrollShadow } from "@heroui/react"
 import { useEffect } from "react"
 
-const Error: React.FC<{
+const ErrorPage: React.FC<{
     error: Error & { digest?: string }
     reset: () => void
 }> = ({
@@ -35,9 +35,9 @@ const Error: React.FC<{
                     className="flex mx-auto mt-5"
                     color="primary"
                     variant="ghost" 
-                    onClick={() => reset()}>Try again</Button>
+                    onPress={() => reset()}>Try again</Button>
             </div>
         )
     }
 
-export default Error;
+export default ErrorPage;

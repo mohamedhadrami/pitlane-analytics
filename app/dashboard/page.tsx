@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 import { LiveSettingsProvider, useLiveSettings } from "@/context/LiveSettingsContext";
 import { useFooter } from "@/context/FooterContext";
 import { mvCircuit } from "@/interfaces/multiviewer";

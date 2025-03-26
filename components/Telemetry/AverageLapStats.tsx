@@ -1,6 +1,6 @@
 // @/components/Telemetry/AverageLapStats.tsx
 
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@nextui-org/react";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@heroui/react";
 import { calculateAverages } from "@/utils/telemetryUtils";
 import { DriverChartData } from "@/interfaces/custom";
 

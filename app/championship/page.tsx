@@ -9,7 +9,7 @@ import DriverChampionshipCard from "./DriverChampionshipCard";
 import ConstructorChampionshipCard from "./ConstructorChampionshipCard";
 import { DriverParams } from "@/interfaces/openF1";
 import { fetchDrivers } from "@/services/openF1Api";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 
 
 const Page: React.FC = () => {

@@ -1,7 +1,7 @@
 // @/components/Telemetry/SelectionPrompts/SelectionPrompt.tsx
 
 import React from "react";
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MeetingParams, SessionParams } from "@/interfaces/openF1";
 

@@ -5,7 +5,7 @@
 import { DriverParams } from "@/interfaces/openF1";
 import { fetchDrivers } from "@/services/openF1Api";
 import { driverImage } from "@/utils/helpers";
-import { Image } from "@nextui-org/react";
+import { Image } from "@heroui/react";
 import { useEffect, useState } from "react";
 
 const Page: React.FC<{ params: { slug: string } }> = ({ params }) => {

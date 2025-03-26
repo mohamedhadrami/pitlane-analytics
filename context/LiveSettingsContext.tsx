@@ -1,5 +1,8 @@
 // app/dashboard/LiveSettingsContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+
+"use client"
+
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
 
 type StateType = boolean | string | number;
 

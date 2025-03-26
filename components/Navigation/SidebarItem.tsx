@@ -1,7 +1,7 @@
 // @/components/Navigation/SidebarItem.tsx
 
 import { NavigationItem } from "@/interfaces/custom";
-import { Chip, Link, Tooltip } from "@nextui-org/react";
+import { Chip, Link, Tooltip } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cloneElement } from "react";
 

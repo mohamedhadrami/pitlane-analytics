@@ -1,7 +1,7 @@
 // @/components/Dashboard/LiveTiming.tsx
 
 import React, { useEffect, useMemo, useState } from "react";
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { DriverParams, IntervalParams, LapParams, PositionParams, StintParams } from "@/interfaces/openF1";
 import SectorSegment from "./SectorSegments";
 import { getCompoundComponent } from "@/components/Tyres";
