@@ -1,8 +1,14 @@
-// services/api.ts
+// services/jolpicaApi.ts
+
+/**
+ * 
+ * RIP Ergast
+ * 
+ */
 
 const fetchApiData = async (endpoint: string) => {
     try {
-        const url = `https://ergast.com/api/f1${endpoint}`;
+        const url = `https://api.jolpi.ca/ergast/f1${endpoint}.json`;
         const response = await fetch(url);
         const data = await response.json();
         //console.log(url);
@@ -16,19 +22,19 @@ const fetchApiData = async (endpoint: string) => {
 // CURRENT
 
 export const fetchCurrentSeason = async () => {
-    const endpoint = '/current.json';
+    const endpoint = '/current';
     const data = await fetchApiData(endpoint);
     return data;
 }
 
 export const fetchCurrentDrivers = async () => {
-    const endpoint = '/current/driverStandings.json';
+    const endpoint = '/current/driverStandings';
     const data = fetchApiData(endpoint);
     return data;
 }
 
 export const fetchCurrentConstructors = async () => {
-    const endpoint = '/current/constructorStandings.json';
+    const endpoint = '/current/constructorStandings';
     const data = await fetchApiData(endpoint);
     return data;
 }
@@ -37,13 +43,13 @@ export const fetchCurrentConstructors = async () => {
 // DETAILS
 
 export const fetchDriverDetails = async (driverId: string | string[]) => {
-    const endpoint = `/drivers/${driverId}.json`;
+    const endpoint = `/drivers/${driverId}`;
     const data = await fetchApiData(endpoint);
     return data;
 }
 
 export const fetchConstructorDetails = async (constructorId: string | string[]) => {
-    const endpoint = `/constructors/${constructorId}.json`;
+    const endpoint = `/constructors/${constructorId}`;
     const data = await fetchApiData(endpoint);
     return data;
 }
@@ -51,54 +57,54 @@ export const fetchConstructorDetails = async (constructorId: string | string[]) 
 
 // GENERAL
 
-export const fetchSeason = async (season: any) => {
-    const endpoint = `/${season}.json`;
+export const fetchSeason = async (season: string) => {
+    const endpoint = `/${season}`;
     const data = await fetchApiData(endpoint);
     return data;
 }
 
-export const fetchDriverChampionship = async (season: any) => {
-    const endpoint = `/${season}/driverStandings.json`;
+export const fetchDriverChampionship = async (season: string) => {
+    const endpoint = `/${season}/driverStandings`;
     const data = await fetchApiData(endpoint);
     return data;
 }
 
-export const fetchConstrutorChampionship = async (season: any) => {
-    const endpoint = `/${season}/constructorStandings.json`;
+export const fetchConstrutorChampionship = async (season: string) => {
+    const endpoint = `/${season}/constructorStandings`;
     const data = await fetchApiData(endpoint);
     return data;
 }
 
-export const fetchRaceResults = async (round: any, season?: any, isCurrentYear?: boolean) => {
-    let endpoint =  `/current/${round}/results.json`;
-    if (season) endpoint = `/${season}/${round}/results.json`;
+export const fetchRaceResults = async (round: string, season?: string, isCurrentYear?: boolean) => {
+    let endpoint = `/current/${round}/results`;
+    if (season) endpoint = `/${season}/${round}/results`;
     const data = await fetchApiData(endpoint);
     return data;
 }
 
-export const fetchRaceResultsByCircuit = async (circuitId: any, season?: any, isCurrentYear?: boolean) => {
-    let endpoint =  `/current/circuits/${circuitId}/results.json`;
-    if (season) endpoint = `/${season}/circuits/${circuitId}/results.json`;
+export const fetchRaceResultsByCircuit = async (circuitId: string, season?: string, isCurrentYear?: boolean) => {
+    let endpoint = `/current/circuits/${circuitId}/results`;
+    if (season) endpoint = `/${season}/circuits/${circuitId}/results`;
     const data = await fetchApiData(endpoint);
     return data;
 }
 
-export const fetchAllRaceResults = async (season: any) => {
-    let endpoint =  `/${season}/results.json?limit=999`;
+export const fetchAllRaceResults = async (season: string) => {
+    const endpoint = `/${season}/results?limit=999`;
     const data = await fetchApiData(endpoint);
     return data;
 }
 
 export const fetchDriverResults = async (driverId: string, year?: number, isCurrentYear?: boolean) => {
-    let endpoint = year ? `/${year}/drivers/${driverId}/results.json` : `/drivers/${driverId}/results.json`;
-    if (isCurrentYear) endpoint = `/current/drivers/${driverId}/results.json`
+    let endpoint = year ? `/${year}/drivers/${driverId}/results` : `/drivers/${driverId}/results`;
+    if (isCurrentYear) endpoint = `/current/drivers/${driverId}/results`
     const data = await fetchApiData(endpoint);
     return data;
 }
 
 export const fetchConstructorResults = async (constructorId: string, year?: number, isCurrentYear?: boolean) => {
-    let endpoint = year ? `/${year}/constructors/${constructorId}/results.json` : `/drivers/${constructorId}/results.json`;
-    if (isCurrentYear) endpoint = `/current/constructors/${constructorId}/results.json`
+    let endpoint = year ? `/${year}/constructors/${constructorId}/results` : `/drivers/${constructorId}/results`;
+    if (isCurrentYear) endpoint = `/current/constructors/${constructorId}/results`
     const data = await fetchApiData(endpoint);
     return data;
 }

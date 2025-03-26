@@ -2,7 +2,7 @@
 "use client"
 
 import type { MeetingParams } from "@/interfaces/openF1";
-import { fetchCurrentSeason } from "@/services/ergastApi";
+import { fetchCurrentSeason } from "@/services/jolpicaApi";
 import { fetchMeeting } from "@/services/openF1Api";
 import { findNextRace, parseISODateAndTime } from "@/utils/helpers";
 import { Card, CardBody, Image } from "@heroui/react";

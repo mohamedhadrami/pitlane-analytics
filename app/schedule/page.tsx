@@ -4,7 +4,7 @@
 
 import CurrentRound from "@/app/schedule/CurrentRound";
 import Round from "@/app/schedule/Round";
-import { fetchCurrentSeason } from "@/services/ergastApi";
+import { fetchCurrentSeason } from "@/services/jolpicaApi";
 import { useState, useEffect } from "react";
 import Loading from "../../components/Loading";
 import { MeetingParams } from "@/interfaces/openF1";

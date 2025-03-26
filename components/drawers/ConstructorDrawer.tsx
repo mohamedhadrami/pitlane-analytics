@@ -1,7 +1,7 @@
 // @/components/drawers/ConstructorDrawer.tsx
 
 import React, { useState, useEffect } from "react";
-import { fetchConstructorResults } from "@/services/ergastApi";
+import { fetchConstructorResults } from "@/services/jolpicaApi";
 import { Link, Button, Tabs, Tab, Card, CardBody } from "@heroui/react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerOverlay } from "../ui/drawer";
 import { X, Minus } from "lucide-react";

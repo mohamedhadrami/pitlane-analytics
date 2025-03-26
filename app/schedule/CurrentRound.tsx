@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MeetingParams } from "../../interfaces/openF1";
 import { fetchCountryFlagByName } from "../../services/countryApi";
-import { fetchRaceResults } from "../../services/ergastApi";
+import { fetchRaceResults } from "../../services/jolpicaApi";
 import { fetchMeeting } from "../../services/openF1Api";
 import { trackDetailedImage, trackImage } from "../../utils/helpers";
 import { Chip, Divider, Image, Spacer } from "@heroui/react";

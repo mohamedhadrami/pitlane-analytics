@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { DriverParams } from "@/interfaces/openF1";
-import { fetchDriverResults } from "@/services/ergastApi";
+import { fetchDriverResults } from "@/services/jolpicaApi";
 import { Link, Button, Tabs, Tab, Card, CardBody } from "@heroui/react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerOverlay } from "../ui/drawer";
 import { X, Minus } from "lucide-react";

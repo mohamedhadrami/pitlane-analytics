@@ -1,7 +1,7 @@
 // components/Round.tsx
 
 import React, { useState, useEffect } from "react";
-import { fetchRaceResults } from "../../services/ergastApi";
+import { fetchRaceResults } from "../../services/jolpicaApi";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { MeetingParams } from "../../interfaces/openF1";
 import { driverImage, trackDetailedImage, trackImage } from "../../utils/helpers";

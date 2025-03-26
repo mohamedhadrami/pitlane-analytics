@@ -2,7 +2,7 @@
 
 "use client"
 
-import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/ergastApi";
+import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/jolpicaApi";
 import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs, Link } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Key, useEffect, useState } from "react";

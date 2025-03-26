@@ -4,10 +4,10 @@ import { useEffect, useState } from "react";
 import {
     fetchCurrentConstructors,
     fetchCurrentDrivers,
-} from "../../services/ergastApi";
+} from "../../services/jolpicaApi";
 import DriverChampionshipCard from "./DriverChampionshipCard";
 import ConstructorChampionshipCard from "./ConstructorChampionshipCard";
-import { DriverParams } from "@/interfaces/openF1";
+import type { DriverParams } from "@/interfaces/openF1";
 import { fetchDrivers } from "@/services/openF1Api";
 import { Divider } from "@heroui/react";
 
@@ -47,8 +47,8 @@ const Page: React.FC = () => {
         <>
             <h1 className="text-3xl font-light py-5 text-center">Driver Standings</h1>
             <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-8 px-15 pb-30">
-                {drivers.length > 1 && driverData?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any, index: number) => (
-                    <div key={index} className="flex justify-center">
+                {drivers.length > 1 && driverData?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any) => (
+                    <div key={driver.Driver.code} className="flex justify-center">
                         <DriverChampionshipCard
                             key={`${driver.Driver.code}_champ-card`}
                             driver={driver}
@@ -61,11 +61,11 @@ const Page: React.FC = () => {
             <h1 className="text-3xl font-light py-5 text-center">Constructors Standings</h1>
             <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-8 px-15 pb-30">
                 {drivers.length > 1 && constructorData?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map(
-                    (constructor: any, index: number) => (
-                        <div key={index} className="flex justify-center">
+                    (constructorTeam: any) => (
+                        <div key={constructorTeam.Constructor.constructorId} className="flex justify-center">
                             <ConstructorChampionshipCard
-                                key={`${constructor.Constructor.constructorId}_champ-card`}
-                                constructor={constructor}
+                                key={`${constructorTeam.Constructor.constructorId}_champ-card`}
+                                constructor={constructorTeam}
                                 drivers={drivers}
                                 year={year}
                             />
