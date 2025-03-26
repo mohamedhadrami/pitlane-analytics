@@ -3,7 +3,7 @@
 // Based on Radio component in tdjsnelling's monaco
 
 
-import { TeamRadioParams } from "@/interfaces/openF1";
+import { TeamRadioParams } from "@/types/openF1";
 import { useState, useRef, useEffect } from "react";
 
 const pad = (n: number, l: number) => {

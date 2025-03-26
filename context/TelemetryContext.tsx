@@ -4,9 +4,9 @@
 
 import type React from "react";
 import { type ReactNode, createContext, useContext, useState } from "react"
-import type { MeetingParams, SessionParams, WeatherParams, RaceControlParams, DriverParams, StintParams } from "@/interfaces/openF1";
-import type { DriverChartData } from "@/interfaces/custom";
-import type { mvCircuit } from "@/interfaces/multiviewer";
+import type { MeetingParams, SessionParams, WeatherParams, RaceControlParams, DriverParams, StintParams } from "@/types/openF1";
+import type { DriverChartData } from "@/types/custom";
+import type { mvCircuit } from "@/types/multiviewer";
 
 interface TelemetryContextProps {
     years: string[];

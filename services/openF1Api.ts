@@ -16,7 +16,7 @@ import {
   StintParams,
   TeamRadioParams,
   WeatherParams,
-} from "@/interfaces/openF1"
+} from "@/types/openF1"
 
 const fetchApiData = async (
   endpoint: string,

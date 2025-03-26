@@ -3,7 +3,7 @@
 "use client"
 
 import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/jolpicaApi";
-import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs, Link } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs, Link } from "@heroui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Key, useEffect, useState } from "react";
 import CustomTable from "@/components/tables/CustomTable";

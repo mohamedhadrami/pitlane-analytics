@@ -7,12 +7,13 @@ import Round from "@/app/schedule/Round";
 import { fetchCurrentSeason } from "@/services/jolpicaApi";
 import { useState, useEffect } from "react";
 import Loading from "../../components/Loading";
-import { MeetingParams } from "@/interfaces/openF1";
+import type { MeetingParams } from "@/types/openF1";
 import { fetchMeeting } from "@/services/openF1Api";
 import { findNextRace } from "@/utils/helpers";
+import type { JLPScheduleResponse, JLPRace } from "@/types/jolpica.types";
 
 const Page: React.FC = () => {
-    const [data, setData] = useState<any>(null);
+    const [data, setData] = useState<JLPScheduleResponse>();
     const [meetings, setMeeting] = useState<MeetingParams[]>([]);
     const [nextRaceIndex, setNextRaceIndex] = useState<number | null>(null);
 
@@ -43,7 +44,7 @@ const Page: React.FC = () => {
                 <div className="">
                     {data ? (
                         <div className="max-w-screen-xl my-5 flex flex-wrap justify-evenly gap-3 px-15 pb-30">
-                            {data?.MRData.RaceTable.Races.map((round: any, index: number) => (
+                            {data?.MRData.RaceTable.Races.map((round: JLPRace, index: number) => (
                                 nextRaceIndex === index ? (
                                     <CurrentRound
                                         key={`race-comp-${round.round}`}

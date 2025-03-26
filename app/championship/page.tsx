@@ -7,16 +7,17 @@ import {
 } from "../../services/jolpicaApi";
 import DriverChampionshipCard from "./DriverChampionshipCard";
 import ConstructorChampionshipCard from "./ConstructorChampionshipCard";
-import type { DriverParams } from "@/interfaces/openF1";
+import type { DriverParams } from "@/types/openF1";
 import { fetchDrivers } from "@/services/openF1Api";
 import { Divider } from "@heroui/react";
+import type { DriverStandingsResponse, ConstructorStandingsResponse, ConstructorStandingItem, DriverStandingItem } from "@/types/jolpica.types";
 
 
 const Page: React.FC = () => {
 
-    const [driverData, setDriverData] = useState<any>(null);
+    const [driverData, setDriverData] = useState<DriverStandingsResponse>();
     const [drivers, setDrivers] = useState<DriverParams[]>([]);
-    const [constructorData, setConstructorData] = useState<any>(null);
+    const [constructorData, setConstructorData] = useState<ConstructorStandingsResponse>();
     const [year, setYear] = useState<string>("");
 
     useEffect(() => {
@@ -47,21 +48,22 @@ const Page: React.FC = () => {
         <>
             <h1 className="text-3xl font-light py-5 text-center">Driver Standings</h1>
             <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-8 px-15 pb-30">
-                {drivers.length > 1 && driverData?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any) => (
-                    <div key={driver.Driver.code} className="flex justify-center">
-                        <DriverChampionshipCard
-                            key={`${driver.Driver.code}_champ-card`}
-                            driver={driver}
-                            drivers={drivers}
-                            year={year} />
-                    </div>
-                ))}
+                {drivers.length > 1 && driverData?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map(
+                    (driver: DriverStandingItem) => (
+                        <div key={driver.Driver.code} className="flex justify-center">
+                            <DriverChampionshipCard
+                                key={`${driver.Driver.code}_champ-card`}
+                                driver={driver}
+                                drivers={drivers}
+                                year={year} />
+                        </div>
+                    ))}
             </div>
             <Divider className="m-5 w-3/4 mx-auto" />
             <h1 className="text-3xl font-light py-5 text-center">Constructors Standings</h1>
             <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-8 px-15 pb-30">
                 {drivers.length > 1 && constructorData?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map(
-                    (constructorTeam: any) => (
+                    (constructorTeam: ConstructorStandingItem) => (
                         <div key={constructorTeam.Constructor.constructorId} className="flex justify-center">
                             <ConstructorChampionshipCard
                                 key={`${constructorTeam.Constructor.constructorId}_champ-card`}

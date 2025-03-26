@@ -1,6 +1,6 @@
 // yourApiHandler.ts
 
-import { DbDriverStandings, DbDrivers } from '@/interfaces/ergast';
+import { DbDriverStandings, DbDrivers } from '@/types/ergast';
 import { sql } from '@vercel/postgres';
 import { NextRequest, NextResponse } from 'next/server';
 

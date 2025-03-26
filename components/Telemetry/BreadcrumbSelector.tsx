@@ -2,7 +2,7 @@
 
 "use client"
 
-import { MeetingParams, SessionParams } from "@/interfaces/openF1";
+import { MeetingParams, SessionParams } from "@/types/openF1";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@heroui/react";
 import { ChevronDownIcon } from "lucide-react";
 import React from "react";

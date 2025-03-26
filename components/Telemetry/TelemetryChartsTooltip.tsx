@@ -2,7 +2,7 @@
 
 import React from "react";
 import { parseISODateAndTime } from "@/utils/helpers";
-import { drsStatus } from "@/interfaces/openF1";
+import { drsStatus } from "@/types/openF1";
 
 interface LapTimeTooltipProps {
   active: boolean;

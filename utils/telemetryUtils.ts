@@ -1,7 +1,7 @@
 // @/utils/telemetryUtils.ts
 
-import { DriverChartData } from "@/interfaces/custom";
-import { CarDataParams, WeatherParams } from "@/interfaces/openF1"
+import { DriverChartData } from "@/types/custom";
+import { CarDataParams, WeatherParams } from "@/types/openF1"
 
 export const calculateWeatherStats = (weatherData: WeatherParams[]) => {
     if (weatherData?.length === 0) return null;

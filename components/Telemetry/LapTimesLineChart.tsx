@@ -4,10 +4,10 @@
 
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
-import { RaceControlParams } from "@/interfaces/openF1";
+import { RaceControlParams } from "@/types/openF1";
 import LapTimeTooltip from "@/components/Telemetry/LapTimeTooltip";
 import { formatSecondsToTime, isValidColor } from "../../utils/helpers";
-import { DriverChartData } from "@/interfaces/custom";
+import { DriverChartData } from "@/types/custom";
 import { toast } from "sonner";
 import LapTimeSettings from "./LapTimeSettings";
 import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "@/components/Telemetry/outlierDetection";

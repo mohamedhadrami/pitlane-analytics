@@ -2,13 +2,13 @@
 
 import { useEffect, useCallback } from "react";
 import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
-import { DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, StintParams, WeatherParams } from "@/interfaces/openF1";
+import { DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, StintParams, WeatherParams } from "@/types/openF1";
 import { fetchCircuitByKey } from "@/services/mvApi";
 import { delay } from "@/utils/helpers";
 import { calculateLapTime } from "@/utils/telemetryUtils";
 import { toast } from "sonner";
 import { useTelemetry } from "@/context/TelemetryContext";
-import { DriverChartData } from "@/interfaces/custom";
+import { DriverChartData } from "@/types/custom";
 
 
 

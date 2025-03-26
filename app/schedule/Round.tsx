@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchRaceResults } from "../../services/jolpicaApi";
 import { fetchCountryFlagByName } from "../../services/countryApi";
-import { MeetingParams } from "../../interfaces/openF1";
+import { MeetingParams } from "../../types/openF1";
 import { driverImage, trackDetailedImage, trackImage } from "../../utils/helpers";
 import { Minus, X } from "lucide-react";
 import { Image, Divider, Spacer, Button, Table, TableHeader, TableColumn, TableBody, TableCell, TableRow, Pagination, Link, Tabs, Tab, Card, CardBody } from "@heroui/react";

@@ -1,12 +1,12 @@
 // @/components/Telemetry/LapSummary.tsx
 
 import React, { useMemo } from 'react';
-import { DriverChartData } from '@/interfaces/custom';
+import { DriverChartData } from '@/types/custom';
 import SectorSegment from '@/components/Dashboard/SectorSegments';
 import { formatSecondsToTime, isValidColor } from '@/utils/helpers';
 import { Table, TableHeader, TableColumn, TableBody, TableCell, TableRow } from '@heroui/react';
 import { getCompoundComponent } from '@/components/Tyres';
-import { CarDataParams } from '@/interfaces/openF1';
+import { CarDataParams } from '@/types/openF1';
 
 
 function calculateAverageSpeed(carData: CarDataParams[]): number {

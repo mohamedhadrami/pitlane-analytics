@@ -1,6 +1,6 @@
 // yourApiHandler.ts
 
-import { RacesKeys } from '@/interfaces/ergast';
+import { RacesKeys } from '@/types/ergast';
 import { sql } from '@vercel/postgres';
 import { NextRequest, NextResponse } from 'next/server';
 

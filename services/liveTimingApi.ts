@@ -1,6 +1,6 @@
 // @/services/liveTiming.ts
 
-import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/interfaces/liveTiming";
+import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
 
 const fetchApiData = async (endpoint: string) => {
     try {

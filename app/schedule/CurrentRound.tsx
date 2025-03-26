@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { MeetingParams } from "../../interfaces/openF1";
+import type { MeetingParams } from "../../types/openF1";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { fetchRaceResults } from "../../services/jolpicaApi";
-import { fetchMeeting } from "../../services/openF1Api";
-import { trackDetailedImage, trackImage } from "../../utils/helpers";
+import { trackDetailedImage } from "../../utils/helpers";
 import { Chip, Divider, Image, Spacer } from "@heroui/react";
 import { Minus } from "lucide-react";
 
@@ -23,8 +22,8 @@ function formatSessionTimeDetails(startTime: string, endTime: string, gmtOffset:
 
     // Apply the GMT offset
     const offsetSign = gmtOffset[0];
-    const offsetHours = parseInt(gmtOffset.slice(1, 3), 10);
-    const offsetMinutes = parseInt(gmtOffset.slice(4, 6), 10);
+    const offsetHours = Number.parseInt(gmtOffset.slice(1, 3), 10);
+    const offsetMinutes = Number.parseInt(gmtOffset.slice(4, 6), 10);
     const offsetMilliseconds = (offsetHours * 60 + offsetMinutes) * 60 * 1000;
     const adjustedStartTime = new Date(startDate.getTime() + (offsetSign === '+' ? -offsetMilliseconds : offsetMilliseconds));
     const adjustedEndTime = new Date(endDate.getTime() + (offsetSign === '+' ? -offsetMilliseconds : offsetMilliseconds));
@@ -82,7 +81,7 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
             }
         };
 
-        const raceDate = new Date(raceData.date + " " + raceData.time);
+        const raceDate = new Date(`${raceData.date} ${raceData.time}`);
         const currentDate = new Date();
 
         if (raceDate < currentDate) {
@@ -91,7 +90,7 @@ const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ 
 
         const getFlag = async () => {
             try {
-                let countryName = raceData.Circuit.Location.country;
+                const countryName = raceData.Circuit.Location.country;
                 const flagApiData = await fetchCountryFlagByName(countryName);
                 setFlagData(flagApiData);
             } catch (error) {

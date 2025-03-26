@@ -1,6 +1,6 @@
 // @/components/Dashboard/RaceStatus.tsx
 
-import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/interfaces/liveTiming";
+import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
 import { Divider } from "@heroui/react";
 
 interface RaceStatusProps {

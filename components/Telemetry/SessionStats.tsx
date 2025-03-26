@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Image, Accordion, AccordionItem } from "@heroui/react";
-import { MeetingParams, SessionParams } from "@/interfaces/openF1";
+import { MeetingParams, SessionParams } from "@/types/openF1";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind, Cloudy, CalendarFold } from "lucide-react";
 import { calculateWeatherStats } from "@/utils/telemetryUtils";
 import { fetchCountryFlagByName } from "@/services/countryApi";

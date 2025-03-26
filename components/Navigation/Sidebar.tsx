@@ -8,7 +8,7 @@ import { PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import SidebarItem from "./SidebarItem";
-import { NavigationItem } from "@/interfaces/custom";
+import { NavigationItem } from "@/types/custom";
 
 interface SidebarProps {
     items: NavigationItem[];

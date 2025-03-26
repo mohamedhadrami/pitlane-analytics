@@ -2,7 +2,7 @@
 import React from "react";
 import Marquee from "react-fast-marquee";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind } from "lucide-react";
-import { MeetingParams, SessionParams, WeatherParams } from "../../interfaces/openF1";
+import { MeetingParams, SessionParams, WeatherParams } from "../../types/openF1";
 import { getWindDirection } from "../../utils/telemetryUtils";
 import { trackImage } from "../../utils/helpers";
 import { Divider, Image } from "@heroui/react";

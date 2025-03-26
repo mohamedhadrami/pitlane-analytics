@@ -1,6 +1,6 @@
 // @/app/api/db/tables/results
 
-import { RacesKeys } from '@/interfaces/ergast';
+import { RacesKeys } from '@/types/ergast';
 import { NextRequest, NextResponse } from "next/server";
 import getPaginatedData from "../../paginatedData";
 import { sql } from '@vercel/postgres';

@@ -5,8 +5,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Divider } from "@heroui/react";
 import { LiveSettingsProvider, useLiveSettings } from "@/context/LiveSettingsContext";
 import { useFooter } from "@/context/FooterContext";
-import { mvCircuit } from "@/interfaces/multiviewer";
-import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/interfaces/liveTiming";
+import { mvCircuit } from "@/types/multiviewer";
+import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
 import {
     DriverParams,
     MeetingParams,
@@ -18,7 +18,7 @@ import {
     LapParams,
     PositionParams,
     IntervalParams,
-} from "@/interfaces/openF1";
+} from "@/types/openF1";
 import {
     fetchDrivers,
     fetchIntervals,

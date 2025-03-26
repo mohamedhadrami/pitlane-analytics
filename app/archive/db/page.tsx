@@ -6,7 +6,7 @@ import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spinne
 import { useInfiniteScroll } from "@nextui-org/use-infinite-scroll";
 import { useAsyncList } from "@react-stately/data";
 import Loading from "@/components/Loading";
-import { DbCircuits } from "@/interfaces/ergast";
+import { DbCircuits } from "@/types/ergast";
 
 const Page: React.FC = () => {
     const [tables, setTables] = useState<[]>([]);

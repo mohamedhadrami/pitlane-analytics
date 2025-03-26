@@ -2,7 +2,7 @@
 
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@heroui/react";
 import { calculateAverages } from "@/utils/telemetryUtils";
-import { DriverChartData } from "@/interfaces/custom";
+import { DriverChartData } from "@/types/custom";
 
 
 const TelemetryLapSummary: React.FC<{ driversData: Map<string, DriverChartData> }> = ({ driversData }) => {

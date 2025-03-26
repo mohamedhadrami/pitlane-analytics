@@ -2,9 +2,9 @@
 
 "use client"
 
-import { DriverChartData } from '@/interfaces/custom';
-import { mvCircuit, trackElement } from '@/interfaces/multiviewer';
-import { LocationParams } from '@/interfaces/openF1';
+import { DriverChartData } from '@/types/custom';
+import { mvCircuit, trackElement } from '@/types/multiviewer';
+import { LocationParams } from '@/types/openF1';
 import { isValidColor } from '@/utils/helpers';
 import React, { useEffect, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';

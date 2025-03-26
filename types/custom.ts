@@ -1,7 +1,7 @@
 // @/interface/custom.ts
 
 import { LucideIcon } from "lucide-react";
-import { CarDataParams, DriverParams, LapParams, LocationParams, RaceControlParams, StintParams } from "./openF1";
+import type { CarDataParams, DriverParams, LapParams, LocationParams, RaceControlParams, StintParams } from "./openF1";
 
 
 export interface DriverChartData {
