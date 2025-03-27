@@ -62,7 +62,7 @@ const Home: React.FC = () => {
   const [currentRace, setCurrentRace] = useState<JLPRace>();
   const [nextRaceIndex, setNextRaceIndex] = useState<number>(0);
   const [meeting, setMeeting] = useState<OFMeeting | null>(null);
-  const [gmtOffset, setGmtOffset] = useState<any>(null);
+  const [gmtOffset, setGmtOffset] = useState<string>("");
   const [timeUntilNextRace, setTimeUntilNextRace] = useState<CountdownTimerProps>();
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [eventTracker, setEventTracker] = useState<any>();

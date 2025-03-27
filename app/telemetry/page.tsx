@@ -41,8 +41,8 @@ const PageContent: React.FC = () => {
             const queryMeeting = searchParams.get("meeting");
             const querySession = searchParams.get("session");
             if (queryYear) setSelectedYear(queryYear);
-            if (queryMeeting) setSelectedMeetingKey(parseInt(queryMeeting));
-            if (querySession) setSelectedSessionKey(parseInt(querySession));
+            if (queryMeeting) setSelectedMeetingKey(Number.parseInt(queryMeeting));
+            if (querySession) setSelectedSessionKey(Number.parseInt(querySession));
         }
     }, [searchParams, setSelectedYear, setSelectedMeetingKey, setSelectedSessionKey]);
 

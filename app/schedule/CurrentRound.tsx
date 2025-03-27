@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { MeetingParams } from "../../types/openF1.types";
+import type { OFMeeting } from "../../types/openF1.types";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { fetchRaceResults } from "../../services/jolpicaApi";
 import { trackDetailedImage } from "../../utils/helpers";
@@ -10,8 +10,8 @@ function formatDateRange(startDate: string, endDate: string) {
     const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
     const formattedStartDate = new Date(startDate.replace(/-/g, "/")).toLocaleDateString("en-US", options);
     const formattedEndDate = new Date(endDate.replace(/-/g, "/")).toLocaleDateString("en-US", options);
-    const startMonthDay = formattedStartDate.substr(0, 3) + " " + formattedStartDate.substr(4);
-    const endMonthDay = formattedEndDate.substr(0, 3) + " " + formattedEndDate.substr(4);
+    const startMonthDay = `${formattedStartDate.substr(0, 3)} ${formattedStartDate.substr(4)}`;
+    const endMonthDay = `${formattedEndDate.substr(0, 3)} ${formattedEndDate.substr(4)}`;
     return (startMonthDay + (startMonthDay === endMonthDay ? "" : ` - ${endMonthDay}`));
 }
 
@@ -50,9 +50,9 @@ function formatSessionTimeDetails(startTime: string, endTime: string, gmtOffset:
     };
 }
 
-const CurrentRound: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceData, meetings }) => {
+const CurrentRound: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
     const [results, setResults] = useState<any>(null);
-    const [meeting, setMeeting] = useState<MeetingParams>();
+    const [meeting, setMeeting] = useState<OFMeeting>();
     const [raceDates, setRaceDates] = useState<string | null>(null);
     const [eventTracker, setEventTracker] = useState<any>();
     const [flagData, setFlagData] = useState<any>(null);

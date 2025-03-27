@@ -1,6 +1,7 @@
 // @/components/Telemetry/TelemetryStepManager.tsx
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTelemetry } from "@/context/TelemetryContext";
 import SelectionPrompt from "./SelectionPrompt";
@@ -43,7 +44,7 @@ const TelemetryStepManager: React.FC = () => {
         selectedSession,
         selectedDrivers,
         isShowLapTimes,
-        isShowTelemetry,])
+        isShowTelemetry])
 
     const handleNextStep = () => {
         if (currentStep === "driver-lap") {

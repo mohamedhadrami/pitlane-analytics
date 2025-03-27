@@ -7,14 +7,14 @@ import Round from "@/app/schedule/Round";
 import { fetchCurrentSeason } from "@/services/jolpicaApi";
 import { useState, useEffect } from "react";
 import Loading from "../../components/Loading";
-import type { MeetingParams } from "@/types/openF1.types";
+import type { OFMeeting, OFMeetingParams } from "@/types/openF1.types";
 import { fetchMeeting } from "@/services/openF1Api";
 import { findNextRace } from "@/utils/helpers";
 import type { JLPScheduleResponse, JLPRace } from "@/types/jolpica.types";
 
 const Page: React.FC = () => {
     const [data, setData] = useState<JLPScheduleResponse>();
-    const [meetings, setMeeting] = useState<MeetingParams[]>([]);
+    const [meetings, setMeeting] = useState<OFMeeting[]>([]);
     const [nextRaceIndex, setNextRaceIndex] = useState<number | null>(null);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const Page: React.FC = () => {
                 setData(apiData);
                 const raceIndex = findNextRace(apiData.MRData.RaceTable.Races);
                 setNextRaceIndex(raceIndex);
-                const params: MeetingParams = {
+                const params: OFMeetingParams = {
                     year: 2024
                 }
                 const meetingsData = await fetchMeeting(params);

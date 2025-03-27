@@ -5,16 +5,17 @@
 import { fetchAllRaceResults, fetchConstrutorChampionship, fetchDriverChampionship } from "@/services/jolpicaApi";
 import { Autocomplete, AutocompleteItem, Button, Divider, Tab, Tabs, Link } from "@heroui/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Key, useEffect, useState } from "react";
+import { type Key, useEffect, useState } from "react";
 import CustomTable from "@/components/tables/CustomTable";
 import { ConstructorChampionshipHeaders, DriverChampionshipHeaders, SeasonRacesHeaders } from "@/utils/const";
+import type { JLPConstructorStandingsResponse, JLPDriverStandingsResponse, JLPRaceResultsResponse } from "@/types/jolpica.types";
 
 const Page: React.FC = () => {
-    const [drivers, setDrivers] = useState<any>(null);
-    const [constructors, setConstructors] = useState<any>(null);
-    const [races, setRaces] = useState<any>(null);
-    const [selectedYear, setSelectedYear] = useState<string>("");
     const router = useRouter();
+    const [drivers, setDrivers] = useState<JLPDriverStandingsResponse>();
+    const [constructors, setConstructors] = useState<JLPConstructorStandingsResponse>();
+    const [races, setRaces] = useState<JLPRaceResultsResponse>();
+    const [selectedYear, setSelectedYear] = useState<string>("");
     const [isMobile, setIsMobile] = useState(false);
 
     const searchParams = useSearchParams();
@@ -60,8 +61,8 @@ const Page: React.FC = () => {
         };
 
         if (selectedYear) {
-            setDrivers(null);
-            setConstructors(null);
+            setDrivers(undefined);
+            setConstructors(undefined);
             fetchData(selectedYear);
         }
     }, [selectedYear]);
@@ -85,12 +86,12 @@ const Page: React.FC = () => {
                         onSelectionChange={onSelectionChange}
                     >
                         {years.map((year) => (
-                            <AutocompleteItem key={year} value={year}>
+                            <AutocompleteItem key={year} textValue={year}>
                                 {year}
                             </AutocompleteItem>
                         ))}
                     </Autocomplete>
-                    {selectedYear && telemetryYears.includes(parseInt(selectedYear)) && (
+                    {selectedYear && telemetryYears.includes(Number.parseInt(selectedYear)) && (
                         <div className="inline-flex items-center ml-auto">
                             <Button
                                 className="ml-auto"

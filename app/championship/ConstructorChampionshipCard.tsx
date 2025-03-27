@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { styled } from "styled-components";
-import type { DriverParams } from "@/types/openF1.types";
+import type { OFDriver } from "@/types/openF1.types";
 import { carImage, isValidColor, logoImage, teamNameConvertor } from "@/utils/helpers";
 import { Divider, Image, Spacer } from "@heroui/react";
 import ConstructorDrawer from "@/components/drawers/ConstructorDrawer";
@@ -19,7 +19,7 @@ const CardContainer = styled.div<{ bordercolor: string }>`
 const ConstructorChampionshipCard: React.FC<{
   constructorTeam: JLPConstructorStandingItem;
   year: string;
-  drivers: DriverParams[];
+  drivers: OFDriver[];
 }> = ({ constructorTeam, year, drivers }) => {
   const [teamName, setTeamName] = useState<string>("");
   const [teamColor, setTeamColor] = useState<string>("");
@@ -34,7 +34,7 @@ const ConstructorChampionshipCard: React.FC<{
   useEffect(() => {
     const fetchData = async () => {
       if (drivers) {
-        const apiDriverData: DriverParams | undefined = drivers.find(v => v.team_name === teamNameConvertor(constructorTeam.Constructor.name));
+        const apiDriverData: OFDriver | undefined = drivers.find(v => v.team_name === teamNameConvertor(constructorTeam.Constructor.name));
         setTeamColor(
           isValidColor(`#${apiDriverData?.team_colour}`)
             ? `#${apiDriverData?.team_colour}`

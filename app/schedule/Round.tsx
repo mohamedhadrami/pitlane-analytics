@@ -1,9 +1,10 @@
 // components/Round.tsx
 
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { fetchRaceResults } from "../../services/jolpicaApi";
 import { fetchCountryFlagByName } from "../../services/countryApi";
-import { MeetingParams } from "../../types/openF1.types";
+import { OFMeeting } from "../../types/openF1.types";
 import { driverImage, trackDetailedImage, trackImage } from "../../utils/helpers";
 import { Minus, X } from "lucide-react";
 import { Image, Divider, Spacer, Button, Table, TableHeader, TableColumn, TableBody, TableCell, TableRow, Pagination, Link, Tabs, Tab, Card, CardBody } from "@heroui/react";
@@ -14,15 +15,15 @@ function formatDateRange(startDate: string, endDate: string) {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
   const formattedStartDate = new Date(startDate.replace(/-/g, "/")).toLocaleDateString("en-US", options);
   const formattedEndDate = new Date(endDate.replace(/-/g, "/")).toLocaleDateString("en-US", options);
-  const startMonthDay = formattedStartDate.substr(0, 3) + " " + formattedStartDate.substr(4);
-  const endMonthDay = formattedEndDate.substr(0, 3) + " " + formattedEndDate.substr(4);
+  const startMonthDay = `${formattedStartDate.substr(0, 3)} ${formattedStartDate.substr(4)}`;
+  const endMonthDay = `${formattedEndDate.substr(0, 3)} ${formattedEndDate.substr(4)}`;
   return (startMonthDay + (startMonthDay === endMonthDay ? "" : ` - ${endMonthDay}`));
 }
 
 
-const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceData, meetings }) => {
+const Round: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
   const [results, setResults] = useState<any>(null);
-  const [meeting, setMeeting] = useState<MeetingParams>();
+  const [meeting, setMeeting] = useState<OFMeeting>();
   const [raceDates, setRaceDates] = useState<any>(null);
   const [flagData, setFlagData] = useState<any>(null);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
@@ -32,8 +33,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
       try {
         const raceResults = await fetchRaceResults(
           raceData.round,
-          undefined,
-          true,
+          undefined
         );
         const parsedData = raceResults.MRData.RaceTable.Races[0].Results;
         setResults(parsedData);
@@ -42,7 +42,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
       }
     };
 
-    const raceDate = new Date(raceData.date + " " + raceData.time);
+    const raceDate = new Date(`${raceData.date} ${raceData.time}`);
     const currentDate = new Date();
 
     if (raceDate < currentDate) {
@@ -53,7 +53,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
   useEffect(() => {
     const getFlag = async () => {
       try {
-        let countryName = raceData.Circuit.Location.country;
+        const countryName = raceData.Circuit.Location.country;
         const flagApiData = await fetchCountryFlagByName(countryName);
         setFlagData(flagApiData);
       } catch (error) {

@@ -9,16 +9,17 @@ import { useFooter } from "@/context/FooterContext";
 import type { mvCircuit } from "@/types/multiviewer";
 import type { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
 import type {
-    DriverParams,
-    MeetingParams,
-    RaceControlParams,
-    SessionParams,
-    StintParams,
-    TeamRadioParams,
-    WeatherParams,
-    LapParams,
-    PositionParams,
-    IntervalParams,
+    OFDriver,
+    OFMeeting,
+    OFRaceControl,
+    OFSession,
+    OFStint,
+    OFTeamRadio,
+    OFWeather,
+    OFLap,
+    OFPosition,
+    OFInterval,
+    OFMeetingParams,
 } from "@/types/openF1.types";
 import {
     fetchDrivers,
@@ -60,16 +61,16 @@ const Dashboard: React.FC = () => {
     // OPENF1
 
     const [year, setYear] = useState<number>();
-    const [meeting, setMeeting] = useState<MeetingParams>();
-    const [session, setSession] = useState<SessionParams>();
-    const [drivers, setDrivers] = useState<DriverParams[]>([]);
-    const [raceControl, setRaceControl] = useState<RaceControlParams[]>([]);
-    const [teamRadio, setTeamRadio] = useState<TeamRadioParams[]>([]);
-    const [weather, setWeather] = useState<WeatherParams>();
-    const [stints, setStints] = useState<StintParams[]>([]);
-    const [laps, setLaps] = useState<LapParams[]>([]);
-    const [intervals, setIntervals] = useState<IntervalParams[]>([]);
-    const [positions, setPositions] = useState<PositionParams[]>([]);
+    const [meeting, setMeeting] = useState<OFMeeting>();
+    const [session, setSession] = useState<OFSession>();
+    const [drivers, setDrivers] = useState<OFDriver[]>([]);
+    const [raceControl, setRaceControl] = useState<OFRaceControl[]>([]);
+    const [teamRadio, setTeamRadio] = useState<OFTeamRadio[]>([]);
+    const [weather, setWeather] = useState<OFWeather>();
+    const [stints, setStints] = useState<OFStint[]>([]);
+    const [laps, setLaps] = useState<OFLap[]>([]);
+    const [intervals, setIntervals] = useState<OFInterval[]>([]);
+    const [positions, setPositions] = useState<OFPosition[]>([]);
 
     const fetchOnceRef = useRef(false);
 
@@ -83,7 +84,7 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const meetingParams: MeetingParams = { meeting_key: meeting_test };
+            const meetingParams: OFMeetingParams = { meeting_key: meeting_test };
 
             const fetchFunctions = [
                 async () => {
@@ -202,8 +203,8 @@ const Dashboard: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             const year = meeting?.year;
-            if (year) {
-                const path = await fetchLiveSessionPath(year, meeting?.meeting_key!, session?.session_key!);
+            if (year && meeting.meeting_key && session?.session_key) {
+                const path = await fetchLiveSessionPath(year, meeting.meeting_key, session.session_key);
                 const liveLapCount: LiveLapCount = await fetchLiveLapCount(path);
                 setLapCount(liveLapCount)
                 const liveArchiveStatus: LiveArchiveStatus = await fetchLiveArchiveStatus(path);
@@ -240,16 +241,16 @@ const Dashboard: React.FC = () => {
 };
 
 interface DashboardContentProps {
-    meeting: MeetingParams;
-    session: SessionParams;
-    drivers: DriverParams[];
-    raceControl: RaceControlParams[];
-    teamRadio: TeamRadioParams[];
-    weather: WeatherParams;
-    stints: StintParams[];
-    laps: LapParams[];
-    intervals: IntervalParams[];
-    positions: PositionParams[];
+    meeting: OFMeeting;
+    session: OFSession;
+    drivers: OFDriver[];
+    raceControl: OFRaceControl[];
+    teamRadio: OFTeamRadio[];
+    weather: OFWeather;
+    stints: OFStint[];
+    laps: OFLap[];
+    intervals: OFInterval[];
+    positions: OFPosition[];
 
     circuitData: mvCircuit;
 

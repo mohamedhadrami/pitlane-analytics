@@ -1,9 +1,10 @@
 "use client";
 
 import Loading from "@/components/Loading";
-import { Button, ScrollShadow, Textarea, Tooltip } from "@nextui-org/react";
+import { Button, ScrollShadow, Textarea, Tooltip } from "@heroui/react";
 import { ArrowBigUp } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState } from "react";
 
 const Page: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -49,7 +50,7 @@ const Page: React.FC = () => {
         value={query}
         onValueChange={setQuery}
         onKeyDown={(e) => handleKeyPress(e as React.KeyboardEvent<HTMLTextAreaElement>)}
-        placeholder={`Write your SQL query here...`}
+        placeholder={"Write your SQL query here..."}
         radius="sm"
         variant="underlined"
         className="w-full"
@@ -58,7 +59,7 @@ const Page: React.FC = () => {
           input: "placeholder:text-primary !text-primary text-md font-medium",
           description: "text-primary",
         }}
-        spellCheck={false}
+        spellCheck="false"
       />
       <br />
       <Tooltip
