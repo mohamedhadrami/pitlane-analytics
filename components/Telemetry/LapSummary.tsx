@@ -6,7 +6,7 @@ import SectorSegment from '@/components/Dashboard/SectorSegments';
 import { formatSecondsToTime, isValidColor } from '@/utils/helpers';
 import { Table, TableHeader, TableColumn, TableBody, TableCell, TableRow } from '@heroui/react';
 import { getCompoundComponent } from '@/components/Tyres';
-import { CarDataParams } from '@/types/openF1';
+import { CarDataParams } from '@/types/openF1.types';
 
 
 function calculateAverageSpeed(carData: CarDataParams[]): number {

@@ -4,7 +4,7 @@
 
 import { DriverChartData } from '@/types/custom';
 import { mvCircuit, trackElement } from '@/types/multiviewer';
-import { LocationParams } from '@/types/openF1';
+import { LocationParams } from '@/types/openF1.types';
 import { isValidColor } from '@/utils/helpers';
 import React, { useEffect, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';

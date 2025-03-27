@@ -4,45 +4,45 @@
 
 import type React from "react";
 import { type ReactNode, createContext, useContext, useState } from "react"
-import type { MeetingParams, SessionParams, WeatherParams, RaceControlParams, DriverParams, StintParams } from "@/types/openF1";
+import type { OFMeeting, OFSession, OFWeather, OFRaceControl, OFDriver, OFStint } from "@/types/openF1.types";
 import type { DriverChartData } from "@/types/custom";
 import type { mvCircuit } from "@/types/multiviewer";
 
 interface TelemetryContextProps {
     years: string[];
     setYears: React.Dispatch<React.SetStateAction<string[]>>;
-    meetings: MeetingParams[];
-    setMeetings: React.Dispatch<React.SetStateAction<MeetingParams[]>>;
-    sessions: SessionParams[];
-    setSessions: React.Dispatch<React.SetStateAction<SessionParams[]>>;
+    meetings: OFMeeting[];
+    setMeetings: React.Dispatch<React.SetStateAction<OFMeeting[]>>;
+    sessions: OFSession[];
+    setSessions: React.Dispatch<React.SetStateAction<OFSession[]>>;
     selectedYear: string | undefined;
     setSelectedYear: React.Dispatch<React.SetStateAction<string | undefined>>;
-    selectedMeeting: MeetingParams | undefined;
-    setSelectedMeeting: React.Dispatch<React.SetStateAction<MeetingParams | undefined>>;
+    selectedMeeting: OFMeeting | undefined;
+    setSelectedMeeting: React.Dispatch<React.SetStateAction<OFMeeting | undefined>>;
     selectedMeetingKey: number | undefined;
     setSelectedMeetingKey: React.Dispatch<React.SetStateAction<number | undefined>>;
-    selectedSession: SessionParams | undefined;
-    setSelectedSession: React.Dispatch<React.SetStateAction<SessionParams | undefined>>;
+    selectedSession: OFSession | undefined;
+    setSelectedSession: React.Dispatch<React.SetStateAction<OFSession | undefined>>;
     selectedSessionKey: number | undefined;
     setSelectedSessionKey: React.Dispatch<React.SetStateAction<number | undefined>>;
     isShowSession: boolean;
     setIsShowSession: React.Dispatch<React.SetStateAction<boolean>>;
-    weather: WeatherParams[];
-    setWeather: React.Dispatch<React.SetStateAction<WeatherParams[]>>;
-    raceControl: RaceControlParams[];
-    setRaceControl: React.Dispatch<React.SetStateAction<RaceControlParams[]>>;
+    weather: OFWeather[];
+    setWeather: React.Dispatch<React.SetStateAction<OFWeather[]>>;
+    raceControl: OFRaceControl[];
+    setRaceControl: React.Dispatch<React.SetStateAction<OFRaceControl[]>>;
     circuitData: mvCircuit | undefined;
     setCircuitData: React.Dispatch<React.SetStateAction<mvCircuit | undefined>>;
     isShowDriverSelect: boolean;
     setIsShowDriverSelect: React.Dispatch<React.SetStateAction<boolean>>;
-    drivers: DriverParams[];
-    setDrivers: React.Dispatch<React.SetStateAction<DriverParams[]>>;
+    drivers: OFDriver[];
+    setDrivers: React.Dispatch<React.SetStateAction<OFDriver[]>>;
     selectedDrivers: Map<string, DriverChartData>;
     setSelectedDrivers: React.Dispatch<React.SetStateAction<Map<string, DriverChartData>>>;
     isShowPitStrategy: boolean;
     setIsShowPitStrategy: React.Dispatch<React.SetStateAction<boolean>>;
-    stints: StintParams[];
-    setStints: React.Dispatch<React.SetStateAction<StintParams[]>>;
+    stints: OFStint[];
+    setStints: React.Dispatch<React.SetStateAction<OFStint[]>>;
     isShowLapTimes: boolean;
     setIsShowLapTimes: React.Dispatch<React.SetStateAction<boolean>>;
     selectedLap: number | null;
@@ -63,26 +63,26 @@ export const useTelemetry = () : TelemetryContextProps => {
 
 export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
     const [years, setYears] = useState<string[]>([]);
-    const [meetings, setMeetings] = useState<MeetingParams[]>([]);
-    const [sessions, setSessions] = useState<SessionParams[]>([]);
+    const [meetings, setMeetings] = useState<OFMeeting[]>([]);
+    const [sessions, setSessions] = useState<OFSession[]>([]);
 
     const [selectedYear, setSelectedYear] = useState<string>();
-    const [selectedMeeting, setSelectedMeeting] = useState<MeetingParams>();
+    const [selectedMeeting, setSelectedMeeting] = useState<OFMeeting>();
     const [selectedMeetingKey, setSelectedMeetingKey] = useState<number>();
-    const [selectedSession, setSelectedSession] = useState<SessionParams>();
+    const [selectedSession, setSelectedSession] = useState<OFSession>();
     const [selectedSessionKey, setSelectedSessionKey] = useState<number>();
 
     const [isShowSession, setIsShowSession] = useState<boolean>(false);
-    const [weather, setWeather] = useState<WeatherParams[]>([]);
-    const [raceControl, setRaceControl] = useState<RaceControlParams[]>([]);
+    const [weather, setWeather] = useState<OFWeather[]>([]);
+    const [raceControl, setRaceControl] = useState<OFRaceControl[]>([]);
     const [circuitData, setCircuitData] = useState<mvCircuit>();
 
     const [isShowDriverSelect, setIsShowDriverSelect] = useState<boolean>(false);
-    const [drivers, setDrivers] = useState<DriverParams[]>([]);
+    const [drivers, setDrivers] = useState<OFDriver[]>([]);
     const [selectedDrivers, setSelectedDrivers] = useState<Map<string, DriverChartData>>(new Map());
 
     const [isShowPitStrategy, setIsShowPitStrategy] = useState<boolean>(false);
-    const [stints, setStints] = useState<StintParams[]>([]);
+    const [stints, setStints] = useState<OFStint[]>([]);
 
     const [isShowLapTimes, setIsShowLapTimes] = useState<boolean>(false);
     const [selectedLap, setSelectedLap] = useState<number | null>(null);

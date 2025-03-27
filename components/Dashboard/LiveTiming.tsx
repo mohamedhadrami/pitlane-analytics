@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
-import { DriverParams, IntervalParams, LapParams, PositionParams, StintParams } from "@/types/openF1";
+import { DriverParams, IntervalParams, LapParams, PositionParams, StintParams } from "@/types/openF1.types";
 import SectorSegment from "./SectorSegments";
 import { getCompoundComponent } from "@/components/Tyres";
 import { formatSecondsToTime } from "@/utils/helpers";

@@ -7,7 +7,7 @@ import {
 } from "../../services/jolpicaApi";
 import DriverChampionshipCard from "./DriverChampionshipCard";
 import ConstructorChampionshipCard from "./ConstructorChampionshipCard";
-import type { DriverParams } from "@/types/openF1";
+import type { DriverParams } from "@/types/openF1.types";
 import { fetchDrivers } from "@/services/openF1Api";
 import { Divider } from "@heroui/react";
 import type { DriverStandingsResponse, ConstructorStandingsResponse, ConstructorStandingItem, DriverStandingItem } from "@/types/jolpica.types";

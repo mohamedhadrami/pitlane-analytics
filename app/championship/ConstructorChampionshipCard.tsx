@@ -3,7 +3,7 @@
 import type React from "react";
 import { useState, useEffect } from "react";
 import { styled } from "styled-components";
-import type { DriverParams } from "@/types/openF1";
+import type { DriverParams } from "@/types/openF1.types";
 import { carImage, isValidColor, logoImage, teamNameConvertor } from "@/utils/helpers";
 import { Divider, Image, Spacer } from "@heroui/react";
 import ConstructorDrawer from "@/components/drawers/ConstructorDrawer";

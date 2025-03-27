@@ -3,7 +3,7 @@
 import React from "react";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MeetingParams, SessionParams } from "@/types/openF1";
+import { MeetingParams, SessionParams } from "@/types/openF1.types";
 
 interface SelectionPromptProps {
     label: string;

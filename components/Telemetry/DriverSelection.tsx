@@ -2,7 +2,7 @@
 
 "use client"
 
-import { DriverParams } from "@/types/openF1";
+import { DriverParams } from "@/types/openF1.types";
 import { driverImage, isValidColor } from "@/utils/helpers";
 import React from "react";
 import styled from "styled-components";

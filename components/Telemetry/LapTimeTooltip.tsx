@@ -2,7 +2,7 @@
 
 import React from "react";
 import { getCompoundComponent } from "@/components/Tyres";
-import { RaceControlParams } from "@/types/openF1";
+import { RaceControlParams } from "@/types/openF1.types";
 import { formatSecondsToTime } from "@/utils/helpers";
 
 interface LapTimesTooltipProps {

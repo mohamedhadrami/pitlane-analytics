@@ -1,6 +1,6 @@
 // @/services/liveTiming.ts
 
-import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
+import type { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
 
 const fetchApiData = async (endpoint: string) => {
     try {
@@ -20,20 +20,26 @@ export const fetchLiveSchedule = async (year: number | string) => {
     return data;
 }
 
-export const fetchLiveSessionPath = async (year: number | string, meetingKey: number | string, sessionKey: number | string) => {
-    let path;
+export const fetchLiveSessionPath = async (
+    year: number | string,
+    meetingKey: number | string,
+    sessionKey: number | string
+  ): Promise<string | undefined> => {
     const res = await fetchLiveSchedule(year);
-    for (let meet in res.Meetings) {
-        if (res.Meetings[meet].Key == meetingKey) {
-            for (let sesh in res.Meetings[meet].Sessions) {
-                if (res.Meetings[meet].Sessions[sesh].Key == sessionKey) {
-                    path = res.Meetings[meet].Sessions[sesh].Path
-                }
-            }
+  
+    for (const meet of res.Meetings) {
+      if (meet.Key === meetingKey) {
+        for (const sesh of meet.Sessions) {
+          if (sesh.Key === sessionKey) {
+            return sesh.Path;
+          }
         }
+      }
     }
-    return path;
-}
+  
+    return undefined;
+  };
+  
 
 export const fetchLiveArchiveStatus = async (sessionPath: string) : Promise<LiveArchiveStatus> => {
     const endpoint = `/${sessionPath}ArchiveStatus.json`;

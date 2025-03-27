@@ -2,13 +2,13 @@
 
 import { useEffect, useCallback } from "react";
 import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
-import { DateRangeParams, DriverParams, LapParams, MeetingParams, RaceControlParams, SessionParams, StintParams, WeatherParams } from "@/types/openF1";
+import type { OFDateRangeParams, OFDriver, OFDriverParams, OFLap, OFLapParams, OFMeetingParams, OFRaceControlParams, OFSessionParams, OFStintParams, OFWeatherParams } from "@/types/openF1.types";
 import { fetchCircuitByKey } from "@/services/mvApi";
 import { delay } from "@/utils/helpers";
 import { calculateLapTime } from "@/utils/telemetryUtils";
 import { toast } from "sonner";
 import { useTelemetry } from "@/context/TelemetryContext";
-import { DriverChartData } from "@/types/custom";
+import type { DriverChartData } from "@/types/custom";
 
 
 
@@ -22,7 +22,7 @@ export const useFetchYears = () => {
             (_, index) => (currentYear - index).toString()
         );
         setYears(availableYears);
-    }, []);
+    }, [setYears]);
 
 };
 
@@ -39,7 +39,7 @@ export const useFetchMeetings = () => {
         }
 
         const fetchData = async () => {
-            const params: MeetingParams = { year: selectedYear };
+            const params: OFMeetingParams = { year: selectedYear };
             const fetchedMeetings = await fetchMeeting(params);
             if (fetchedMeetings.length === 0) throw new Error("No meetings fetched. Checked if year is within the correct range")
             setMeetings(fetchedMeetings);
@@ -47,12 +47,12 @@ export const useFetchMeetings = () => {
 
         const dataPromise = fetchData();
         toast.promise(Promise.all([dataPromise]), {
-            loading: `Loading meetings...`,
-            success: `Meetings loaded successfully!`,
-            error: (e: any) => `${e.message}`,
+            loading: "Loading meetings...",
+            success: "Meetings loaded successfully!",
+            error: (e: Error) => `${e.message}`,
         });
 
-    }, [selectedYear]);
+    }, [selectedYear, setMeetings, setSelectedMeetingKey]);
 
 };
 
@@ -77,7 +77,7 @@ export const useFetchSessions = () => {
         }
 
         const fetchData = async () => {
-            const params: SessionParams = { meeting_key: selectedMeetingKey };
+            const params: OFSessionParams = { meeting_key: selectedMeetingKey };
             const fetchedSessions = await fetchSession(params);
             if (fetchedSessions.length === 0) throw new Error("No sessions fetched. Checked if meeting key is correct.")
             setSessions(fetchedSessions);
@@ -87,11 +87,11 @@ export const useFetchSessions = () => {
 
         const dataPromise = fetchData();
         toast.promise(Promise.all([dataPromise]), {
-            loading: `Loading sessions...`,
-            success: `Sessions loaded successfully!`,
-            error: (e: any) => `${e.message}`,
+            loading: "Loading sessions...",
+            success: "Sessions loaded successfully!",
+            error: (e: Error) => `${e.message}`,
         });
-    }, [selectedMeetingKey, meetings]);
+    }, [selectedMeetingKey, meetings, setSessions, setSelectedMeeting, setSelectedSessionKey]);
 
 };
 
@@ -125,34 +125,34 @@ export const useFetchSessionData = () => {
 
         const fetchData = async () => {
             const session = sessions?.find(v => v.session_key === selectedSessionKey);
-            setSelectedSession(session!);
+            setSelectedSession(session);
             const params = {
                 meeting_key: selectedMeetingKey,
                 session_key: selectedSessionKey
             };
 
-            const weatherRes = await fetchWeather(params as WeatherParams);
+            const weatherRes = await fetchWeather(params as OFWeatherParams);
             if (!weatherRes) throw new Error("Error fetching weather");
             setWeather(weatherRes);
             setIsShowSession(true);
 
-            const driverRes = await fetchDrivers(params as DriverParams);
+            const driverRes = await fetchDrivers(params as OFDriverParams);
             if (!driverRes) throw new Error("Error fetching driver data");
             setDrivers(driverRes);
             await delay(500);
             setIsShowDriverSelect(true);
 
-            const raceControlRes = await fetchRaceControl(params as RaceControlParams);
+            const raceControlRes = await fetchRaceControl(params as OFRaceControlParams);
             if (!raceControlRes) throw new Error("Error fetching race control data");
             setRaceControl(raceControlRes);
 
-            const stintRes = await fetchStint(params as StintParams);
+            const stintRes = await fetchStint(params as OFStintParams);
             if (!stintRes) throw new Error("Error fetching stints");
             setStints(stintRes);
             await delay(1000);
             setIsShowPitStrategy(true);
 
-            const circuitRes = await fetchCircuitByKey(session?.circuit_key!, selectedYear!);
+            const circuitRes = await fetchCircuitByKey(session.circuit_key, selectedYear);
             if (!circuitRes) throw new Error("Error fetching circuit data");
             setCircuitData(circuitRes);
             setSelectedDrivers(new Map());
@@ -179,14 +179,31 @@ export const useFetchSessionData = () => {
             if (selectedSessionKey) {
                 const dataPromise = fetchData();
                 toast.promise(Promise.all([dataPromise]), {
-                    loading: `Loading session data...`,
-                    success: `Session data loaded successfully!`,
+                    loading: "Loading session data...",
+                    success: "Session data loaded successfully!",
                     error: (e: any) => `${e.message}. Make sure the session key is correct`,
                 });
             }
         }
 
-    }, [selectedYear, selectedMeetingKey, selectedSessionKey, sessions]);
+    }, [selectedYear, 
+        selectedMeetingKey, 
+        selectedSessionKey, 
+        sessions,
+        setSelectedSession,
+        setSelectedLap,
+        setIsShowSession,
+        setIsShowDriverSelect,
+        setIsShowPitStrategy,
+        setSelectedDrivers,
+        setIsShowLapTimes,
+        setIsShowTelemetry,
+        setWeather,
+        setDrivers,
+        setRaceControl,
+        setStints,
+        setCircuitData
+    ]);
 
 };
 
@@ -202,13 +219,13 @@ export const useToggleDriverSelect = () => {
         setSelectedLap,
     } = useTelemetry();
     
-    const toggleDriverSelect = async (driver: DriverParams) => {
+    const toggleDriverSelect = async (driver: OFDriver) => {
         const driverKey = driver.driver_number?.toString();
-        const isDriverSelected = selectedDrivers?.has(driverKey!);
+        const isDriverSelected = selectedDrivers?.has(driverKey);
 
         if (isDriverSelected) {
             const updatedDrivers = new Map(selectedDrivers);
-            updatedDrivers.delete(driverKey!);
+            updatedDrivers.delete(driverKey);
             setSelectedDrivers(updatedDrivers);
         } else {
             const params = {
@@ -218,7 +235,7 @@ export const useToggleDriverSelect = () => {
             };
 
             const lapApiPromise = fetchLaps(params);
-            const stintData = stints.filter((stint: LapParams) => stint.driver_number === driver.driver_number);
+            const stintData = stints.filter((stint: OFLap) => stint.driver_number === driver.driver_number);
 
             toast.promise(Promise.all([lapApiPromise]), {
                 loading: `Loading lap times for ${driver.name_acronym}...`,
@@ -230,7 +247,7 @@ export const useToggleDriverSelect = () => {
 
             setSelectedDrivers((prevMap) => {
                 const updatedMap = new Map(prevMap);
-                updatedMap.set(driverKey!, {
+                updatedMap.set(driverKey, {
                     selectedLap: null,
                     driver,
                     laps: lapApiData,
@@ -255,7 +272,7 @@ export const useHandleDriverSelect = () => {
     useEffect(() => {
         if (selectedDrivers.size > 0) setIsShowLapTimes(true);
         setIsShowTelemetry(false)
-    }, [selectedDrivers]);
+    }, [selectedDrivers, setIsShowLapTimes, setIsShowTelemetry]);
 };
 
 
@@ -275,13 +292,13 @@ export const useFetchTelemetryData = () => {
     const fetchTelemetryData = useCallback(async () => {
         const lapDataRequests = Array.from(selectedDrivers, async ([_, driverData]) => {
             if (driverData.selectedLap !== selectedLap || driverData.carData.length === 0) {
-                const lap: LapParams = driverData.laps.find((lap: LapParams) => lap.lap_number === selectedLap)!;
-                const date_gt: string = lap.date_start!;
-                const lapDurationMilliseconds: number = lap.lap_duration! * 1000;
+                const lap: OFLap = driverData.laps.find((lap: OFLap) => lap.lap_number === selectedLap);
+                const date_gt: string = lap.date_start;
+                const lapDurationMilliseconds: number = lap.lap_duration * 1000;
                 const date_gtObject: Date = new Date(date_gt);
                 const date_ltObject: Date = new Date(date_gtObject.getTime() + lapDurationMilliseconds);
                 const date_lt: string = date_ltObject.toISOString();
-                const dateRangeParams: DateRangeParams = {
+                const dateRangeParams: OFDateRangeParams = {
                     date_gt: date_gt,
                     date_lt: date_lt,
                 };
@@ -315,14 +332,14 @@ export const useFetchTelemetryData = () => {
 
         let hasUpdate = false;
         for (const result of lapDataResults) {
-            if (result !== null) {
-                const driverKey = result?.driver.driver_number!.toString();
-                const existingDriverData = updatedSelectedDrivers.get(driverKey!);
+            if (result !== null && result !== undefined) {
+                const driverKey = result.driver.driver_number.toString();
+                const existingDriverData = updatedSelectedDrivers.get(driverKey);
                 if (existingDriverData) {
-                    updatedSelectedDrivers.set(driverKey!, {
+                    updatedSelectedDrivers.set(driverKey, {
                         ...existingDriverData,
                         selectedLap: selectedLap,
-                        carData: result?.carDataWithLapTime!,
+                        carData: result?.carDataWithLapTime,
                         locationData: result?.locationData,
                     });
                     hasUpdate = true;
@@ -343,5 +360,5 @@ export const useFetchTelemetryData = () => {
         } else {
             setIsShowTelemetry(false);
         }
-    }, [fetchTelemetryData, selectedLap]);
+    }, [fetchTelemetryData, setIsShowLapTimes, setIsShowTelemetry, selectedLap]);
 };

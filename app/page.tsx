@@ -1,7 +1,7 @@
 
 "use client"
 
-import type { MeetingParams } from "@/types/openF1";
+import type { OFMeeting, OFMeetingParams } from "@/types/openF1.types";
 import { fetchCurrentSeason } from "@/services/jolpicaApi";
 import { fetchMeeting } from "@/services/openF1Api";
 import { findNextRace, parseISODateAndTime } from "@/utils/helpers";
@@ -10,6 +10,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { Watch } from "react-loader-spinner";
 import Link from 'next/link';
+import type { JLPRace, JLPScheduleResponse } from "@/types/jolpica.types";
 
 interface CountdownTimerProps {
   weeks: number;
@@ -57,10 +58,10 @@ const CountdownTimer: React.FC<{ timeRemaining: CountdownTimerProps }> = ({ time
 }
 
 const Home: React.FC = () => {
-  const [data, setData] = useState<any>();
-  const [currentRace, setCurrentRace] = useState<any>();
+  const [data, setData] = useState<JLPScheduleResponse>();
+  const [currentRace, setCurrentRace] = useState<JLPRace>();
   const [nextRaceIndex, setNextRaceIndex] = useState<number>(0);
-  const [meeting, setMeeting] = useState<MeetingParams | null>(null);
+  const [meeting, setMeeting] = useState<OFMeeting | null>(null);
   const [gmtOffset, setGmtOffset] = useState<any>(null);
   const [timeUntilNextRace, setTimeUntilNextRace] = useState<CountdownTimerProps>();
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
@@ -73,6 +74,7 @@ const Home: React.FC = () => {
         const apiData = await fetchCurrentSeason();
         setData(apiData);
         findNextRace(apiData.MRData.RaceTable.Races);
+
         const eventTrackData = await fetch('/api/formula1/event-tracker');
         const eventTrackJson = await eventTrackData.json();
         setEventTracker(eventTrackJson);
@@ -96,11 +98,11 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const params: MeetingParams = {
+      const params: OFMeetingParams = {
         meeting_name: data?.MRData.RaceTable.Races[nextRaceIndex].raceName
       }
       const apiData = await fetchMeeting(params);
-      setGmtOffset(apiData[0].gmtOffset);
+      setGmtOffset(apiData[0].gmt_offset);
       setMeeting(apiData[0]);
     }
 
@@ -116,11 +118,11 @@ const Home: React.FC = () => {
       setNextRaceIndex(raceIndex);
       setCurrentRace(data?.MRData.RaceTable.Races[raceIndex])
     }
-  }, [currentTime, data]);
+  }, [data]);
 
   useEffect(() => {
-    if (currentRace) {
-      const raceDate = new Date(currentRace.FirstPractice.date + "T" + currentRace.FirstPractice.time);
+    if (currentRace?.FirstPractice) {
+      const raceDate = new Date(`${currentRace.FirstPractice.date}T${currentRace.FirstPractice.time}`);
       const timeDiff = raceDate.getTime() - currentTime.getTime();
       const weeks = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 7));
       const days = Math.floor((timeDiff % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));

@@ -1,110 +1,108 @@
 // services/jolpicaApi.ts
 
+import type {
+    JLPConstructorDetailsResponse,
+    JLPConstructorStandingsResponse,
+    JLPDriverDetailsResponse,
+    JLPDriverStandingsResponse,
+    JLPRaceResultsByCircuitResponse,
+    JLPRaceResultsByConstructorResponse,
+    JLPRaceResultsByDriverResponse,
+    JLPRaceResultsResponse,
+    JLPScheduleResponse
+} from "@/types/jolpica.types";
+
 /**
  * 
  * RIP Ergast
  * 
  */
 
-const fetchApiData = async (endpoint: string) => {
+const fetchApiData = async <T>(endpoint: string): Promise<T> => {
     try {
-        const url = `https://api.jolpi.ca/ergast/f1${endpoint}.json`;
+        const url = `https://api.jolpi.ca/ergast/f1${endpoint}/`;
         const response = await fetch(url);
         const data = await response.json();
-        //console.log(url);
         return data;
     } catch (error) {
         console.error('Error fetching data:', error);
         throw error;
     }
-}
+};
 
-// CURRENT
+// --- Current Season Data ---
 
-export const fetchCurrentSeason = async () => {
-    const endpoint = '/current';
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchCurrentSeason = () =>
+    fetchApiData<JLPScheduleResponse>('/current');
 
-export const fetchCurrentDrivers = async () => {
-    const endpoint = '/current/driverStandings';
-    const data = fetchApiData(endpoint);
-    return data;
-}
+export const fetchCurrentDrivers = () =>
+    fetchApiData<JLPDriverStandingsResponse>('/current/driverStandings');
 
-export const fetchCurrentConstructors = async () => {
-    const endpoint = '/current/constructorStandings';
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchCurrentConstructors = () =>
+    fetchApiData<JLPConstructorStandingsResponse>('/current/constructorStandings');
 
+// --- Details ---
 
-// DETAILS
+export const fetchDriverDetails = (driverId: string | string[]) =>
+    fetchApiData<JLPDriverDetailsResponse>(`/drivers/${driverId}`);
 
-export const fetchDriverDetails = async (driverId: string | string[]) => {
-    const endpoint = `/drivers/${driverId}`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchConstructorDetails = (constructorId: string | string[]) =>
+    fetchApiData<JLPConstructorDetailsResponse>(`/constructors/${constructorId}`);
 
-export const fetchConstructorDetails = async (constructorId: string | string[]) => {
-    const endpoint = `/constructors/${constructorId}`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+// --- Season Data ---
 
+export const fetchSeason = (season: string) =>
+    fetchApiData<JLPScheduleResponse>(`/${season}`);
 
-// GENERAL
+export const fetchDriverChampionship = (season: string) =>
+    fetchApiData<JLPDriverStandingsResponse>(`/${season}/driverStandings`);
 
-export const fetchSeason = async (season: string) => {
-    const endpoint = `/${season}`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchConstrutorChampionship = (season: string) =>
+    fetchApiData<JLPConstructorStandingsResponse>(`/${season}/constructorStandings`);
 
-export const fetchDriverChampionship = async (season: string) => {
-    const endpoint = `/${season}/driverStandings`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+// --- Race Results ---
 
-export const fetchConstrutorChampionship = async (season: string) => {
-    const endpoint = `/${season}/constructorStandings`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchRaceResults = (round: string, season?: string) =>
+    fetchApiData<JLPRaceResultsResponse>(
+        season ? `/${season}/${round}/results` : `/current/${round}/results`
+    );
 
-export const fetchRaceResults = async (round: string, season?: string, isCurrentYear?: boolean) => {
-    let endpoint = `/current/${round}/results`;
-    if (season) endpoint = `/${season}/${round}/results`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchAllRaceResults = (season: string, limit = 100) =>
+    fetchApiData<JLPRaceResultsResponse>(`/${season}/results?limit=${limit}`);
 
-export const fetchRaceResultsByCircuit = async (circuitId: string, season?: string, isCurrentYear?: boolean) => {
-    let endpoint = `/current/circuits/${circuitId}/results`;
-    if (season) endpoint = `/${season}/circuits/${circuitId}/results`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchRaceResultsByCircuit = (circuitId: string, season?: string) =>
+    fetchApiData<JLPRaceResultsByCircuitResponse>(
+        season
+            ? `/${season}/circuits/${circuitId}/results`
+            : `/current/circuits/${circuitId}/results`
+    );
 
-export const fetchAllRaceResults = async (season: string) => {
-    const endpoint = `/${season}/results?limit=999`;
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+// --- Entity-Based Results ---
 
-export const fetchDriverResults = async (driverId: string, year?: number, isCurrentYear?: boolean) => {
-    let endpoint = year ? `/${year}/drivers/${driverId}/results` : `/drivers/${driverId}/results`;
-    if (isCurrentYear) endpoint = `/current/drivers/${driverId}/results`
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+export const fetchDriverResults = (
+    driverId: string,
+    year?: number,
+    isCurrentYear?: boolean
+) => {
+    const endpoint = isCurrentYear
+        ? `/current/drivers/${driverId}/results`
+        : year
+            ? `/${year}/drivers/${driverId}/results`
+            : `/drivers/${driverId}/results`;
 
-export const fetchConstructorResults = async (constructorId: string, year?: number, isCurrentYear?: boolean) => {
-    let endpoint = year ? `/${year}/constructors/${constructorId}/results` : `/drivers/${constructorId}/results`;
-    if (isCurrentYear) endpoint = `/current/constructors/${constructorId}/results`
-    const data = await fetchApiData(endpoint);
-    return data;
-}
+    return fetchApiData<JLPRaceResultsByDriverResponse>(endpoint);
+};
+
+export const fetchConstructorResults = (
+    constructorId: string,
+    year?: number,
+    isCurrentYear?: boolean
+) => {
+    const endpoint = isCurrentYear
+        ? `/current/constructors/${constructorId}/results`
+        : year
+            ? `/${year}/constructors/${constructorId}/results`
+            : `/constructors/${constructorId}/results`;
+
+    return fetchApiData<JLPRaceResultsByConstructorResponse>(endpoint);
+};

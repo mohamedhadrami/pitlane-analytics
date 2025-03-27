@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DriverParams, RaceControlParams, SessionParams } from "../../types/openF1";
+import { DriverParams, RaceControlParams, SessionParams } from "../../types/openF1.types";
 import { driverImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
 import { Image, ScrollShadow } from "@heroui/react";

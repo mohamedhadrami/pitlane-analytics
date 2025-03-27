@@ -1,12 +1,26 @@
 // intefaces/openF1.ts
 
-export type OpenF1ApiParams = CarDataParams | DateRangeParams | DriverParams | IntervalParams | LapParams | LocationParams | MeetingParams | PitParams | PositionParams | RaceControlParams | SessionParams | StintParams | TeamRadioParams | WeatherParams;
+export type OpenF1ApiParams = 
+    OFCarDataParams | 
+    OFDateRangeParams | 
+    OFDriverParams | 
+    OFIntervalParams | 
+    OFLapParams | 
+    OFLocationParams | 
+    OFMeetingParams | 
+    OFPitParams | 
+    OFPositionParams | 
+    OFRaceControlParams | 
+    OFSessionParams | 
+    OFStintParams | 
+    OFTeamRadioParams | 
+    OFWeatherParams;
 
 /**
  * @param date_gt 
  * @param date_lt
  */
-export interface DateRangeParams {
+export type OFDateRangeParams = {
     date_gt?: string;
     date_lt?: string;
 }
@@ -23,18 +37,20 @@ export interface DateRangeParams {
  * @param speed	Velocity of the car in km/h.
  * @param throttle	Percentage of maximum engine power being used.
  */
-export interface CarDataParams {
-    brake?: number;
-    date?: string;
-    driver_number?: number;
-    drs?: number;
-    meeting_key?: number;
-    n_gear?: number;
-    rpm?: number;
-    session_key?: number;
-    speed?: number;
-    throttle?: number;
-}
+export type OFCarData = {
+    brake: number;
+    date: string;
+    driver_number: number;
+    drs: number;
+    meeting_key: number;
+    n_gear: number;
+    rpm: number;
+    session_key: number;
+    speed: number;
+    throttle: number;
+};
+
+export type OFCarDataParams = Partial<OFCarData>;
 
 export const drsStatus: Record<number, string> = {
     0: 'DRS off',
@@ -64,20 +80,22 @@ export const drsStatus: Record<number, string> = {
  * @param team_colour	The hexadecimal color value (RRGGBB) of the driver's team.
  * @param team_name	Name of the driver's team.
  */
-export interface DriverParams {
-    broadcast_name?: string;
-    country_code?: string;
-    driver_number?: number;
-    first_name?: string;
-    full_name?: string;
-    headshot_url?: string;
-    last_name?: string;
-    meeting_key?: number | string;
-    name_acronym?: string;
-    session_key?: number | string;
-    team_colour?: string;
-    team_name?: string;
+export type OFDriver = {
+    broadcast_name: string;
+    country_code: string;
+    driver_number: number;
+    first_name: string;
+    full_name: string;
+    headshot_url: string;
+    last_name: string;
+    meeting_key: number | string;
+    name_acronym: string;
+    session_key: number | string;
+    team_colour: string;
+    team_name: string;
 }
+
+export type OFDriverParams = Partial<OFDriver>;
 
 /**
  * @param date	The UTC date and time, in ISO 8601 format.
@@ -87,7 +105,7 @@ export interface DriverParams {
  * @param meeting_key	The unique identifier for the meeting. Use latest to identify the latest or current meeting.
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
-export interface IntervalParams {
+export type OFInterval = {
     date?: string;
     driver_number?: number;
     gap_to_leader?: number;
@@ -95,6 +113,8 @@ export interface IntervalParams {
     meeting_key?: number | string;
     session_key?: number | string;
 }
+
+export type OFIntervalParams = Partial<OFInterval>;
 
 /**
  * @param date_start	The UTC starting date and time, in ISO 8601 format.
@@ -114,7 +134,7 @@ export interface IntervalParams {
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  * @param st_speed	The speed of the car, in km/h, at the speed trap, which is a specific point on the track where the highest speeds are usually recorded.
  */
-export interface LapParams {
+export type OFLap = {
     date_start?: string;
     driver_number?: number;
     duration_sector_1?: number;
@@ -132,6 +152,8 @@ export interface LapParams {
     session_key?: number | string;
     st_speed?: number;
 }
+
+export type OFLapParams = Partial<OFLap>;
 
 export const segmentColor: Record<number, string> = {
     0: '#52525B',
@@ -155,7 +177,7 @@ export const segmentColor: Record<number, string> = {
  * @param y	The 'y' value in a 3D Cartesian coordinate system representing the current approximate location of the car on the track.
  * @param z	The 'z' value in a 3D Cartesian coordinate system representing the current approximate location of the car on the track.
  */
-export interface LocationParams {
+export type OFLocation = {
     date?: string;
     driver_number?: number;
     meeting_key?: number | string;
@@ -164,6 +186,8 @@ export interface LocationParams {
     y?: number;
     z?: number;
 }
+
+export type OFLocationParams = Partial<OFLocation>;
 
 /**
  * @param circuit_key The unique identifier for the circuit where the event takes place.
@@ -179,7 +203,7 @@ export interface LocationParams {
  * @param meeting_official_name The official name of the meeting.
  * @param year The year the event takes place.
  */
-export interface MeetingParams {
+export type OFMeeting = {
     circuit_key?: number;
     circuit_short_name?: string;
     country_code?: string;
@@ -194,6 +218,8 @@ export interface MeetingParams {
     year?: string | number;
 }
 
+export type OFMeetingParams = Partial<OFMeeting>;
+
 /**
  * @param date	The UTC date and time, in ISO 8601 format.
  * @param driver_number	The unique number assigned to an F1 driver (cf. Wikipedia).
@@ -202,7 +228,7 @@ export interface MeetingParams {
  * @param pit_duration	The time spent in the pit, from entering to leaving the pit lane, in seconds.
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
-export interface PitParams {
+export type OFPit = {
     date?: string;
     driver_number?: number;
     lap_number?: number;
@@ -211,6 +237,8 @@ export interface PitParams {
     session_key?: number | string;
 }
 
+export type OFPitParams = Partial<OFPit>;
+
 /**
  * @param date	The UTC date and time, in ISO 8601 format.
  * @param driver_number	The unique number assigned to an F1 driver (cf. Wikipedia).
@@ -218,13 +246,15 @@ export interface PitParams {
  * @param position	Position of the driver (starts at 1).
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
-export interface PositionParams {
+export type OFPosition = {
     date?: string;
     driver_number?: number;
     meeting_key?: number | string;
     position?: number;
     session_key?: number | string;
 }
+
+export type OFPositionParams = Partial<OFPosition>;
 
 /**
  * @param category	The category of the event (CarEvent, Drs, Flag, SafetyCar, ...).
@@ -238,7 +268,7 @@ export interface PositionParams {
  * @param sector	Segment ("mini-sector") of the track where the event occurred? (starts at 1).
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
-export interface RaceControlParams {
+export type OFRaceControl = {
     category?: string;
     date?: string;
     driver_number?: number;
@@ -250,6 +280,8 @@ export interface RaceControlParams {
     sector?: number;
     session_key?: number | string;
 }
+
+export type OFRaceControlParams = Partial<OFRaceControl>;
 
 /**
  * @param circuit_key	The unique identifier for the circuit where the event takes place.
@@ -267,7 +299,7 @@ export interface RaceControlParams {
  * @param session_type	The type of the session (Practice, Qualifying, Race, ...).
  * @param year	The year the event takes place.
  */
-export interface SessionParams {
+export type OFSession = {
     circuit_key?: number;
     circuit_short_name?: string;
     country_code?: string;
@@ -284,6 +316,8 @@ export interface SessionParams {
     year?: string | number;
 }
 
+export type OFSessionParams = Partial<OFSession>;
+
 /**
  * @param compound	The specific compound of tyre used during the stint (SOFT, MEDIUM, HARD, ...).
  * @param driver_number	The unique number assigned to an F1 driver (cf. Wikipedia).
@@ -294,7 +328,7 @@ export interface SessionParams {
  * @param stint_number	The sequential number of the stint within the session (starts at 1).
  * @param tyre_age_at_start	The age of the tyres at the start of the stint, in laps completed.
  */
-export interface StintParams {
+export type OFStint = {
     compound?: string;
     driver_number?: number;
     lap_end?: number;
@@ -305,6 +339,8 @@ export interface StintParams {
     tyre_age_at_start?: number;
 }
 
+export type OFStintParams = Partial<OFStint>;
+
 /**
  * @param date	The UTC date and time, in ISO 8601 format.
  * @param driver_number	The unique number assigned to an F1 driver (cf. Wikipedia).
@@ -312,13 +348,15 @@ export interface StintParams {
  * @param recording_url	URL of the radio recording.
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
-export interface TeamRadioParams {
+export type OFTeamRadio = {
     date?: string;
     driver_number?: number;
     meeting_key?: number | string;
     recording_url?: string;
     session_key?: number | string;
 }
+
+export type OFTeamRadioParams = Partial<OFTeamRadio>;
 
 /**
  * @param air_temperature	Air temperature (°C).
@@ -332,7 +370,7 @@ export interface TeamRadioParams {
  * @param wind_direction	Wind direction (°), from 0° to 359°.
  * @param wind_speed	Wind speed (m/s).
  */
-export interface WeatherParams {
+export type OFWeather = {
     air_temperature?: number;
     date?: string;
     humidity?: number;
@@ -344,3 +382,5 @@ export interface WeatherParams {
     wind_direction?: number;
     wind_speed?: number;
 }
+
+export type OFWeatherParams = Partial<OFWeather>;

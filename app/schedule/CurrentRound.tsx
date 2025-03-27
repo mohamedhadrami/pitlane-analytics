@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { MeetingParams } from "../../types/openF1";
+import type { MeetingParams } from "../../types/openF1.types";
 import { fetchCountryFlagByName } from "../../services/countryApi";
 import { fetchRaceResults } from "../../services/jolpicaApi";
 import { trackDetailedImage } from "../../utils/helpers";

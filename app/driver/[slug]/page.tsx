@@ -2,7 +2,7 @@
 
 "use client"
 
-import { DriverParams } from "@/types/openF1";
+import { DriverParams } from "@/types/openF1.types";
 import { fetchDrivers } from "@/services/openF1Api";
 import { driverImage } from "@/utils/helpers";
 import { Image } from "@heroui/react";

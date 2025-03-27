@@ -3,7 +3,7 @@
 "use client";
 
 import { getCompoundColor } from "@/components/Tyres";
-import { DriverParams, StintParams } from "@/types/openF1";
+import { DriverParams, StintParams } from "@/types/openF1.types";
 import { driverImage } from "@/utils/helpers";
 import { Image } from "@heroui/react";
 import React, { useMemo } from 'react';

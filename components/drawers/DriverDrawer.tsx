@@ -1,7 +1,7 @@
 // @/components/drawers/DriverDrawer.tsx
 
 import React, { useState, useEffect } from "react";
-import { DriverParams } from "@/types/openF1";
+import { DriverParams } from "@/types/openF1.types";
 import { fetchDriverResults } from "@/services/jolpicaApi";
 import { Link, Button, Tabs, Tab, Card, CardBody } from "@heroui/react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerOverlay } from "../ui/drawer";

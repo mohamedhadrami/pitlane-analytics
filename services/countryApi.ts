@@ -38,7 +38,7 @@ export const fetchCountryFlagByDemonym = async (demonym: string) => {
 
 export const fetchCountryNameByCode = async (country_code: string) => {
     let endpoint = `/alpha/${country_code}`;
-    if (country_code == undefined) endpoint = "USA"
+    if (country_code === undefined) endpoint = "USA"
     const data = await fetchRestCountryApi(endpoint);
     const name = data[0]?.name.common;
     return name;

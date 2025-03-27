@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
-import { RaceControlParams } from "@/types/openF1";
+import { RaceControlParams } from "@/types/openF1.types";
 import LapTimeTooltip from "@/components/Telemetry/LapTimeTooltip";
 import { formatSecondsToTime, isValidColor } from "../../utils/helpers";
 import { DriverChartData } from "@/types/custom";

@@ -1,13 +1,14 @@
 // @/app/dashboard/page.tsx
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import type React from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Divider } from "@heroui/react";
 import { LiveSettingsProvider, useLiveSettings } from "@/context/LiveSettingsContext";
 import { useFooter } from "@/context/FooterContext";
-import { mvCircuit } from "@/types/multiviewer";
-import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
-import {
+import type { mvCircuit } from "@/types/multiviewer";
+import type { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
+import type {
     DriverParams,
     MeetingParams,
     RaceControlParams,
@@ -18,7 +19,7 @@ import {
     LapParams,
     PositionParams,
     IntervalParams,
-} from "@/types/openF1";
+} from "@/types/openF1.types";
 import {
     fetchDrivers,
     fetchIntervals,
@@ -78,7 +79,7 @@ const Dashboard: React.FC = () => {
     const params = useMemo(() => ({
         meeting_key: meeting_test,
         session_key: session_test,
-    }), [meeting_test, session_test]);
+    }), []);
 
     useEffect(() => {
         async function fetchData() {
@@ -174,7 +175,7 @@ const Dashboard: React.FC = () => {
         }
 
         fetchOnceRef.current = true;
-    }, [setMeeting, setSession, setDrivers, setRaceControl, setTeamRadio, setWeather, setStints, setLaps, setIntervals, setPositions, params]);
+    }, [params]);
 
 
     // MULTIVIEWER
@@ -200,7 +201,7 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            let year = meeting?.year;
+            const year = meeting?.year;
             if (year) {
                 const path = await fetchLiveSessionPath(year, meeting?.meeting_key!, session?.session_key!);
                 const liveLapCount: LiveLapCount = await fetchLiveLapCount(path);

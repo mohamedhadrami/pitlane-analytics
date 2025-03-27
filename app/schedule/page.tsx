@@ -7,7 +7,7 @@ import Round from "@/app/schedule/Round";
 import { fetchCurrentSeason } from "@/services/jolpicaApi";
 import { useState, useEffect } from "react";
 import Loading from "../../components/Loading";
-import type { MeetingParams } from "@/types/openF1";
+import type { MeetingParams } from "@/types/openF1.types";
 import { fetchMeeting } from "@/services/openF1Api";
 import { findNextRace } from "@/utils/helpers";
 import type { JLPScheduleResponse, JLPRace } from "@/types/jolpica.types";

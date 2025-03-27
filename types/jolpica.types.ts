@@ -29,13 +29,39 @@ export type JLPCircuit = {
     circuitId: string;
     url: string;
     circuitName: string;
-    Location: Location;
+    Location: JLPLocation;
 };
 
 export type JLPSession = {
     date: string;
     time: string;
 };
+
+export type JLPRace = JLPBaseRace & {
+    FirstPractice?: JLPSession;
+    SecondPractice?: JLPSession;
+    ThirdPractice?: JLPSession;
+    Qualifying?: JLPSession;
+    SprintQualifying?: JLPSession;
+    Sprint?: JLPSession;
+};
+
+export type JLPTime = {
+    millis: string;
+    time: string;
+}
+
+export type JLPTimeValue = {
+    time: string;
+};
+
+export type JLPFastestTime = {
+    rank: string;
+    lap: string;
+    Time: JLPTimeValue;
+};
+
+
 
 // --- Shared Structures ---
 
@@ -50,11 +76,27 @@ export type JLPMRData<T, K extends string = "StandingsTable"> = {
     [key in K]: T;
 };
 
-
-export type JLPStandingsListBase = {
+export type JLPBaseStandings = {
     season: string;
     round: string;
 };
+
+export type JLPBaseRace = {
+    season: string;
+    round: string;
+    url: string;
+    raceName: string;
+    Circuit: JLPCircuit;
+    date: string;
+    time: string;
+};
+
+export type JLPBaseRaceTable = {
+    season: string;
+    Races: JLPBaseRace[];
+};
+
+
 
 // --- Driver Standings ---
 
@@ -68,7 +110,7 @@ export type JLPDriverStandingsTable = {
     StandingsLists: JLPDriverStandingsList[];
 };
 
-export type JLPDriverStandingsList = JLPStandingsListBase & {
+export type JLPDriverStandingsList = JLPBaseStandings & {
     DriverStandings: JLPDriverStandingItem[];
 };
 
@@ -93,7 +135,7 @@ export type JLPConstructorStandingsTable = {
     StandingsLists: JLPConstructorStandingsList[];
 };
 
-export type JLPConstructorStandingsList = JLPStandingsListBase & {
+export type JLPConstructorStandingsList = JLPBaseStandings & {
     ConstructorStandings: JLPConstructorStandingItem[];
 };
 
@@ -109,26 +151,88 @@ export type JLPConstructorStandingItem = {
 // --- Schedule ---
 
 export type JLPScheduleResponse = {
-    MRData: JLPMRData<JLPRaceTable, "RaceTable">;
+    MRData: JLPMRData<JLPBaseRaceTable, "RaceTable">;
 };
 
-export type JLPRaceTable = {
-    season: string;
-    Races: JLPRace[];
+// --- Results ---
+
+export type JLPRaceResultsResponse = {
+    MRData: JLPMRData<JLPRaceResultsTable, "RaceTable">;
 };
 
-export type JLPRace = {
-    season: string;
-    round: string;
-    url: string;
-    raceName: string;
-    Circuit: JLPCircuit;
-    date: string;
-    time: string;
-    FirstPractice?: JLPSession;
-    SecondPractice?: JLPSession;
-    ThirdPractice?: JLPSession;
-    Qualifying?: JLPSession;
-    SprintQualifying?: JLPSession;
-    Sprint?: JLPSession;
+export type JLPRaceResultsTable = JLPBaseRaceTable & {
+    Races: JLPRaceResults[];
 };
+export type JLPRaceResults = JLPBaseRace & {
+    Results: JLPResult[];
+};
+
+export type JLPResult = {
+    number: string;
+    position: string;
+    positionText: string;
+    points: string;
+    Driver: JLPDriver;
+    Constructor: JLPConstructor;
+    grid: string;
+    laps: string;
+    status: string;
+    Time: JLPTime;
+    FastestLap: JLPFastestTime;
+}
+
+
+// --- Results by Circuit ---
+
+export type JLPRaceResultsByCircuitResponse = {
+    MRData: JLPMRData<JLPRaceResultsByCircuitTable, "RaceTable">;
+};
+
+export type JLPRaceResultsByCircuitTable = JLPRaceResultsTable & {
+    circuitId: string;
+};
+
+// --- Results by Driver ---
+
+export type JLPRaceResultsByDriverResponse = {
+    MRData: JLPMRData<JLPRaceResultsByDriverTable, "RaceTable">;
+};
+
+export type JLPRaceResultsByDriverTable = JLPRaceResultsTable & {
+    driverId: string;
+};
+
+// --- Results by Constructor ---
+
+export type JLPRaceResultsByConstructorResponse = {
+    MRData: JLPMRData<JLPRaceResultsByConstructorTable, "RaceTable">;
+};
+
+export type JLPRaceResultsByConstructorTable = JLPRaceResultsTable & {
+    constructorId: string;
+};
+
+
+
+
+// --- Driver Details ---
+
+export type JLPDriverDetailsResponse = {
+    MRData: JLPMRData<JLPDriverDetailsTable, "DriverTable">;
+}
+
+export type JLPDriverDetailsTable = {
+    driverId: string;
+    Drivers: JLPDriver[]
+}
+
+// --- Constructor Details ---
+
+export type JLPConstructorDetailsResponse = {
+    MRData: JLPMRData<JLPConstructorDetailsTable, "ConstructorTable">;
+}
+
+export type JLPConstructorDetailsTable = {
+    driverId: string;
+    Constructors: JLPConstructor[]
+}

@@ -1,21 +1,20 @@
 // @/interface/custom.ts
 
-import { LucideIcon } from "lucide-react";
-import type { CarDataParams, DriverParams, LapParams, LocationParams, RaceControlParams, StintParams } from "./openF1";
+import type { OFCarDataParams, OFDriverParams, OFLapParams, OFLocationParams, OFRaceControlParams, OFStintParams } from "./openF1.types";
 
 
 export interface DriverChartData {
     selectedLap: number | null;
-    driver: DriverParams;
-    laps: LapParams[];
+    driver: OFDriverParams;
+    laps: OFLapParams[];
     carData: ExtendedCarDataParams[];
-    locationData: LocationParams[];
-    stintData: StintParams[];
-    raceControl: RaceControlParams[];
+    locationData: OFLocationParams[];
+    stintData: OFStintParams[];
+    raceControl: OFRaceControlParams[];
     chartData: any[];
 }
 
-export interface ExtendedCarDataParams extends CarDataParams {
+export interface ExtendedCarDataParams extends OFCarDataParams {
     lap_time?: number;
 }
 

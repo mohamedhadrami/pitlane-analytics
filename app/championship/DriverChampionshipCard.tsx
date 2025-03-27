@@ -4,7 +4,7 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { fetchCountryNameByCode } from "@/services/countryApi";
-import type { DriverParams } from "@/types/openF1";
+import type { DriverParams } from "@/types/openF1.types";
 import { Image, Divider, Spacer } from "@heroui/react";
 import {
   driverImage,
