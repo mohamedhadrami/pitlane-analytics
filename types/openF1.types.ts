@@ -135,22 +135,22 @@ export type OFIntervalParams = Partial<OFInterval>;
  * @param st_speed	The speed of the car, in km/h, at the speed trap, which is a specific point on the track where the highest speeds are usually recorded.
  */
 export type OFLap = {
-    date_start?: string;
-    driver_number?: number;
-    duration_sector_1?: number;
-    duration_sector_2?: number;
-    duration_sector_3?: number;
-    i1_speed?: number;
-    i2_speed?: number;
-    is_pit_out_lap?: boolean;
-    lap_duration?: number;
-    lap_number?: number;
-    meeting_key?: number | string;
-    segments_sector_1?: [];
-    segments_sector_2?: [];
-    segments_sector_3?: [];
-    session_key?: number | string;
-    st_speed?: number;
+    date_start: string;
+    driver_number: number;
+    duration_sector_1: number;
+    duration_sector_2: number;
+    duration_sector_3: number;
+    i1_speed: number;
+    i2_speed: number;
+    is_pit_out_lap: boolean;
+    lap_duration: number;
+    lap_number: number;
+    meeting_key: number | string;
+    segments_sector_1: [];
+    segments_sector_2: [];
+    segments_sector_3: [];
+    session_key: number | string;
+    st_speed: number;
 }
 
 export type OFLapParams = Partial<OFLap>;
@@ -178,13 +178,13 @@ export const segmentColor: Record<number, string> = {
  * @param z	The 'z' value in a 3D Cartesian coordinate system representing the current approximate location of the car on the track.
  */
 export type OFLocation = {
-    date?: string;
-    driver_number?: number;
-    meeting_key?: number | string;
-    session_key?: number | string;
-    x?: number;
-    y?: number;
-    z?: number;
+    date: string;
+    driver_number: number;
+    meeting_key: number | string;
+    session_key: number | string;
+    x: number;
+    y: number;
+    z: number;
 }
 
 export type OFLocationParams = Partial<OFLocation>;
@@ -204,18 +204,18 @@ export type OFLocationParams = Partial<OFLocation>;
  * @param year The year the event takes place.
  */
 export type OFMeeting = {
-    circuit_key?: number;
-    circuit_short_name?: string;
-    country_code?: string;
-    country_key?: number;
-    country_name?: string;
-    date_start?: string;
-    gmt_offset?: string;
-    location?: string;
-    meeting_key?: number | string;
-    meeting_name?: string;
-    meeting_official_name?: string;
-    year?: string | number;
+    circuit_key: number;
+    circuit_short_name: string;
+    country_code: string;
+    country_key: number;
+    country_name: string;
+    date_start: string;
+    gmt_offset: string;
+    location: string;
+    meeting_key: number | string;
+    meeting_name: string;
+    meeting_official_name: string;
+    year: string | number;
 }
 
 export type OFMeetingParams = Partial<OFMeeting>;
@@ -229,12 +229,12 @@ export type OFMeetingParams = Partial<OFMeeting>;
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export type OFPit = {
-    date?: string;
-    driver_number?: number;
-    lap_number?: number;
-    meeting_key?: number | string;
-    pit_duration?: number;
-    session_key?: number | string;
+    date: string;
+    driver_number: number;
+    lap_number: number;
+    meeting_key: number | string;
+    pit_duration: number;
+    session_key: number | string;
 }
 
 export type OFPitParams = Partial<OFPit>;
@@ -247,11 +247,11 @@ export type OFPitParams = Partial<OFPit>;
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export type OFPosition = {
-    date?: string;
-    driver_number?: number;
-    meeting_key?: number | string;
-    position?: number;
-    session_key?: number | string;
+    date: string;
+    driver_number: number;
+    meeting_key: number | string;
+    position: number;
+    session_key: number | string;
 }
 
 export type OFPositionParams = Partial<OFPosition>;
@@ -269,16 +269,16 @@ export type OFPositionParams = Partial<OFPosition>;
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export type OFRaceControl = {
-    category?: string;
-    date?: string;
-    driver_number?: number;
-    flag?: string;
-    lap_number?: number;
-    meeting_key?: number | string;
-    message?: string;
-    scope?: string;
-    sector?: number;
-    session_key?: number | string;
+    category: string;
+    date: string;
+    driver_number: number;
+    flag: string;
+    lap_number: number;
+    meeting_key: number | string;
+    message: string;
+    scope: string;
+    sector: number;
+    session_key: number | string;
 }
 
 export type OFRaceControlParams = Partial<OFRaceControl>;
@@ -300,20 +300,20 @@ export type OFRaceControlParams = Partial<OFRaceControl>;
  * @param year	The year the event takes place.
  */
 export type OFSession = {
-    circuit_key?: number;
-    circuit_short_name?: string;
-    country_code?: string;
-    country_key?: number;
-    country_name?: string;
-    date_end?: string;
-    date_start?: string;
-    gmt_offset?: string;
-    location?: string;
-    meeting_key?: number | string;
-    session_key?: number | string;
-    session_name?: string;
-    session_type?: string;
-    year?: string | number;
+    circuit_key: number;
+    circuit_short_name: string;
+    country_code: string;
+    country_key: number;
+    country_name: string;
+    date_end: string;
+    date_start: string;
+    gmt_offset: string;
+    location: string;
+    meeting_key: number | string;
+    session_key: number | string;
+    session_name: string;
+    session_type: string;
+    year: string | number;
 }
 
 export type OFSessionParams = Partial<OFSession>;
@@ -329,14 +329,14 @@ export type OFSessionParams = Partial<OFSession>;
  * @param tyre_age_at_start	The age of the tyres at the start of the stint, in laps completed.
  */
 export type OFStint = {
-    compound?: string;
-    driver_number?: number;
-    lap_end?: number;
-    lap_start?: number;
-    meeting_key?: number | string;
-    session_key?: number | string;
-    stint_number?: number;
-    tyre_age_at_start?: number;
+    compound: string;
+    driver_number: number;
+    lap_end: number;
+    lap_start: number;
+    meeting_key: number | string;
+    session_key: number | string;
+    stint_number: number;
+    tyre_age_at_start: number;
 }
 
 export type OFStintParams = Partial<OFStint>;
@@ -349,11 +349,11 @@ export type OFStintParams = Partial<OFStint>;
  * @param session_key	The unique identifier for the session. Use latest to identify the latest or current session.
  */
 export type OFTeamRadio = {
-    date?: string;
-    driver_number?: number;
-    meeting_key?: number | string;
-    recording_url?: string;
-    session_key?: number | string;
+    date: string;
+    driver_number: number;
+    meeting_key: number | string;
+    recording_url: string;
+    session_key: number | string;
 }
 
 export type OFTeamRadioParams = Partial<OFTeamRadio>;
@@ -371,16 +371,16 @@ export type OFTeamRadioParams = Partial<OFTeamRadio>;
  * @param wind_speed	Wind speed (m/s).
  */
 export type OFWeather = {
-    air_temperature?: number;
-    date?: string;
-    humidity?: number;
-    meeting_key?: number | string;
-    pressure?: number;
-    rainfall?: number;
-    session_key?: number | string;
-    track_temperature?: number;
-    wind_direction?: number;
-    wind_speed?: number;
+    air_temperature: number;
+    date: string;
+    humidity: number;
+    meeting_key: number | string;
+    pressure: number;
+    rainfall: number;
+    session_key: number | string;
+    track_temperature: number;
+    wind_direction: number;
+    wind_speed: number;
 }
 
 export type OFWeatherParams = Partial<OFWeather>;
