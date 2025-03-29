@@ -76,7 +76,7 @@ const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, con
           </div>
         </DrawerContent>
         <DrawerFooter>
-          <div className="h-2">&nbsp;</div>
+          <div className="h-2" />
         </DrawerFooter>
         <DrawerOverlay className="bg-[#e10600aa]" />
       </Drawer>

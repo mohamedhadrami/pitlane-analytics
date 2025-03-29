@@ -10,6 +10,7 @@ import { Minus } from "lucide-react";
 import { Image, Divider, Spacer } from "@heroui/react";
 import RaceDrawer from "@/components/drawers/RaceDrawer";
 import type { JLPRace, JLPRaceResultsResponse, JLPResult } from "@/types/jolpica.types";
+import type { RCFlags } from "@/types/restCountries";
 
 function formatDateRange(startDate: string, endDate: string) {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
@@ -24,8 +25,8 @@ function formatDateRange(startDate: string, endDate: string) {
 const Round: React.FC<{ raceData: JLPRace, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
   const [results, setResults] = useState<JLPResult[]>([]);
   const [meeting, setMeeting] = useState<OFMeeting>();
-  const [raceDates, setRaceDates] = useState<any>(null);
-  const [flagData, setFlagData] = useState<any>(null);
+  const [raceDates, setRaceDates] = useState<string>("");
+  const [flagData, setFlagData] = useState<RCFlags>();
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ const Round: React.FC<{ raceData: JLPRace, meetings: OFMeeting[] }> = ({ raceDat
     };
 
     getFlag();
-    setRaceDates(formatDateRange(raceData.FirstPractice!.date, raceData.date));
+    if (raceData.FirstPractice) setRaceDates(formatDateRange(raceData.FirstPractice.date, raceData.date));
   }, [raceData]);
 
   useEffect(() => {
@@ -111,15 +112,17 @@ const Round: React.FC<{ raceData: JLPRace, meetings: OFMeeting[] }> = ({ raceDat
           <Image src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
         </div>
 
-        {results && <ResultsContainer results={results} />}
+        {results && meeting && <ResultsContainer meeting={meeting} results={results} />}
       </div>
-      <RaceDrawer
-        isOpen={openDrawer}
-        setIsOpen={setOpenDrawer}
-        raceData={raceData}
-        raceResults={results}
-        meeting={meeting!}
-      />
+      {meeting && (
+        <RaceDrawer
+          isOpen={openDrawer}
+          setIsOpen={setOpenDrawer}
+          raceData={raceData}
+          raceResults={results}
+          meeting={meeting}
+        />
+      )}
     </>
   );
 };
@@ -129,15 +132,15 @@ export default Round;
 
 
 
-const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
+const ResultsContainer: React.FC<{ meeting: OFMeeting; results: JLPResult[] }> = ({ meeting, results }) => {
   const driverClasses = "flex flex-col items-center gap-2"
   const driverImageClasses = "rounded-full"
 
   return (
     <div>
       <Divider className="my-3" />
-      <h3 key={`${results.round}-results-title`} className="text-center font-light text-lg m-3">Race Results</h3>
-      <div key={`${results.round}-results-container`} className="flex flex-row justify-center gap-5">
+      <h3 key={`${meeting.meeting_key}-results-title`} className="text-center font-light text-lg m-3">Race Results</h3>
+      <div key={`${meeting.meeting_key}-results-container`} className="flex flex-row justify-center gap-5">
         <div className={driverClasses}>
           <Image
             src={driverImage(
@@ -147,7 +150,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
             alt={`${results[1].Driver.givenName} ${results[1].Driver.familyName} driver image`}
             className={driverImageClasses}
           />
-          <span key={`${results.round}-2`} className="flex items-center">
+          <span key={`${meeting.meeting_key}-2`} className="flex items-center">
             <span className="font-extralight">2</span>
             <Spacer x={2} />
             <Divider orientation="vertical" className="h-5" />
@@ -164,7 +167,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
             alt={`${results[0].Driver.givenName} ${results[0].Driver.familyName} driver image`}
             className={`${driverImageClasses} w-32`}
           />
-          <span key={`${results.round}-2`} className="flex items-center">
+          <span key={`${meeting.meeting_key}-2`} className="flex items-center">
             <span className="font-extralight">1</span>
             <Spacer x={2} />
             <Divider orientation="vertical" className="h-5" />
@@ -181,7 +184,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
             alt={`${results[2].Driver.givenName} ${results[2].Driver.familyName} driver image`}
             className={driverImageClasses}
           />
-          <span key={`${results.round}-2`} className="flex items-center">
+          <span key={`${meeting.meeting_key}-2`} className="flex items-center">
             <span className="font-extralight">3</span>
             <Spacer x={2} />
             <Divider orientation="vertical" className="h-5" />

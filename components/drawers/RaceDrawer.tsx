@@ -65,7 +65,7 @@ const RaceDrawer: React.FC<RaceDrawerProps> = ({ isOpen, setIsOpen, raceData, ra
                     </div>
                 </DrawerContent>
                 <DrawerFooter>
-                    <div className="h-2">&nsbp;</div>
+                    <div className="h-2" />
                 </DrawerFooter>
             </Drawer>
         </div>

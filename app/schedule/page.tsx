@@ -25,7 +25,7 @@ const Page: React.FC = () => {
                 const raceIndex = findNextRace(apiData.MRData.RaceTable.Races);
                 setNextRaceIndex(raceIndex);
                 const params: OFMeetingParams = {
-                    year: 2024
+                    year: 2025
                 }
                 const meetingsData = await fetchMeeting(params);
                 setMeeting(meetingsData);
