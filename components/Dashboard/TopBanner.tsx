@@ -1,8 +1,8 @@
 
-import React from "react";
+import type React from "react";
 import Marquee from "react-fast-marquee";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind } from "lucide-react";
-import { MeetingParams, SessionParams, WeatherParams } from "../../types/openF1.types";
+import type { OFMeeting, OFSession, OFWeather } from "../../types/openF1.types";
 import { getWindDirection } from "../../utils/telemetryUtils";
 import { trackImage } from "../../utils/helpers";
 import { Divider, Image } from "@heroui/react";
@@ -10,7 +10,7 @@ import { useLiveSettings } from "@/context/LiveSettingsContext";
 
 const labelClasses = "text-gray-400 mr-3";
 
-const TopBanner: React.FC<{ meeting: MeetingParams, session: SessionParams, weather: WeatherParams }> = ({ meeting, session, weather }) => {
+const TopBanner: React.FC<{ meeting: OFMeeting, session: OFSession, weather: OFWeather }> = ({ meeting, session, weather }) => {
     const { settings } = useLiveSettings();
     const findSetting = (name: string) => settings.find(setting => setting.name === name);
     const isShowSessionInfo = findSetting('Show Session Info')?.value;

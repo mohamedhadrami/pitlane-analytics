@@ -2,13 +2,14 @@
 
 "use client"
 
-import React, { useState, useEffect, useRef } from "react";
+import type React from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTheme } from "next-themes";
 import { PanelLeftOpen, PanelLeftClose } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import SidebarItem from "./SidebarItem";
-import { NavigationItem } from "@/types/custom";
+import type { NavigationItem } from "@/types/custom";
 
 interface SidebarProps {
     items: NavigationItem[];
@@ -70,6 +71,7 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
             >
                 <div className={`flex ${isOpen ? 'justify-end' : 'justify-center'} items-center mb-5`}>
                     <button
+                        type="button"
                         className="text-foreground hover:text-white-800 dark:text-white-500 dark:hover:text-white-300"
                         onClick={toggleSidebar}
                     >
@@ -83,7 +85,7 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
                     ))}
                 </AnimatePresence>
 
-                <div className="flex-grow"></div>
+                <div className="flex-grow" />
                 {/*
                         <Tooltip content='Theme' placement="right" closeDelay={0} showArrow>
                         <Button onClick={handleThemeChange} isIconOnly variant="light" aria-label="Take a photo" className="font-light text-xl flex items-center align-middle cursor-pointer">
@@ -98,7 +100,7 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
 
             </motion.div>
 
-            <div className="ml-16"></div>
+            <div className="ml-16" />
         </div>
     );
 }

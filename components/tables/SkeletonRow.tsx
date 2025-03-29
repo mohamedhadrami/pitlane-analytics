@@ -5,7 +5,7 @@ import { Skeleton } from "@heroui/react";
 const SkeletonRow: React.FC = () => {
     return (
         <Skeleton className="w-3/5 rounded-lg">
-            <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+            <div className="h-3 w-3/5 rounded-lg bg-default-200" />
         </Skeleton>
     )
 }

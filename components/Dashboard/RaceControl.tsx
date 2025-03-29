@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { DriverParams, RaceControlParams, SessionParams } from "../../types/openF1.types";
+import type { OFDriver, OFRaceControl, OFSession, OFSessionParams } from "../../types/openF1.types";
 import { driverImage, parseISOTimeFull } from "../../utils/helpers";
 import { fetchSession } from "../../services/openF1Api";
 import { Image, ScrollShadow } from "@heroui/react";
 import { useLiveSettings } from "@/context/LiveSettingsContext";
 
-const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlParams[] }> = ({ drivers, raceControl }) => {
+const RaceControl: React.FC<{ drivers: OFDriver[], raceControl: OFRaceControl[] }> = ({ drivers, raceControl }) => {
     const { settings } = useLiveSettings();
     const findSetting = (name: string) => settings.find(setting => setting.name === name);
     const isShowRaceControlTime = findSetting('Show Race Control Time')?.value;
@@ -15,7 +15,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
 
     useEffect(() => {
         const fetchOffset = async () => {
-            const params: SessionParams = {
+            const params: OFSessionParams = {
                 session_key: raceControl[0]?.session_key
             }
             const apiData = await fetchSession(params);
@@ -25,13 +25,13 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
     }, [raceControl]);
 
     const driverData = (driver_number: number) => {
-        const driver: DriverParams | undefined = drivers?.find(driver => driver.driver_number === driver_number);
+        const driver: OFDriver | undefined = drivers?.find(driver => driver.driver_number === driver_number);
         if (driver) return [driver?.first_name, driver?.last_name]
-        else return [undefined, undefined]
+        return [undefined, undefined]
     }
 
     // Sort the raceControl array by date in descending order
-    const sortedRaceControl = raceControl.sort((a, b) => Date.parse(b.date!) - Date.parse(a.date!));
+    const sortedRaceControl = raceControl.sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
 
     const filteredRaceControl = isShowBlueFlag 
         ? sortedRaceControl 
@@ -41,7 +41,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
         <div className="overflow-y-scroll">
             <div className="m-3 min-w-[400px] font-extralight">
                 <ScrollShadow className="min-w-[300px] h-[400px]" size={50}>
-                    {filteredRaceControl && filteredRaceControl.map((event: RaceControlParams, id: number) => (
+                    {filteredRaceControl?.map((event: OFRaceControl, id: number) => (
                         <div key={`${event.date}-${event.category}-${id}`} className="flex items-center my-1">
                             {isShowRaceControlTime && gmtOffset && (
                                 <div className="text-[#999] font-extralight w-[12%] text-left">
@@ -57,7 +57,7 @@ const RaceControl: React.FC<{ drivers: DriverParams[], raceControl: RaceControlP
                                 )}
                                 {event.category && event.category === "SafetyCar" && (
                                     <Image
-                                        src={`flags/SC.png`}
+                                        src={"flags/SC.png"}
                                         alt={`${event.flag}`}
                                         className="w-5 mr-3" />
                                 )}

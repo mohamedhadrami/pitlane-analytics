@@ -1,6 +1,6 @@
 // @/components/Navigation/SidebarItem.tsx
 
-import { NavigationItem } from "@/types/custom";
+import type { NavigationItem } from "@/types/custom";
 import { Chip, Link, Tooltip } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { cloneElement } from "react";
@@ -43,7 +43,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ pathname, isOpen, item }) => 
                             color="foreground"
                             className="relative font-light text-xl flex items-center align-middle cursor-pointer text-primary-800 dark:text-primary-200 hover:text-primary-600 dark:hover:text-primary-300 group"
                         >
-                            <div className={`absolute top-1/2 left-0 transform -translate-y-1/2 w-[2px] transition-all duration-300 ease-out group-hover:h-full group-focus:h-full h-0 ${pathname === item.href ? 'bg-secondary' : 'bg-foreground'}`}></div>
+                            <div className={`absolute top-1/2 left-0 transform -translate-y-1/2 w-[2px] transition-all duration-300 ease-out group-hover:h-full group-focus:h-full h-0 ${pathname === item.href ? 'bg-secondary' : 'bg-foreground'}`} />
                             <div className="ml-3">
                                 {cloneElement(item.icon, { className: pathname === item.href ? 'text-secondary' : 'text-foreground' })}
                             </div>

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { mvCircuit, trackElement } from "@/types/multiviewer";
+import type React from "react";
+import { useEffect, useState } from "react";
+import type { mvCircuit, trackElement } from "@/types/multiviewer";
 import { ResponsiveContainer, XAxis, YAxis, Tooltip, ScatterChart, Scatter } from "recharts";
 import PindropShape from "../Telemetry/Pindrop";
 import TrackVisualizerTooltip from "../Telemetry/TrackVisualizerTooltip";

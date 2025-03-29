@@ -64,7 +64,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         value={zscoreThreshold.toString()}
                         isInvalid={zscoreThreshold < 0}
                         errorMessage="Value must be greater than zero"
-                        onChange={(e) => setZscoreThreshold(parseFloat(e.target.value))}
+                        onChange={(e) => setZscoreThreshold(Number.parseFloat(e.target.value))}
                         size="sm"
                     />
                 )
@@ -76,7 +76,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         value={modZscoreThreshold.toString()}
                         isInvalid={modZscoreThreshold < 0}
                         errorMessage="Value must be greater than zero"
-                        onChange={(e) => setModZscoreThreshold(parseFloat(e.target.value))}
+                        onChange={(e) => setModZscoreThreshold(Number.parseFloat(e.target.value))}
                         size="sm"
                     />
                 )
@@ -92,7 +92,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         value={iqrMultiplier.toString()}
                         isInvalid={iqrMultiplier < 0}
                         errorMessage="Value must be greater than zero"
-                        onChange={(e) => setIqrMultiplier(parseFloat(e.target.value))}
+                        onChange={(e) => setIqrMultiplier(Number.parseFloat(e.target.value))}
                         size="sm"
                     />
                 )
@@ -170,7 +170,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                                                 </Button>
                                             </DropdownTrigger>
                                             <DropdownMenu
-                                                aria-label={`Outlier Method Selection`}
+                                                aria-label="Outlier Method Selection"
                                                 variant="solid"
                                                 color="primary"
                                                 selectionMode="single"
@@ -191,7 +191,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                                                     : defaultThresholds[0].toString()
                                             }
                                             onChange={(e) =>
-                                                setCustomLowerThreshold(parseFloat(e.target.value))
+                                                setCustomLowerThreshold(Number.parseFloat(e.target.value))
                                             }
                                             size="sm"
                                         />
@@ -204,7 +204,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                                                     : defaultThresholds[1].toString()
                                             }
                                             onChange={(e) =>
-                                                setCustomUpperThreshold(parseFloat(e.target.value))
+                                                setCustomUpperThreshold(Number.parseFloat(e.target.value))
                                             }
                                             size="sm"
                                         />

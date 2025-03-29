@@ -59,7 +59,6 @@ const TelemetryStepManager: React.FC = () => {
             case "driver-lap":
                 return <DriverSelection />;
             case "lap-telemetry":
-                console.log("its on")
                 return <LapTimesLineChart />;
             default:
                 return null;
@@ -93,7 +92,7 @@ const TelemetryStepManager: React.FC = () => {
                     <div className="flex flex-grow">
                         <AnimatePresence mode="wait">
                             <motion.div
-                                key={currentStep + "-left"}
+                                key={`${currentStep}-left`}
                                 initial={{ opacity: 0, x: -100 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: 100 }}
@@ -105,7 +104,7 @@ const TelemetryStepManager: React.FC = () => {
                         </AnimatePresence>
                         <AnimatePresence mode="wait">
                             <motion.div
-                                key={currentStep + "-right"}
+                                key={`${currentStep}-right`}
                                 initial={{ opacity: 0, x: 100 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -100 }}

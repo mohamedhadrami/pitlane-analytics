@@ -1,14 +1,15 @@
 // @/components/Telemetry/SelectionPrompts/SelectionPrompt.tsx
 
-import React from "react";
+import type React from "react";
+import type { JSX } from "react";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MeetingParams, SessionParams } from "@/types/openF1.types";
+import type { OFMeeting, OFSession } from "@/types/openF1.types";
 
 interface SelectionPromptProps {
     label: string;
     icon: JSX.Element;
-    data: string[] | MeetingParams[] | SessionParams[];
+    data: string[] | OFMeeting[] | OFSession[];
 }
 
 const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) => {
@@ -27,7 +28,7 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
                             { key: "date_start", label: "Start Date" },
                             { key: "year", label: "Year" },
                         ]}
-                        data={data as MeetingParams[]}
+                        data={data as OFMeeting[]}
                     />
                 );
             case "Session":
@@ -40,7 +41,7 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
                             { key: "date_start", label: "Start Date" },
                             { key: "date_end", label: "End Date" },
                         ]}
-                        data={data as SessionParams[]}
+                        data={data as OFSession[]}
                     />
                 );
             default:
@@ -79,18 +80,25 @@ const DataTable = <T extends object>({ headers, data }: DataTableProps<T>) => {
     return (
         <Table>
             <TableHeader columns={headers}>
-                {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                {(column) => <TableColumn key={String(column.key)}>{column.label}</TableColumn>}
             </TableHeader>
             <TableBody items={data}>
-                {(item: T) => (
-                    <TableRow key={(item as any).key || Object.values(item).join("-")}>
-                        {headers.map((header) => (
-                            <TableCell key={header.key}>
-                                {item[header.key]}
-                            </TableCell>
-                        ))}
-                    </TableRow>
-                )}
+                {(item: T) => {
+                    const key =
+                        "key" in item && typeof item.key === "string"
+                            ? (item.key as string)
+                            : headers.map((h) => String(item[h.key])).join("-");
+
+                    return (
+                        <TableRow key={key}>
+                            {headers.map((header) => (
+                                <TableCell key={String(header.key)}>
+                                    {String(item[header.key])}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    )
+                }}
             </TableBody>
         </Table>
     );
@@ -100,8 +108,8 @@ const DataTable = <T extends object>({ headers, data }: DataTableProps<T>) => {
 const YearData: React.FC<{ data: string[] }> = ({ data }) => {
     return (
         <div>
-            {data.map((year, index) => (
-                <p key={index}>{year}</p>
+            {data.map((year) => (
+                <p key={year}>{year}</p>
             ))}
         </div>
     );

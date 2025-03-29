@@ -13,13 +13,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
 
   return (
     <Sonner
-      closeButton expand pauseWhenPageIsHidden offset={16} visibleToasts={9}
+      closeButton expand offset={16} visibleToasts={9}
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       toastOptions={{
         classNames: {
           toast: "group toast",
-          description: `text-zinc-300 font-extralight`,
+          description: "text-zinc-300 font-extralight",
           title: 'text-white font-light text-base',
           actionButton: "group-[.toast]:bg-zinc-900 group-[.toast]:text-zinc-50 dark:group-[.toast]:bg-zinc-50 dark:group-[.toast]:text-zinc-900",
           cancelButton: "bg-red-500",

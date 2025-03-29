@@ -1,17 +1,18 @@
 // @/components/Telemetry/LapSummary.tsx
 
-import React, { useMemo } from 'react';
-import { DriverChartData } from '@/types/custom';
+import type React from 'react';
+import { useMemo } from 'react';
+import type { DriverChartData } from '@/types/custom';
 import SectorSegment from '@/components/Dashboard/SectorSegments';
 import { formatSecondsToTime, isValidColor } from '@/utils/helpers';
 import { Table, TableHeader, TableColumn, TableBody, TableCell, TableRow } from '@heroui/react';
 import { getCompoundComponent } from '@/components/Tyres';
-import { CarDataParams } from '@/types/openF1.types';
+import type { OFCarData } from '@/types/openF1.types';
 
 
-function calculateAverageSpeed(carData: CarDataParams[]): number {
+function calculateAverageSpeed(carData: OFCarData[]): number {
     if (!carData.length) return 0;
-    
+
     const totalSpeed = carData.reduce((sum, data) => sum + (data.speed || 0), 0);
     return Math.round(totalSpeed / carData.length);
 }
@@ -44,7 +45,7 @@ const LapSummary: React.FC<LapSummaryProps> = ({ driversData, lapSelected }) => 
     return (
         <div className="">
             <div className="flex justify-center gap-5 m-5">
-                <h2 className="text-2xl font-extralight">{`Lap Summary`}</h2>
+                <h2 className="text-2xl font-extralight">Lap Summary</h2>
                 <div className="align-middle">
                 </div>
             </div>
@@ -62,10 +63,22 @@ const LapSummary: React.FC<LapSummaryProps> = ({ driversData, lapSelected }) => 
                 </TableHeader>
                 <TableBody>
                     {Array.from(driversData.values()).map((driverData) => {
-                        const driverLap = driverData.laps.find((lap) => lap.lap_number === lapSelected);
-                        const stint = driverData.stintData.find(stint => lapSelected >= stint.lap_start! && (stint.lap_end ? lapSelected <= stint.lap_end : true));
+                        const driverLap = driverData.laps.find(
+                            (lap) => lap.lap_number === lapSelected
+                        );
+
+                        const stint = driverData.stintData.find(
+                            (stint) =>
+                                lapSelected >= stint.lap_start &&
+                                (stint.lap_end ? lapSelected <= stint.lap_end : true)
+                        );
+
                         const avgSpeed = calculateAverageSpeed(driverData.carData);
-                        const tyreAge = driverLap?.lap_number! - stint?.lap_start! + stint?.tyre_age_at_start!;
+
+                        const tyreAge = driverLap && stint
+                            ? driverLap.lap_number - stint.lap_start + (stint.tyre_age_at_start ?? 0)
+                            : undefined;
+
                         return (
                             <TableRow key={driverData.driver.driver_number} className="text-center items-center">
                                 <TableCell
@@ -78,23 +91,32 @@ const LapSummary: React.FC<LapSummaryProps> = ({ driversData, lapSelected }) => 
                                 >
                                     {driverData.driver.name_acronym}
                                 </TableCell>
-                                <TableCell>{formatSecondsToTime(driverLap?.lap_duration)}</TableCell>
                                 <TableCell>
-                                    <div className="flex flex-col mx-auto">
-                                        <div className="flex justify-center gap-1 items-center">
-                                            <div className="w-[25px]">{getCompoundComponent(stint?.compound!)}</div>
-                                            <div className="">{tyreAge}</div>
+                                    {driverLap?.lap_duration !== undefined
+                                        ? formatSecondsToTime(driverLap.lap_duration)
+                                        : "--"}
+                                </TableCell>
+                                <TableCell>
+                                    {stint ? (
+                                        <div className="flex flex-col mx-auto">
+                                            <div className="flex justify-center gap-1 items-center">
+                                                <div className="w-[25px]">{getCompoundComponent(stint.compound)}</div>
+                                                <div>{tyreAge}</div>
+                                            </div>
+                                            <div className="font-thin text-center">Pit {stint.stint_number}</div>
                                         </div>
-                                        <div className="font-thin text-center">Pit {stint?.stint_number}</div>
-                                    </div>
+                                    ) : (
+                                        "-"
+                                    )}
                                 </TableCell>
-                                <TableCell>
-                                    {avgSpeed}
+                                <TableCell>{avgSpeed}</TableCell>
+                                <TableCell className="flex justify-center">
+                                    {driverLap ? <SectorSegment lap={driverLap} /> : "-"}
                                 </TableCell>
-                                <TableCell className="flex justify-center"><SectorSegment lap={driverLap!} /></TableCell>
                             </TableRow>
-                        )
+                        );
                     })}
+
                 </TableBody>
             </Table>
         </div>

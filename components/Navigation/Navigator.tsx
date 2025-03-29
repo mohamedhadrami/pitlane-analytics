@@ -1,7 +1,7 @@
 
 "use client"
 
-import { NavigationItem } from "@/types/custom";
+import type { NavigationItem } from "@/types/custom";
 import { House, CalendarCheck, Trophy, Radio, ChartLine } from "lucide-react";
 import CustomNavbar from "./CustomNavbar";
 import Sidebar from "./Sidebar";

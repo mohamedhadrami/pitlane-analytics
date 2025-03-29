@@ -106,7 +106,7 @@ const ConstructorChampionshipCard: React.FC<{
         </div>
       </CardContainer>
       {constructorTeam && teamName && (
-        <ConstructorDrawer isOpen={openDrawer} setIsOpen={setOpenDrawer} constructor={constructorTeam} teamName={teamName} />
+        <ConstructorDrawer isOpen={openDrawer} setIsOpen={setOpenDrawer} constructorTeam={constructorTeam} teamName={teamName} />
       )}
     </>
   );

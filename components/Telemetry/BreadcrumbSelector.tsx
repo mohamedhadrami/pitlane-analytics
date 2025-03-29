@@ -2,59 +2,63 @@
 
 "use client"
 
-import { MeetingParams, SessionParams } from "@/types/openF1.types";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@heroui/react";
+import type React from "react";
+import type { OFMeeting, OFSession } from "@/types/openF1.types";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, type Selection } from "@heroui/react";
 import { ChevronDownIcon } from "lucide-react";
-import React from "react";
 
-interface SelectorProps {
-    id: string;
-    label: string;
-    values: any[] | null;
-    onChange: (value: any, name: any) => void;
+type SelectorLabel = "year" | "meeting" | "session";
+
+type ValueMap = {
+    year: string;
+    meeting: OFMeeting;
+    session: OFSession;
+};
+
+type SelectorProps<L extends SelectorLabel> = {
+    label: L;
+    values: ValueMap[L][] | null;
+    onChange: (value: ValueMap[L], label: L) => void;
     displayValue: (label: string | undefined) => string | undefined;
     disabled?: boolean;
-}
+};
 
-const organizeValues = (label: string, values: any[] | null, isDisabled: boolean) => {
-    let verifiedValues: any[] = [];
-    if (values == null) return values;
-    if (isDisabled) return values;
+const organizeValues = <L extends SelectorLabel>(
+    label: L,
+    values: ValueMap[L][] | null,
+    isDisabled: boolean
+): string[] | null => {
+    if (!values || isDisabled) return null;
+
     switch (label) {
-        case "year":
-            verifiedValues = values;
-            break;
         case "meeting":
-            values.forEach((value: MeetingParams) => {
-                verifiedValues.push(value.meeting_official_name);
-            })
-            break;
+            return (values as OFMeeting[]).map((v) => v.meeting_official_name);
         case "session":
-            values.forEach((value: SessionParams) => {
-                verifiedValues.push(value.session_name);
-            })
-            break;
+            return (values as OFSession[]).map((v) => v.session_name);
+        //case "year":
+        default:
+            return values as string[];
     }
-    return verifiedValues;
-}
+};
 
-const BreadcrumbSelector: React.FC<SelectorProps> = ({
-    id,
+
+const BreadcrumbSelector = <L extends SelectorLabel>({
     label,
     values,
     onChange,
     displayValue,
     disabled = false,
-}) => {
-
-    const handleChange = (e: any) => {
-        let chosenValue = [...e][0];
-        onChange(chosenValue, label);
-    };
+}: SelectorProps<L>) => {
 
     const organizedValues = organizeValues(label, values, disabled);
-
     const selectedKeys = displayValue(label);
+
+    const handleChange = (keys: Selection) => {
+        if (keys === "all") return;
+        const chosenValue = Array.from(keys)[0];
+        if (!chosenValue) return;
+        onChange(chosenValue as ValueMap[L], label);
+    };
 
     return (
         <>

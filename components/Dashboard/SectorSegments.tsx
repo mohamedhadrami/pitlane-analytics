@@ -1,5 +1,5 @@
-import React from "react";
-import { LapParams, segmentColor } from "../../types/openF1.types";
+import type React from "react";
+import { type OFLap, segmentColor } from "../../types/openF1.types";
 import { Divider } from "@heroui/react";
 
 const Segment: React.FC<{ segment: number }> = ({ segment }) => (
@@ -11,8 +11,8 @@ const Segment: React.FC<{ segment: number }> = ({ segment }) => (
     />
 );
 
-const SectorSegment: React.FC<{ lap: LapParams }> = ({ lap }) => {
-    var arr = Array<number>(7).fill(2064);
+const SectorSegment: React.FC<{ lap: OFLap }> = ({ lap }) => {
+    const arr = Array<number>(7).fill(2064);
     const renderSegments = (segments: number[] | undefined, sectorDuration: number | undefined) => (
         <div className="flex flex-col mx-1 w-14">
             <div className="flex gap-1">

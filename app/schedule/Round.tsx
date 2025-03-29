@@ -4,12 +4,12 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { fetchRaceResults } from "../../services/jolpicaApi";
 import { fetchCountryFlagByName } from "../../services/countryApi";
-import { OFMeeting } from "../../types/openF1.types";
-import { driverImage, trackDetailedImage, trackImage } from "../../utils/helpers";
-import { Minus, X } from "lucide-react";
-import { Image, Divider, Spacer, Button, Table, TableHeader, TableColumn, TableBody, TableCell, TableRow, Pagination, Link, Tabs, Tab, Card, CardBody } from "@heroui/react";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerTitle } from "@/components/ui/drawer";
+import type { OFMeeting } from "../../types/openF1.types";
+import { driverImage, trackImage } from "../../utils/helpers";
+import { Minus } from "lucide-react";
+import { Image, Divider, Spacer } from "@heroui/react";
 import RaceDrawer from "@/components/drawers/RaceDrawer";
+import type { JLPRace, JLPRaceResultsResponse, JLPResult } from "@/types/jolpica.types";
 
 function formatDateRange(startDate: string, endDate: string) {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
@@ -21,8 +21,8 @@ function formatDateRange(startDate: string, endDate: string) {
 }
 
 
-const Round: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
-  const [results, setResults] = useState<any>(null);
+const Round: React.FC<{ raceData: JLPRace, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
+  const [results, setResults] = useState<JLPResult[]>([]);
   const [meeting, setMeeting] = useState<OFMeeting>();
   const [raceDates, setRaceDates] = useState<any>(null);
   const [flagData, setFlagData] = useState<any>(null);
@@ -31,7 +31,7 @@ const Round: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ raceData, m
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const raceResults = await fetchRaceResults(
+        const raceResults: JLPRaceResultsResponse = await fetchRaceResults(
           raceData.round,
           undefined
         );
@@ -62,7 +62,7 @@ const Round: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ raceData, m
     };
 
     getFlag();
-    setRaceDates(formatDateRange(raceData.FirstPractice.date, raceData.date));
+    setRaceDates(formatDateRange(raceData.FirstPractice!.date, raceData.date));
   }, [raceData]);
 
   useEffect(() => {
@@ -77,12 +77,16 @@ const Round: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ raceData, m
   return (
     <>
       <div
-        className="flex flex-col justify-evenly 
-                  bg-gradient-to-b from-zinc-800 to-[#111]
-                  hover:scale-[0.99] 
-                  ml-auto w-full md:w-5/12 rounded-lg p-5"
+        className="bg-gradient-to-t from-zinc-700 to-[#222]
+             p-5 w-full
+             border-r-1 border-l-1"
         key={`${raceData.round}-container`}
         onClick={handleCardClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleCardClick();
+          }
+        }}
       >
         <div className="flex flex-row items-center justify-between">
           <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>

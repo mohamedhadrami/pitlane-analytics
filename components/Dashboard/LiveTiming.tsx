@@ -1,8 +1,9 @@
 // @/components/Dashboard/LiveTiming.tsx
 
-import React, { useEffect, useMemo, useState } from "react";
+import type React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
-import { DriverParams, IntervalParams, LapParams, PositionParams, StintParams } from "@/types/openF1.types";
+import type { OFDriver, OFInterval, OFLap, OFPosition, OFStint } from "@/types/openF1.types";
 import SectorSegment from "./SectorSegments";
 import { getCompoundComponent } from "@/components/Tyres";
 import { formatSecondsToTime } from "@/utils/helpers";
@@ -11,11 +12,11 @@ import { useLiveSettings } from "../../context/LiveSettingsContext";
 import { Minus } from "lucide-react";
 
 interface LiveTimingProps {
-    drivers: DriverParams[];
-    stints: StintParams[];
-    laps: LapParams[];
-    positions: PositionParams[];
-    intervals: IntervalParams[];
+    drivers: OFDriver[];
+    stints: OFStint[];
+    laps: OFLap[];
+    positions: OFPosition[];
+    intervals: OFInterval[];
 }
 
 const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, positions, intervals }) => {
@@ -65,7 +66,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
         defaultSettings.showLapColumn,
         defaultSettings.showSectors]);
 
-    const [sortedDrivers, setSortedDrivers] = useState<DriverParams[]>([]);
+    const [sortedDrivers, setSortedDrivers] = useState<OFDriver[]>([]);
     const [currentLap, setCurrentLap] = useState<number | undefined>(0);
 
     useEffect(() => {
@@ -94,35 +95,35 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
         [],
     );
 
-    const [overallFastestLap, setOverallFastestLap] = useState<LapParams | null>(null);
+    const [overallFastestLap, setOverallFastestLap] = useState<OFLap | null>(null);
 
     useEffect(() => {
-        const fastestLap = laps.reduce((fastest: LapParams | null, current) => {
+        const fastestLap = laps.reduce((fastest: OFLap | null, current) => {
             if (current.lap_duration == null) {
                 return fastest;
             }
-            return !fastest || (current.lap_duration < fastest.lap_duration!) ? current : fastest;
+            return !fastest || (current.lap_duration < fastest.lap_duration) ? current : fastest;
         }, null);
         setOverallFastestLap(fastestLap);
         console.log(fastestLap?.lap_duration)
     }, [laps]);
 
 
-    const renderCell = (driver: DriverParams, columnKey: React.Key, laps: LapParams[], stints: StintParams[]): React.ReactNode => {
+    const renderCell = (driver: OFDriver, columnKey: React.Key, laps: OFLap[], stints: OFStint[]): React.ReactNode => {
         const lap = laps?.filter(lap => lap.driver_number === driver.driver_number).pop();
         const fastestLap = laps
             .filter(lap => lap.driver_number === driver.driver_number && lap.lap_duration !== 0)
-            .reduce((fastest: LapParams | null, current) => {
+            .reduce((fastest: OFLap | null, current) => {
                 if (current.lap_duration == null) {
                     return fastest;
                 }
-                return !fastest || (current.lap_duration < fastest.lap_duration!) ? current : fastest;
+                return !fastest || (current.lap_duration < fastest.lap_duration) ? current : fastest;
             }, null);
 
         switch (columnKey) {
-            case "position":
+            case "position": {
                 const position = positions.filter(position => position.driver_number === driver.driver_number).pop()?.position;
-                if (position == 1) {
+                if (position === 1) {
                     setCurrentLap(lap?.lap_number)
                 }
                 return (
@@ -131,15 +132,16 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                         <span style={{ color: `#${driver?.team_colour}`, textAlign: "center" }}>{driver.name_acronym}</span>
                     </div>
                 );
+            }
             case "lapTime":
                 return (
                     <div className="flex flex-col">
-                        {lap && lap.lap_duration ? (
+                        {lap?.lap_duration ? (
                             <div className="">{formatSecondsToTime(lap?.lap_duration)}</div>
                         ) : (
                             <div className="mx-auto"><Minus /></div>
                         )}
-                        {isShowFastestLap ? (fastestLap && fastestLap?.lap_duration ? (
+                        {isShowFastestLap ? (fastestLap?.lap_duration ? (
                             fastestLap.lap_duration === overallFastestLap?.lap_duration ? (
                                 <div className="flex flex-row justify-center gap-1 text-[#FF00FF]">
                                     {formatSecondsToTime(fastestLap?.lap_duration)} {`(${fastestLap?.lap_number})`}
@@ -154,21 +156,22 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                         )) : ""}
                     </div>
                 );
-            case "gap":
-                const latestInterval: IntervalParams | undefined = intervals.filter((gap: IntervalParams) => gap.driver_number === driver.driver_number).pop();
-                let gap = "+" + latestInterval?.interval;
-                let gapToLeader = "+" + latestInterval?.gap_to_leader;
-                if (gap == "+0" || gap == "+undefined" || gap == "+null") gap = '-';
-                if (gapToLeader == "+0") gapToLeader = "-";
+            case "gap": {
+                const latestInterval: OFInterval | undefined = intervals.filter((gap: OFInterval) => gap.driver_number === driver.driver_number).pop();
+                let gap = `+${latestInterval?.interval}`;
+                let gapToLeader = `+${latestInterval?.gap_to_leader}`;
+                if (gap === "+0" || gap === "+undefined" || gap === "+null") gap = '-';
+                if (gapToLeader === "+0") gapToLeader = "-";
                 return (
                     <div className="flex flex-col">
                         <span className="">{gap}</span>
                         {isShowGapToLeader ? (<span className="font-thin">{gapToLeader}</span>) : ""}
                     </div>
                 );
-            case "tyre":
+            }
+            case "tyre": {
                 const stint = stints.filter(stint => stint.driver_number === driver.driver_number).pop();
-                const tyreAge = stint?.lap_end ? (stint?.lap_end - stint?.lap_start!) : (lap?.lap_number! - stint?.lap_start! + stint?.tyre_age_at_start!);
+                const tyreAge = stint?.lap_end ? (stint?.lap_end - stint?.lap_start) : (lap?.lap_number! - stint?.lap_start! + stint?.tyre_age_at_start!);
                 return (
                     <div className="flex flex-col mx-auto">
                         {isShowTyre ? (<div className="flex justify-center gap-1 items-center">
@@ -178,6 +181,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
                         {isShowStintNumber ? (<div className="font-thin text-center">Pit {stint?.stint_number}</div>) : ""}
                     </div>
                 )
+            }
             case "lap":
                 return (
                     <span>{lap?.lap_number}</span>
@@ -192,9 +196,9 @@ const LiveTiming: React.FC<LiveTimingProps> = ({ drivers, stints, laps, position
         }
     }
 
-    const renderRow = (driver: DriverParams) => {
+    const renderRow = (driver: OFDriver) => {
         const lap = laps?.filter(lap => lap.driver_number === driver.driver_number).pop();
-        let isGreyedOut = currentLap && lap && (currentLap - lap.lap_number! >= 3);
+        let isGreyedOut = currentLap && lap && (currentLap - lap.lap_number >= 3);
         if (!lap) isGreyedOut = true;
         return (
             <TableRow key={driver.driver_number} className={isGreyedOut ? "brightness-[0.35]" : ""}>

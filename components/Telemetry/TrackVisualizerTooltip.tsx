@@ -1,6 +1,6 @@
 // @/components/Telemetry/TrackVisualizerTooltip.tsx
 
-import React from 'react';
+import type React from 'react';
 
 interface TrackVisualizerTooltipProps {
   active?: boolean;

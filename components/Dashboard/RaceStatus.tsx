@@ -1,6 +1,6 @@
 // @/components/Dashboard/RaceStatus.tsx
 
-import { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
+import type { LiveArchiveStatus, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming";
 import { Divider } from "@heroui/react";
 
 interface RaceStatusProps {
@@ -26,10 +26,10 @@ const RaceStatus: React.FC<RaceStatusProps> = ({
                     </div>
                     <Divider orientation="vertical" className="h-6" />
                     <div>
-                        <p className={`font-extralight ${archiveStatus.Status == "Complete" ? 'text-success' : 'text-secondary'}`}>{archiveStatus.Status}</p>
+                        <p className={`font-extralight ${archiveStatus.Status === "Complete" ? 'text-success' : 'text-secondary'}`}>{archiveStatus.Status}</p>
                     </div>
                     <div>
-                        <p className={`font-extralight ${trackStatus.Message == "AllClear" ? 'text-success' : 'text-secondary'}`}>{trackStatus.Message}</p>
+                        <p className={`font-extralight ${trackStatus.Message === "AllClear" ? 'text-success' : 'text-secondary'}`}>{trackStatus.Message}</p>
                     </div>
                 </div>
             </div>

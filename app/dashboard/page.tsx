@@ -205,6 +205,7 @@ const Dashboard: React.FC = () => {
             const year = meeting?.year;
             if (year && meeting.meeting_key && session?.session_key) {
                 const path = await fetchLiveSessionPath(year, meeting.meeting_key, session.session_key);
+                if (!path) return;
                 const liveLapCount: LiveLapCount = await fetchLiveLapCount(path);
                 setLapCount(liveLapCount)
                 const liveArchiveStatus: LiveArchiveStatus = await fetchLiveArchiveStatus(path);

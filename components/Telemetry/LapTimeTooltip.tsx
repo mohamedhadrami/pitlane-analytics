@@ -1,8 +1,8 @@
 // @/components/Telemetry/LapTimeTooltip.tsx
 
-import React from "react";
+import type React from "react";
 import { getCompoundComponent } from "@/components/Tyres";
-import { RaceControlParams } from "@/types/openF1.types";
+import type { OFRaceControl } from "@/types/openF1.types";
 import { formatSecondsToTime } from "@/utils/helpers";
 
 interface LapTimesTooltipProps {
@@ -30,7 +30,7 @@ const LapTimesTooltip: React.FC<LapTimesTooltipProps> = ({
             </div>
           </div>
         ))}
-        {payload[0].payload.raceControl?.map((event: RaceControlParams) => (
+        {payload[0].payload.raceControl?.map((event: OFRaceControl) => (
           <div key={`${event.category}-${event.date}`} className="max-w-96">
             - {event.message}
           </div>

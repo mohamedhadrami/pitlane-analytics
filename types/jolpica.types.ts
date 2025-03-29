@@ -160,7 +160,8 @@ export type JLPRaceResultsResponse = {
     MRData: JLPMRData<JLPRaceResultsTable, "RaceTable">;
 };
 
-export type JLPRaceResultsTable = JLPBaseRaceTable & {
+export type JLPRaceResultsTable = {
+    season: string;
     Races: JLPRaceResults[];
 };
 export type JLPRaceResults = JLPBaseRace & {

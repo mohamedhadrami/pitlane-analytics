@@ -1,13 +1,13 @@
 // @/components/Telemetry2/TelemetryBreadcrumbs.tsx
 
-import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
+import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, type Selection } from "@heroui/react";
 import BreadcrumbSelector from "./BreadcrumbSelector";
 import { useTelemetry } from "@/context/TelemetryContext";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "lucide-react";
-import { DriverParams } from "@/types/openF1.types";
 import { useToggleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
+import type { OFMeeting, OFSession } from "@/types/openF1.types";
 
 const TelemetryBreadcrumbs: React.FC = () => {
 
@@ -30,53 +30,61 @@ const TelemetryBreadcrumbs: React.FC = () => {
     const toggleDriverSelect = useToggleDriverSelect();
 
     const selections = {
-        "year": {
-            "values": years,
-            "disabled": years.length == 0 ? true : false,
+        year: {
+            values: years,
+            disabled: years.length === 0,
         },
-        "meeting": {
-            "values": meetings,
-            "disabled": meetings.length == 0 ? true : false,
+        meeting: {
+            values: meetings,
+            disabled: meetings.length === 0,
         },
-        "session": {
-            "values": sessions,
-            "disabled": sessions.length == 0 ? true : false,
+        session: {
+            values: sessions,
+            disabled: sessions.length === 0,
         }
     }
 
-    const getValue = (label: any) => {
+    type SelectorLabel = keyof typeof selections;
+
+    const getValue = (label?: string): string | undefined => {
+        if (!label) return undefined;
         switch (label) {
             case "year":
-                if (!selectedYear) return `Select a year`;
+                if (!selectedYear) return "Select a year";
                 return selectedYear;
             case "meeting":
-                if (!selectedMeeting) return `Select a race`;
+                if (!selectedMeeting) return "Select a race";
                 return selectedMeeting?.meeting_name;
             case "session":
-                if (!selectedSession) return `Select a session`;
+                if (!selectedSession) return "Select a session";
                 return selectedSession?.session_name;
             default:
                 break;
         }
     }
 
-    const setValue = (value: any, label: any) => {
+    const setValue = (value: string | OFMeeting | OFSession, label: string) => {
         switch (label) {
             case "year":
-                setSelectedYear(value)
+                if (typeof value === "string") {
+                    setSelectedYear(value);
+                }
                 break;
             case "meeting":
-                const meeting = meetings?.find(v => v.meeting_official_name === value);
-                setSelectedMeetingKey(Number(meeting?.meeting_key!));
+                if (typeof value === "object" && "meeting_key" in value) {
+                    setSelectedMeetingKey(Number(value.meeting_key));
+                }
                 break;
             case "session":
-                const session = sessions?.find(v => v.session_name === value);
-                setSelectedSessionKey(Number(session?.session_key!))
+                if (typeof value === "object" && "session_key" in value) {
+                    setSelectedSessionKey(Number(value.session_key));
+                }
                 break;
             default:
                 break;
         }
-    }
+    };
+
 
 
     const [driverBreadcrumb, setDriverBreadcrumb] = useState<string>("");
@@ -84,11 +92,7 @@ const TelemetryBreadcrumbs: React.FC = () => {
 
     useEffect(() => {
         if (selectedDrivers.size > 0) {
-            const acronyms: string[] = [];
-
-            selectedDrivers.forEach((driver) => {
-                acronyms.push(driver.driver.name_acronym!);
-            });
+            const acronyms = Array.from(selectedDrivers.values()).map(d => d.driver.name_acronym);
 
             setDriverBreadcrumb(acronyms.join(", "));
 
@@ -106,12 +110,19 @@ const TelemetryBreadcrumbs: React.FC = () => {
     }, [selectedDrivers]);
 
     const handleChange = (keys: Selection) => {
-        const latestSelection = [...keys].pop();
-        const driver: DriverParams | undefined = drivers.find(d => d.driver_number === parseInt(latestSelection));
+        if (keys === "all") return;
+
+        const latestSelection = Array.from(keys).pop();
+        if (!latestSelection) return;
+
+        const driver = drivers.find(
+            (d) => d.driver_number === Number.parseInt(latestSelection.toString())
+        );
+
         if (driver) {
-            toggleDriverSelect(driver)
+            toggleDriverSelect(driver);
         }
-    }
+    };
 
 
 
@@ -120,9 +131,9 @@ const TelemetryBreadcrumbs: React.FC = () => {
             variant="light"
             separator="|"
         >
-            {Object.keys(selections)
-                .filter((key: string) => !selections[key as keyof typeof selections].disabled)
-                .map((key: string) => (
+            {(Object.keys(selections) as SelectorLabel[])
+                .filter((key) => !selections[key].disabled)
+                .map((key) => (
                     <BreadcrumbItem key={key}>
                         <motion.div
                             key={`breadcrumb-${key}`}
@@ -131,21 +142,20 @@ const TelemetryBreadcrumbs: React.FC = () => {
                             transition={{ duration: 0.5 }}
                         >
                             <BreadcrumbSelector
-                                id={key}
-                                key={`${key}-dropdown`}
                                 label={key}
-                                values={selections[key as keyof typeof selections].values}
+                                values={selections[key].values}
                                 onChange={setValue}
                                 displayValue={getValue}
-                                disabled={selections[key as keyof typeof selections].disabled}
+                                disabled={selections[key].disabled}
                             />
                         </motion.div>
                     </BreadcrumbItem>
-                ))}
+                ))
+            }
             {driverBreadcrumb && (
                 <BreadcrumbItem>
                     <motion.div
-                        key={`breadcrumb-drivers`}
+                        key="breadcrumb-drivers"
                         initial={{ opacity: 0, x: -25 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
@@ -168,7 +178,7 @@ const TelemetryBreadcrumbs: React.FC = () => {
                             </DropdownTrigger>
                             {selectedDrivers && selectedDrivers.size > 0 && (
                                 <DropdownMenu
-                                    aria-label={`driver-selection`}
+                                    aria-label="driver-selection"
                                     variant="solid"
                                     color="primary"
                                     selectionMode="multiple"
@@ -189,7 +199,7 @@ const TelemetryBreadcrumbs: React.FC = () => {
             {selectedLap && (
                 <BreadcrumbItem key="breadcrumb-lap">
                     <motion.div
-                        key={`breadcrumb-lap`}
+                        key="breadcrumb-lap"
                         initial={{ opacity: 0, x: -25 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}

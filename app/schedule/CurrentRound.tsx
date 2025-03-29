@@ -5,6 +5,7 @@ import { fetchRaceResults } from "../../services/jolpicaApi";
 import { trackDetailedImage } from "../../utils/helpers";
 import { Chip, Divider, Image, Spacer } from "@heroui/react";
 import { Minus } from "lucide-react";
+import type { JLPRace, JLPResult } from "@/types/jolpica.types";
 
 function formatDateRange(startDate: string, endDate: string) {
     const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
@@ -50,8 +51,8 @@ function formatSessionTimeDetails(startTime: string, endTime: string, gmtOffset:
     };
 }
 
-const CurrentRound: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
-    const [results, setResults] = useState<any>(null);
+const CurrentRound: React.FC<{ raceData: JLPRace, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
+    const [results, setResults] = useState<JLPResult[]>([]);
     const [meeting, setMeeting] = useState<OFMeeting>();
     const [raceDates, setRaceDates] = useState<string | null>(null);
     const [eventTracker, setEventTracker] = useState<any>();
@@ -99,7 +100,7 @@ const CurrentRound: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ race
         };
 
         getFlag();
-        setRaceDates(formatDateRange(raceData.FirstPractice.date, raceData.date));
+        setRaceDates(formatDateRange(raceData.FirstPractice!.date, raceData.date));
     }, [raceData]);
 
     useEffect(() => {
@@ -114,55 +115,62 @@ const CurrentRound: React.FC<{ raceData: any, meetings: OFMeeting[] }> = ({ race
     return (
         <div
             className="bg-gradient-to-t from-zinc-700 to-[#222]
-                        p-5 w-full
-                        border-r-1 border-l-1"
+             p-5 w-full
+             border-r-1 border-l-1"
             key={`${raceData.round}-container`}
             onClick={handleCardClick}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    handleCardClick();
+                }
+            }}
         >
-            {raceData && eventTracker && (
-                <>
-                    <div className="flex flex-row items-center justify-between">
-                        <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
-                        <Image src={flagData?.png} className="w-12 h-auto rounded" alt="flag image" />
-                    </div>
-                    <span key={`${raceData.round}-title`} className="flex justify-center">
-                        <span className="font-extralight">{`Round ${raceData.round}`}</span>
-                        <Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
-                        <span className="font-light">{raceData.raceName}</span>
-                    </span>
-                    <p className="text-center font-small">{eventTracker.race.meetingOfficialName}</p>
-
-                    <Divider className="my-3" />
-
-                    <div className="flex flex-row">
-                        <div className="w-1/4">
-                            {eventTracker.seasonContext.timetables.map((session: any) => {
-                                const formattedTime = formatSessionTimeDetails(session.startTime, session.endTime, session.gmtOffset)
-                                return (
-                                    <div className="flex flex-row justify-evenly my-2" key={session.session}>
-                                        <span>{session.description.toString().toUpperCase()}</span>
-                                        <span className="font-thin">{formattedTime.dayOfWeek}</span>
-                                        <Chip>{formattedTime.formattedStartTimeInLocal}-{formattedTime.formattedEndTimeInLocal}</Chip>
-                                    </div>
-                                )
-                            })}
+            {
+                raceData && eventTracker && (
+                    <>
+                        <div className="flex flex-row items-center justify-between">
+                            <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
+                            <Image src={flagData?.png} className="w-12 h-auto rounded" alt="flag image" />
                         </div>
-                        <Divider orientation="vertical" className="mx-1 h-50" />
-                        <div className="mx-auto">
-                            <div className="flex flex-row items-center justify-between">
-                                <p key={`${raceData.Circuit.Location.locality}`}>
-                                    {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
-                                </p>
-                                <p>{raceData.Circuit.circuitName}</p>
+                        <span key={`${raceData.round}-title`} className="flex justify-center">
+                            <span className="font-extralight">{`Round ${raceData.round}`}</span>
+                            <Spacer x={1} /><Minus className="font-thin" /><Spacer x={1} />
+                            <span className="font-light">{raceData.raceName}</span>
+                        </span>
+                        <p className="text-center font-small">{eventTracker.race.meetingOfficialName}</p>
+
+                        <Divider className="my-3" />
+
+                        <div className="flex flex-row">
+                            <div className="w-1/4">
+                                {eventTracker.seasonContext.timetables.map((session: any) => {
+                                    const formattedTime = formatSessionTimeDetails(session.startTime, session.endTime, session.gmtOffset)
+                                    return (
+                                        <div className="flex flex-row justify-evenly my-2" key={session.session}>
+                                            <span>{session.description.toString().toUpperCase()}</span>
+                                            <span className="font-thin">{formattedTime.dayOfWeek}</span>
+                                            <Chip>{formattedTime.formattedStartTimeInLocal}-{formattedTime.formattedEndTimeInLocal}</Chip>
+                                        </div>
+                                    )
+                                })}
                             </div>
-                            <div className="flex justify-center">
-                                <Image src={trackDetailedImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
+                            <Divider orientation="vertical" className="mx-1 h-50" />
+                            <div className="mx-auto">
+                                <div className="flex flex-row items-center justify-between">
+                                    <p key={`${raceData.Circuit.Location.locality}`}>
+                                        {`${raceData.Circuit.Location.locality}, ${raceData.Circuit.Location.country}`}
+                                    </p>
+                                    <p>{raceData.Circuit.circuitName}</p>
+                                </div>
+                                <div className="flex justify-center">
+                                    <Image src={trackDetailedImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </>
-            )}
-        </div>
+                    </>
+                )
+            }
+        </div >
 
 
     );

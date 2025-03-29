@@ -2,13 +2,14 @@
 
 import { useEffect, useCallback } from "react";
 import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fetchRaceControl, fetchSession, fetchStint, fetchWeather } from "@/services/openF1Api";
-import type { OFDateRangeParams, OFDriver, OFDriverParams, OFLap, OFLapParams, OFMeetingParams, OFRaceControlParams, OFSessionParams, OFStintParams, OFWeatherParams } from "@/types/openF1.types";
+import type { OFDateRangeParams, OFDriver, OFDriverParams, OFLap, OFMeetingParams, OFRaceControlParams, OFSession, OFSessionParams, OFStint, OFStintParams, OFWeatherParams } from "@/types/openF1.types";
 import { fetchCircuitByKey } from "@/services/mvApi";
 import { delay } from "@/utils/helpers";
 import { calculateLapTime } from "@/utils/telemetryUtils";
 import { toast } from "sonner";
 import { useTelemetry } from "@/context/TelemetryContext";
 import type { DriverChartData } from "@/types/custom";
+import { assertSession } from "./assertTelemetry";
 
 
 
@@ -96,8 +97,6 @@ export const useFetchSessions = () => {
 };
 
 
-
-
 export const useFetchSessionData = () => {
     const {
         selectedYear,
@@ -124,7 +123,11 @@ export const useFetchSessionData = () => {
 
 
         const fetchData = async () => {
+            if (!selectedYear) {
+                throw new Error("Session not found");
+            }
             const session = sessions?.find(v => v.session_key === selectedSessionKey);
+            assertSession(session);
             setSelectedSession(session);
             const params = {
                 meeting_key: selectedMeetingKey,
@@ -175,20 +178,19 @@ export const useFetchSessionData = () => {
             setStints([])
             setCircuitData(undefined)
             return;
-        } else {
-            if (selectedSessionKey) {
-                const dataPromise = fetchData();
-                toast.promise(Promise.all([dataPromise]), {
-                    loading: "Loading session data...",
-                    success: "Session data loaded successfully!",
-                    error: (e: any) => `${e.message}. Make sure the session key is correct`,
-                });
-            }
+        }
+        if (selectedSessionKey) {
+            const dataPromise = fetchData();
+            toast.promise(Promise.all([dataPromise]), {
+                loading: "Loading session data...",
+                success: "Session data loaded successfully!",
+                error: (e: Error) => `${e.message}. Make sure the session key is correct`,
+            });
         }
 
-    }, [selectedYear, 
-        selectedMeetingKey, 
-        selectedSessionKey, 
+    }, [selectedYear,
+        selectedMeetingKey,
+        selectedSessionKey,
         sessions,
         setSelectedSession,
         setSelectedLap,
@@ -218,7 +220,7 @@ export const useToggleDriverSelect = () => {
         stints,
         setSelectedLap,
     } = useTelemetry();
-    
+
     const toggleDriverSelect = async (driver: OFDriver) => {
         const driverKey = driver.driver_number?.toString();
         const isDriverSelected = selectedDrivers?.has(driverKey);
@@ -235,7 +237,7 @@ export const useToggleDriverSelect = () => {
             };
 
             const lapApiPromise = fetchLaps(params);
-            const stintData = stints.filter((stint: OFLap) => stint.driver_number === driver.driver_number);
+            const stintData = stints.filter((stint: OFStint) => stint.driver_number === driver.driver_number);
 
             toast.promise(Promise.all([lapApiPromise]), {
                 loading: `Loading lap times for ${driver.name_acronym}...`,
@@ -292,7 +294,13 @@ export const useFetchTelemetryData = () => {
     const fetchTelemetryData = useCallback(async () => {
         const lapDataRequests = Array.from(selectedDrivers, async ([_, driverData]) => {
             if (driverData.selectedLap !== selectedLap || driverData.carData.length === 0) {
-                const lap: OFLap = driverData.laps.find((lap: OFLap) => lap.lap_number === selectedLap);
+                const lap = driverData.laps.find((lap: OFLap) => lap.lap_number === selectedLap);
+
+                if (!lap) {
+                    console.warn(`Lap ${selectedLap} not found for driver ${driverData.driver.name_acronym}`);
+                    return null;
+                }
+
                 const date_gt: string = lap.date_start;
                 const lapDurationMilliseconds: number = lap.lap_duration * 1000;
                 const date_gtObject: Date = new Date(date_gt);
@@ -350,7 +358,7 @@ export const useFetchTelemetryData = () => {
         if (hasUpdate) {
             setSelectedDrivers(updatedSelectedDrivers);
         }
-    }, [selectedDrivers, selectedLap, selectedMeetingKey, selectedSessionKey]);
+    }, [selectedDrivers, selectedLap, selectedMeetingKey, selectedSessionKey, setSelectedDrivers]);
 
     useEffect(() => {
         if (selectedLap) {

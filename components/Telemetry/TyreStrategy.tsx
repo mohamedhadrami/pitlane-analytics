@@ -2,15 +2,16 @@
 
 "use client";
 
+import type React from 'react';
+import { useMemo } from 'react';
 import { getCompoundColor } from "@/components/Tyres";
-import { DriverParams, StintParams } from "@/types/openF1.types";
+import type { OFDriver, OFStint } from "@/types/openF1.types";
 import { driverImage } from "@/utils/helpers";
 import { Image } from "@heroui/react";
-import React, { useMemo } from 'react';
 
 interface TyreStrategyProps {
-    stints: StintParams[];
-    drivers: DriverParams[];
+    stints: OFStint[];
+    drivers: OFDriver[];
 }
 
 const TyreStrategy: React.FC<TyreStrategyProps> = ({ stints, drivers }) => {
@@ -23,7 +24,7 @@ const TyreStrategy: React.FC<TyreStrategyProps> = ({ stints, drivers }) => {
                 acc[stint.driver_number].push(stint);
             }
             return acc;
-        }, {} as { [key: number]: StintParams[] });
+        }, {} as { [key: number]: OFStint[] });
     }, [stints]);
 
     const driverNameMap = useMemo(() => {
@@ -45,12 +46,12 @@ const TyreStrategy: React.FC<TyreStrategyProps> = ({ stints, drivers }) => {
                 <div key={driverNumber} className="flex items-center my-3">
                     <Image
                         className="rounded-full w-7 mr-2"
-                        src={driverImage(driverNameMap[parseInt(driverNumber)].name!)}
-                        alt={`${driverNameMap[parseInt(driverNumber)].name}`} />
+                        src={driverImage(driverNameMap[Number.parseInt(driverNumber)].name!)}
+                        alt={`${driverNameMap[Number.parseInt(driverNumber)].name}`} />
                     <div
                         className="w-16 text-xl font-semibold"
-                        style={{ color: `${driverNameMap[parseInt(driverNumber)].color}` }}>
-                        {driverNameMap[parseInt(driverNumber)].acronym}
+                        style={{ color: `${driverNameMap[Number.parseInt(driverNumber)].color}` }}>
+                        {driverNameMap[Number.parseInt(driverNumber)].acronym}
                     </div>
                     <div className="flex-1 relative bg-[#111] h-8 overflow-hidden rounded-md">
                         {driverStints.map((stint, index) => (
@@ -58,12 +59,12 @@ const TyreStrategy: React.FC<TyreStrategyProps> = ({ stints, drivers }) => {
                                 key={index}
                                 className="absolute h-full text-black rounded-md border-x-2 border-[#111] flex justify-center"
                                 style={{
-                                    left: `${(stint.lap_start! - 1) / maxLap * 100}%`,
-                                    width: `${(stint.lap_end! - stint.lap_start! + 1) / maxLap * 100}%`,
-                                    backgroundColor: getCompoundColor(stint.compound!)!,
+                                    left: `${(stint.lap_start - 1) / maxLap * 100}%`,
+                                    width: `${(stint.lap_end - stint.lap_start + 1) / maxLap * 100}%`,
+                                    backgroundColor: getCompoundColor(stint.compound)!,
                                 }}
                             >
-                                <p className="align-middle">{stint.lap_end! - stint.lap_start!}</p>
+                                <p className="align-middle">{stint.lap_end - stint.lap_start}</p>
                             </div>
                         ))}
 

@@ -105,26 +105,26 @@ const Page: React.FC = () => {
                     )}
                 </div>
             </div>
-            {selectedYear && (
+            {selectedYear && drivers && constructors && races && (
                 <div className="mx-5 w-full">
                     <Tabs className="" color="primary" isVertical={!isMobile}>
                         <Tab key="drivers" title="Drivers" className="">
                             <CustomTable
-                                rawData={drivers?.MRData.StandingsTable.StandingsLists[0].DriverStandings}
+                                rawData={drivers.MRData.StandingsTable.StandingsLists[0].DriverStandings}
                                 headers={DriverChampionshipHeaders}
                                 type="archiveDriversChampionship"
                             />
                         </Tab>
                         <Tab key="constructors" title="Constructors" className="">
                             <CustomTable
-                                rawData={constructors?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings}
+                                rawData={constructors.MRData.StandingsTable.StandingsLists[0].ConstructorStandings}
                                 headers={ConstructorChampionshipHeaders}
                                 type="archiveConstructorsChampionship"
                             />
                         </Tab>
                         <Tab key="races" title="Races" className="">
                             <CustomTable
-                                rawData={races?.MRData.RaceTable.Races}
+                                rawData={races.MRData.RaceTable.Races}
                                 headers={SeasonRacesHeaders}
                                 type="archiveSeasonRaces"
                             />

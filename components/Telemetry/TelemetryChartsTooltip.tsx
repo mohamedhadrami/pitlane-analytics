@@ -1,6 +1,6 @@
 // @/components/Telemetry/LapStatsTooltip.tsx
 
-import React from "react";
+import type React from "react";
 import { parseISODateAndTime } from "@/utils/helpers";
 import { drsStatus } from "@/types/openF1.types";
 
@@ -17,21 +17,21 @@ const LapTimeTooltip: React.FC<LapTimeTooltipProps> = ({ active, payload, label,
   if (active && payload && payload.length) {
     return (
       <div className="bg-gradient-to-tl from-zinc-800 to-[#111] p-2 rounded-lg max-w-xs">
-        <p className="font-light">{dataNormalization == "time" ? `${label} s` : parseISODateAndTime(label)}</p>
+        <p className="font-light">{dataNormalization === "time" ? `${label} s` : parseISODateAndTime(label)}</p>
         {payload.map((entry: any) => {
           let displayValue = entry.value;
           switch (chartType) {
             case "speed":
-              displayValue = entry.value + " km/h";
+              displayValue = `${entry.value} km/h`;
               break;
             case "throttle":
-              displayValue = entry.value + "%";
+              displayValue = `${entry.value}%`;
               break;
             case "brake":
-              displayValue = entry.value + "%";
+              displayValue = `${entry.value}%`;
               break;
             case "rpm":
-              displayValue = entry.value + " RPM";
+              displayValue = `${entry.value} RPM`;
               break;
             case "n_gear":
               displayValue = entry.value;
@@ -50,9 +50,8 @@ const LapTimeTooltip: React.FC<LapTimeTooltipProps> = ({ active, payload, label,
         })}
       </div>
     );
-  } else {
-    return null;
   }
+  return null;
 };
 
 export default LapTimeTooltip;

@@ -1,18 +1,19 @@
 // @/components/drawer/RaceDrawer.tsx
 
-import { MeetingParams } from "@/types/openF1.types";
+import type { OFMeeting } from "@/types/openF1.types";
 import { Link, Button, Tabs, Tab, Card, CardBody } from "@heroui/react";
 import { X } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "../ui/drawer";
 import CustomTable from "../tables/CustomTable";
 import { RaceHeaders } from "@/utils/const";
+import type { JLPRace, JLPResult } from "@/types/jolpica.types";
 
 interface RaceDrawerProps {
     isOpen: boolean;
     setIsOpen: (value: boolean) => void;
-    raceData: any;
-    raceResults: any;
-    meeting: MeetingParams;
+    raceData: JLPRace;
+    raceResults: JLPResult[];
+    meeting: OFMeeting;
 }
 
 const RaceDrawer: React.FC<RaceDrawerProps> = ({ isOpen, setIsOpen, raceData, raceResults, meeting }) => {
@@ -25,7 +26,7 @@ const RaceDrawer: React.FC<RaceDrawerProps> = ({ isOpen, setIsOpen, raceData, ra
                         <DrawerHeader className="flex w-full justify-evenly">
                             <div className="mr-auto">
                                 <DrawerTitle>
-                                    <Link href={`/driver`} className="text-white text-lg font-extralight" showAnchorIcon>
+                                    <Link href={"/driver"} className="text-white text-lg font-extralight" showAnchorIcon>
                                         {`${raceData.raceName}`}
                                     </Link>
                                 </DrawerTitle>
@@ -64,7 +65,7 @@ const RaceDrawer: React.FC<RaceDrawerProps> = ({ isOpen, setIsOpen, raceData, ra
                     </div>
                 </DrawerContent>
                 <DrawerFooter>
-                    <div className="h-2"></div>
+                    <div className="h-2">&nsbp;</div>
                 </DrawerFooter>
             </Drawer>
         </div>

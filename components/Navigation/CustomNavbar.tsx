@@ -4,7 +4,7 @@
 import { Navbar, NavbarContent, NavbarMenuToggle, NavbarBrand, NavbarItem, NavbarMenu, Link, NavbarMenuItem, Spacer } from "@heroui/react";
 import { useState } from "react";
 import Image from 'next/image';
-import { NavigationItem } from "@/types/custom";
+import type { NavigationItem } from "@/types/custom";
 
 const titleClasses = "font-light text-lg"
 

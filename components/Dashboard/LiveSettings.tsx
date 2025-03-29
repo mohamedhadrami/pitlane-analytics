@@ -1,8 +1,8 @@
 // app/dashboard/LiveSettings.tsx
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "@/components/ui/sheet";
 import { Accordion, AccordionItem, Switch, Input } from "@heroui/react";
-import { Cog, Headset, Info, ListOrdered, Map, TowerControl } from "lucide-react";
-import { LiveSetting, useLiveSettings } from "@/context/LiveSettingsContext";
+import { Cog, Headset, Info, ListOrdered, MapIcon, TowerControl } from "lucide-react";
+import { type LiveSetting, useLiveSettings } from "@/context/LiveSettingsContext";
 
 const LiveSettings: React.FC = () => {
     const { settings } = useLiveSettings();
@@ -129,7 +129,7 @@ const getCategoryIcon = (category: string) => {
         case 'team-radio':
             return <Headset className="mx-2" />;
         case 'track':
-            return <Map className="mx-2" />;
+            return <MapIcon className="mx-2" />;
         default:
             return <Cog className="mx-2" />;
     }

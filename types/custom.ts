@@ -1,20 +1,21 @@
 // @/interface/custom.ts
 
-import type { OFCarDataParams, OFDriverParams, OFLapParams, OFLocationParams, OFRaceControlParams, OFStintParams } from "./openF1.types";
+import type { JSX } from "react";
+import type { OFCarData, OFDriver, OFLap, OFLocation, OFRaceControl, OFStint } from "./openF1.types";
 
 
-export interface DriverChartData {
+export type DriverChartData = {
     selectedLap: number | null;
-    driver: OFDriverParams;
-    laps: OFLapParams[];
-    carData: ExtendedCarDataParams[];
-    locationData: OFLocationParams[];
-    stintData: OFStintParams[];
-    raceControl: OFRaceControlParams[];
+    driver: OFDriver;
+    laps: OFLap[];
+    carData: ExtendedCarData[];
+    locationData: OFLocation[];
+    stintData: OFStint[];
+    raceControl: OFRaceControl[];
     chartData: any[];
 }
 
-export interface ExtendedCarDataParams extends OFCarDataParams {
+export interface ExtendedCarData extends OFCarData {
     lap_time?: number;
 }
 
