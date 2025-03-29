@@ -8,7 +8,7 @@ import { findNextRace, parseISODateAndTime } from "@/utils/helpers";
 import { Card, CardBody, Image } from "@heroui/react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { Watch } from "react-loader-spinner";
+import { Watch } from "@/components/spinners/Watch";
 import Link from 'next/link';
 import type { JLPRace, JLPScheduleResponse } from "@/types/jolpica.types";
 

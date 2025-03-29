@@ -37,6 +37,7 @@ const TelemetryStepManager: React.FC = () => {
         return "year";
     };
 
+    // biome-ignore lint/correctness/useExhaustiveDependencies: Needs to rerender anytime a change happens to the dependencies
     useEffect(() => {
         setCurrentStep(getCurrentStep())
     }, [selectedYear,
