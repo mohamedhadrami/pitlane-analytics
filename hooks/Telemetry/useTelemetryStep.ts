@@ -38,6 +38,16 @@ const useTelemetryStep = (telemetryState: TelemetryStateShape) => {
     }
   }, [maxUnlockedStep, currentStep, stepOrder]);
 
+  useEffect(() => {
+    const nextStep = getNextStep(currentStep, stepOrder);
+    const canAdvance =
+      nextStep && stepOrder.indexOf(nextStep) <= stepOrder.indexOf(maxUnlockedStep);
+  
+    if (canAdvance) {
+      setCurrentStep(nextStep);
+    }
+  }, [maxUnlockedStep, stepOrder, currentStep]);
+
   const goToNextStep = useCallback(() => {
     const next = getNextStep(currentStep, stepOrder);
     if (next && stepOrder.indexOf(next) <= stepOrder.indexOf(maxUnlockedStep)) {
