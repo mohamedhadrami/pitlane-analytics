@@ -8,7 +8,7 @@ import { driverImage, isValidColor } from "@/utils/helpers";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useTelemetry } from "@/context/TelemetryContext";
-import { useToggleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
+import { useToggleDriverSelect } from "@/hooks/Telemetry/useToggleDriverSelect";
 
 
 const DriverImage = styled(motion.img) <{ isselected: string; bordercolor: string }>`

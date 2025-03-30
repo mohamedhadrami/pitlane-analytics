@@ -6,8 +6,7 @@ import { useTelemetry } from "@/context/TelemetryContext";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "lucide-react";
-import { useToggleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
-import type { OFMeeting, OFSession } from "@/types/openF1.types";
+import { useToggleDriverSelect } from "@/hooks/Telemetry/useToggleDriverSelect";
 
 const TelemetryBreadcrumbs: React.FC = () => {
 

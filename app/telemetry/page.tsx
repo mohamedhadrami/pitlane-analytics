@@ -10,11 +10,15 @@ import { ChevronLeft, ChevronRight, Info, RotateCcw } from "lucide-react";
 
 import { useFooter } from "@/context/FooterContext";
 import { TelemetryProvider, useTelemetry } from "@/context/TelemetryContext";
-import { useFetchMeetings, useFetchSessionData, useFetchSessions, useFetchTelemetryData, useFetchYears, useHandleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
+import { useFetchMeetings } from "@/hooks/Telemetry/useFetchMeetings";
+import { useFetchSessionData } from "@/hooks/Telemetry/useFetchSessionData";
+import { useFetchSessions } from "@/hooks/Telemetry/useFetchSessions";
+import { useFetchTelemetryData } from "@/hooks/Telemetry/useFetchTelemetryData";
+import { useFetchYears } from "@/hooks/Telemetry/useFetchYears";
+import { useHandleDriverSelect } from "@/hooks/Telemetry/useHandleDriverSelect";
 
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import TelemetryBreadcrumbs from "@/components/Telemetry/TelemetryBreadcrumbs";
-import { stepOrder } from "@/utils/telemetry/telemetrySteps";
 
 const PageContent: React.FC = () => {
     const { setFooterVisible } = useFooter();
@@ -37,8 +41,8 @@ const PageContent: React.FC = () => {
         setSelectedMeetingKey,
         setSelectedSessionKey,
         resetTelemetry
-      } = useTelemetry();
-      
+    } = useTelemetry();
+
     const searchParams = useSearchParams();
     useEffect(() => {
         if (searchParams) {
@@ -68,7 +72,12 @@ const PageContent: React.FC = () => {
                 className="flex flex-row items-center p-1"
             >
                 <div className="flex flex-row items-center">
-                    <Button isIconOnly onClick={goToPreviousStep} disabled={isFirstStep} className={`${isFirstStep ? "text-default-200" : ""}`}>
+                    <Button
+                        onClick={goToPreviousStep}
+                        className={`${isFirstStep ? "text-default-200" : ""}`}
+                        disabled={isFirstStep}
+                        isIconOnly
+                    >
                         <ChevronLeft />
                     </Button>
                     <TelemetryBreadcrumbs />
@@ -87,6 +96,7 @@ const PageContent: React.FC = () => {
                 </div>
             </motion.div>
             <Divider />
+
             <TelemetryStepManager />
         </div>
     );
@@ -103,48 +113,3 @@ const Page: React.FC = () => {
 
 
 export default Page;
-
-/*
-    const {
-        years,
-        setYears,
-        meetings,
-        setMeetings,
-        sessions,
-        setSessions,
-        selectedYear,
-        setSelectedYear,
-        selectedMeeting,
-        setSelectedMeeting,
-        selectedMeetingKey,
-        setSelectedMeetingKey,
-        selectedSession,
-        setSelectedSession,
-        selectedSessionKey,
-        setSelectedSessionKey,
-        isShowSession,
-        setIsShowSession,
-        weather,
-        setWeather,
-        raceControl,
-        setRaceControl,
-        circuitData,
-        setCircuitData,
-        isShowDriverSelect,
-        setIsShowDriverSelect,
-        drivers,
-        setDrivers,
-        selectedDrivers,
-        setSelectedDrivers,
-        isShowPitStrategy,
-        setIsShowPitStrategy,
-        stints,
-        setStints,
-        isShowLapTimes,
-        setIsShowLapTimes,
-        selectedLap,
-        setSelectedLap,
-        isShowTelemetry,
-        setIsShowTelemetry,
-    } = useTelemetry();
-*/
