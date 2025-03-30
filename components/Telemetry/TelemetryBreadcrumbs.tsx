@@ -63,27 +63,26 @@ const TelemetryBreadcrumbs: React.FC = () => {
         }
     }
 
-    const setValue = (value: string | OFMeeting | OFSession, label: string) => {
+    const setValue = (value: string, label: string) => {
         switch (label) {
             case "year":
-                if (typeof value === "string") {
-                    setSelectedYear(value);
-                }
+                setSelectedYear(value)
                 break;
-            case "meeting":
-                if (typeof value === "object" && "meeting_key" in value) {
-                    setSelectedMeetingKey(Number(value.meeting_key));
-                }
+            case "meeting": {
+                const meeting = meetings?.find(v => v.meeting_official_name === value);
+                setSelectedMeetingKey(Number(meeting?.meeting_key));
                 break;
-            case "session":
-                if (typeof value === "object" && "session_key" in value) {
-                    setSelectedSessionKey(Number(value.session_key));
-                }
+            }
+            case "session": {
+                const session = sessions?.find(v => v.session_name === value);
+                setSelectedSessionKey(Number(session?.session_key))
                 break;
+            }
             default:
                 break;
         }
-    };
+    }
+
 
 
 
@@ -183,7 +182,7 @@ const TelemetryBreadcrumbs: React.FC = () => {
                                     color="primary"
                                     selectionMode="multiple"
                                     selectedKeys={selectedDriverKeys}
-                                    onSelectionChange={(keys) => handleChange(keys)}
+                                    onSelectionChange={(keys: Selection) => handleChange(keys)}
                                 >
                                     {drivers.map((driver) => (
                                         <DropdownItem key={driver.driver_number}>

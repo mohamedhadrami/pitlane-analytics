@@ -10,6 +10,7 @@ import DriverSelection from "./DriverSelection";
 import LapTimesLineChart from "./LapTimesLineChart";
 import { Calendar } from "lucide-react";
 import TelemetryCharts from "./TelemetryCharts";
+import { TelemetryStep } from "@/utils/telemetry/telemetrySteps";
 
 const TelemetryStepManager: React.FC = () => {
     const { 
@@ -22,19 +23,19 @@ const TelemetryStepManager: React.FC = () => {
         selectedDrivers, 
         selectedLap,
         isShowLapTimes,
-        isShowTelemetry
+        isShowTelemetry,
+        currentStep,
+        setCurrentStep
     } = useTelemetry();
 
-    const [currentStep, setCurrentStep] = useState<string>("driver-lap");
-
     const getCurrentStep = () => {
-        if (!selectedYear) return "year";
-        if (!selectedMeeting) return "meeting";
-        if (!selectedSession) return "session";
-        if (!selectedDrivers.size) return "stats-drivers";
-        if (isShowLapTimes) return "driver-lap";
-        if (isShowTelemetry) return "lap-telemetry";
-        return "year";
+        if (!selectedYear) return TelemetryStep.Year;
+        if (!selectedMeeting) return TelemetryStep.Meeting;
+        if (!selectedSession) return TelemetryStep.Session;
+        if (!selectedDrivers.size) return TelemetryStep.StatsDrivers;
+        if (isShowLapTimes) return TelemetryStep.DriverLap;
+        if (isShowTelemetry) return TelemetryStep.LapTelemetry;
+        return TelemetryStep.Year;
     };
 
     // biome-ignore lint/correctness/useExhaustiveDependencies: Needs to rerender anytime a change happens to the dependencies
@@ -46,14 +47,6 @@ const TelemetryStepManager: React.FC = () => {
         selectedDrivers,
         isShowLapTimes,
         isShowTelemetry])
-
-    const handleNextStep = () => {
-        if (currentStep === "driver-lap") {
-            setCurrentStep("lap-telemetry");
-        } else if (currentStep === "lap-telemetry") {
-            setCurrentStep("telemetry-fullscreen");
-        }
-    };
 
     const renderLeftComponent = () => {
         switch (currentStep) {

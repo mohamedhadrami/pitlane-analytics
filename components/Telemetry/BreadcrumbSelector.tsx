@@ -18,7 +18,7 @@ type ValueMap = {
 type SelectorProps<L extends SelectorLabel> = {
     label: L;
     values: ValueMap[L][] | null;
-    onChange: (value: ValueMap[L], label: L) => void;
+    onChange: (value: string, label: L) => void;
     displayValue: (label: string | undefined) => string | undefined;
     disabled?: boolean;
 };
@@ -53,11 +53,9 @@ const BreadcrumbSelector = <L extends SelectorLabel>({
     const organizedValues = organizeValues(label, values, disabled);
     const selectedKeys = displayValue(label);
 
-    const handleChange = (keys: Selection) => {
-        if (keys === "all") return;
-        const chosenValue = Array.from(keys)[0];
-        if (!chosenValue) return;
-        onChange(chosenValue as ValueMap[L], label);
+    const handleChange = (e: any) => {
+        const chosenValue = [...e][0];
+        onChange(chosenValue, label);
     };
 
     return (

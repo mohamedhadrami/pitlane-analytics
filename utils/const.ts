@@ -1,12 +1,11 @@
 // @/utils/consts.ts
 
+// TABLE HEADERS
 
 export type TableHeaderType = {
     key: string;
     label: string;
 }
-
-// TABLE HEADERS
 
 export const DriverChampionshipHeaders: TableHeaderType[] = [
     { key: "position", label: "Position" },

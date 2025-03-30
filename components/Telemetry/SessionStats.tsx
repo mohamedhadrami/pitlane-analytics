@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Image, Accordion, AccordionItem } from "@heroui/react";
 import type { OFMeeting, OFSession } from "@/types/openF1.types";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind, Cloudy, CalendarFold } from "lucide-react";
-import { calculateWeatherStats } from "@/utils/telemetryUtils";
+import { calculateWeatherStats } from "@/utils/telemetry/telemetryUtils";
 import { fetchCountryFlagByName } from "@/services/countryApi";
 import { parseISODateAndTime, trackDetailedImage } from "@/utils/helpers";
 import CustomTable from "@/components/tables/CustomTable";

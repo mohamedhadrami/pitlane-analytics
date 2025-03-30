@@ -1,7 +1,7 @@
 // @/components/Telemetry/AverageLapStats.tsx
 
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "@heroui/react";
-import { calculateAverages } from "@/utils/telemetryUtils";
+import { calculateAverages } from "@/utils/telemetry/telemetryUtils";
 import type { DriverChartData } from "@/types/custom";
 
 

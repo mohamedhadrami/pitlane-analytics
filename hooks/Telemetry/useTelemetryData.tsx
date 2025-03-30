@@ -5,11 +5,11 @@ import { fetchCarData, fetchDrivers, fetchLaps, fetchLocation, fetchMeeting, fet
 import type { OFDateRangeParams, OFDriver, OFDriverParams, OFLap, OFMeetingParams, OFRaceControlParams, OFSession, OFSessionParams, OFStint, OFStintParams, OFWeatherParams } from "@/types/openF1.types";
 import { fetchCircuitByKey } from "@/services/mvApi";
 import { delay } from "@/utils/helpers";
-import { calculateLapTime } from "@/utils/telemetryUtils";
+import { calculateLapTime } from "@/utils/telemetry/telemetryUtils";
 import { toast } from "sonner";
 import { useTelemetry } from "@/context/TelemetryContext";
 import type { DriverChartData } from "@/types/custom";
-import { assertSession } from "./assertTelemetry";
+import { assertSession } from "../../utils/telemetry/assertTelemetry";
 
 
 
@@ -165,7 +165,7 @@ export const useFetchSessionData = () => {
 
         if (!selectedYear || !selectedMeetingKey || !selectedSessionKey || !sessions) {
             setSelectedSession(undefined)
-            setSelectedLap(null)
+            setSelectedLap(undefined)
             setIsShowSession(false)
             setIsShowDriverSelect(false)
             setIsShowPitStrategy(false)
@@ -263,7 +263,7 @@ export const useToggleDriverSelect = () => {
             });
         }
 
-        if (selectedDrivers?.size !== 0) setSelectedLap(null);
+        if (selectedDrivers?.size !== 0) setSelectedLap(undefined);
     };
     return toggleDriverSelect;
 };
@@ -346,7 +346,7 @@ export const useFetchTelemetryData = () => {
                 if (existingDriverData) {
                     updatedSelectedDrivers.set(driverKey, {
                         ...existingDriverData,
-                        selectedLap: selectedLap,
+                        selectedLap: selectedLap!,
                         carData: result?.carDataWithLapTime,
                         locationData: result?.locationData,
                     });

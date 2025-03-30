@@ -3,10 +3,12 @@
 "use client"
 
 import type React from "react";
-import { type ReactNode, createContext, useContext, useState } from "react"
+import { type ReactNode, createContext, useContext, useMemo, useState } from "react"
 import type { OFMeeting, OFSession, OFWeather, OFRaceControl, OFDriver, OFStint } from "@/types/openF1.types";
 import type { DriverChartData } from "@/types/custom";
 import type { mvCircuit } from "@/types/multiviewer";
+import { type TelemetryStateShape, TelemetryStep } from "@/utils/telemetry/telemetrySteps";
+import useTelemetryStep from "@/hooks/Telemetry/useTelemetryStep";
 
 interface TelemetryContextProps {
     years: string[];
@@ -45,15 +47,27 @@ interface TelemetryContextProps {
     setStints: React.Dispatch<React.SetStateAction<OFStint[]>>;
     isShowLapTimes: boolean;
     setIsShowLapTimes: React.Dispatch<React.SetStateAction<boolean>>;
-    selectedLap: number | null;
-    setSelectedLap: React.Dispatch<React.SetStateAction<number | null>>;
+    selectedLap: number | undefined;
+    setSelectedLap: React.Dispatch<React.SetStateAction<number | undefined>>;
     isShowTelemetry: boolean;
     setIsShowTelemetry: React.Dispatch<React.SetStateAction<boolean>>;
+
+    currentStep: TelemetryStep;
+    setCurrentStep: (step: TelemetryStep) => void;
+    maxUnlockedStep: TelemetryStep;
+    goToNextStep: () => void;
+    goToPreviousStep: () => void;
+    canGoToStep: (step: TelemetryStep) => boolean;
+    stepOrder: TelemetryStep[];
+    isFirstStep: boolean;
+    isLastStep: boolean;
+
+    resetTelemetry: () => void;
 }
 
 const TelemetryContext = createContext<TelemetryContextProps | undefined>(undefined);
 
-export const useTelemetry = () : TelemetryContextProps => {
+export const useTelemetry = (): TelemetryContextProps => {
     const context = useContext(TelemetryContext);
     if (!context) {
         throw new Error("useTelemetry must be used within a TelemetryProvider");
@@ -85,32 +99,83 @@ export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
     const [stints, setStints] = useState<OFStint[]>([]);
 
     const [isShowLapTimes, setIsShowLapTimes] = useState<boolean>(false);
-    const [selectedLap, setSelectedLap] = useState<number | null>(null);
+    const [selectedLap, setSelectedLap] = useState<number>();
 
     const [isShowTelemetry, setIsShowTelemetry] = useState<boolean>(false);
 
+
+    const telemetryStepState = useMemo<TelemetryStateShape>(() => ({
+        selectedYear,
+        selectedMeetingKey,
+        selectedSessionKey,
+        selectedDrivers,
+        selectedLap,
+    }), [
+        selectedYear,
+        selectedMeetingKey,
+        selectedSessionKey,
+        selectedDrivers,
+        selectedLap,
+    ]);
+
+    const {
+        currentStep,
+        setCurrentStep,
+        maxUnlockedStep,
+        goToNextStep,
+        goToPreviousStep,
+        canGoToStep,
+        stepOrder,
+        isFirstStep,
+        isLastStep,
+    } = useTelemetryStep(telemetryStepState);
+
+
+    const resetTelemetry = () => {
+        setSelectedYear(undefined);
+        setSelectedMeeting(undefined);
+        setSelectedMeetingKey(undefined);
+        setSelectedSession(undefined);
+        setSelectedSessionKey(undefined);
+        setSelectedDrivers(new Map());
+        setSelectedLap(undefined);
+        setIsShowTelemetry(false);
+        setIsShowLapTimes(false);
+        setCurrentStep(TelemetryStep.Year);
+    };
+
     return (
         <TelemetryContext.Provider value={{
-            years, setYears, 
-            meetings, setMeetings, 
+            years, setYears,
+            meetings, setMeetings,
             sessions, setSessions,
-            selectedYear, setSelectedYear, 
-            selectedMeeting, setSelectedMeeting, 
-            selectedMeetingKey, setSelectedMeetingKey, 
+            selectedYear, setSelectedYear,
+            selectedMeeting, setSelectedMeeting,
+            selectedMeetingKey, setSelectedMeetingKey,
             selectedSession, setSelectedSession,
-            selectedSessionKey, setSelectedSessionKey, 
+            selectedSessionKey, setSelectedSessionKey,
             isShowSession, setIsShowSession,
-            weather, setWeather, 
-            raceControl, setRaceControl, 
+            weather, setWeather,
+            raceControl, setRaceControl,
             circuitData, setCircuitData,
-            isShowDriverSelect, setIsShowDriverSelect, 
-            drivers, setDrivers, 
-            selectedDrivers, setSelectedDrivers, 
+            isShowDriverSelect, setIsShowDriverSelect,
+            drivers, setDrivers,
+            selectedDrivers, setSelectedDrivers,
             isShowPitStrategy, setIsShowPitStrategy,
-            stints, setStints, 
-            isShowLapTimes, setIsShowLapTimes, 
+            stints, setStints,
+            isShowLapTimes, setIsShowLapTimes,
             selectedLap, setSelectedLap,
-            isShowTelemetry, setIsShowTelemetry
+            isShowTelemetry, setIsShowTelemetry,
+
+            currentStep, setCurrentStep,
+            maxUnlockedStep,
+            goToNextStep, goToPreviousStep,
+            canGoToStep,
+            stepOrder,
+            isFirstStep,
+            isLastStep,
+
+            resetTelemetry
         }}>
             {children}
         </TelemetryContext.Provider>

@@ -2,11 +2,11 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Divider } from "@heroui/react";
+import { Button, Divider } from "@heroui/react";
 import { motion } from "framer-motion";
-import { Info, RotateCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, RotateCcw } from "lucide-react";
 
 import { useFooter } from "@/context/FooterContext";
 import { TelemetryProvider, useTelemetry } from "@/context/TelemetryContext";
@@ -14,6 +14,7 @@ import { useFetchMeetings, useFetchSessionData, useFetchSessions, useFetchTeleme
 
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import TelemetryBreadcrumbs from "@/components/Telemetry/TelemetryBreadcrumbs";
+import { stepOrder } from "@/utils/telemetry/telemetrySteps";
 
 const PageContent: React.FC = () => {
     const { setFooterVisible } = useFooter();
@@ -27,13 +28,17 @@ const PageContent: React.FC = () => {
     }, [setFooterVisible]);
 
     const {
+        goToNextStep,
+        goToPreviousStep,
+        isFirstStep,
+        isLastStep,
+        selectedMeeting,
         setSelectedYear,
         setSelectedMeetingKey,
         setSelectedSessionKey,
-
-        selectedMeeting
-    } = useTelemetry();
-
+        resetTelemetry
+      } = useTelemetry();
+      
     const searchParams = useSearchParams();
     useEffect(() => {
         if (searchParams) {
@@ -53,7 +58,6 @@ const PageContent: React.FC = () => {
     useHandleDriverSelect();
     useFetchTelemetryData();
 
-
     return (
         <div className="min-h-screen flex flex-col">
             <motion.div
@@ -63,7 +67,10 @@ const PageContent: React.FC = () => {
                 transition={{ duration: 0.5 }}
                 className="flex flex-row items-center p-1"
             >
-                <div className="">
+                <div className="flex flex-row items-center">
+                    <Button isIconOnly onClick={goToPreviousStep} disabled={isFirstStep} className={`${isFirstStep ? "text-default-200" : ""}`}>
+                        <ChevronLeft />
+                    </Button>
                     <TelemetryBreadcrumbs />
                 </div>
                 <div className="ml-auto flex flex-row gap-3 items-center">
@@ -73,7 +80,10 @@ const PageContent: React.FC = () => {
                             <Info />
                         </div>
                     )}
-                    <RotateCcw onClick={() => setSelectedYear(undefined)} />
+                    <RotateCcw onClick={resetTelemetry} className="cursor-pointer" /> {/* Add confirmation dialog, tooltip, or popover */}
+                    <Button isIconOnly onClick={goToNextStep} disabled={isLastStep} className={`${isLastStep ? "text-default-200" : ""}`}>
+                        <ChevronRight />
+                    </Button>
                 </div>
             </motion.div>
             <Divider />

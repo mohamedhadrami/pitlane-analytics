@@ -3,7 +3,7 @@ import type React from "react";
 import Marquee from "react-fast-marquee";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind } from "lucide-react";
 import type { OFMeeting, OFSession, OFWeather } from "../../types/openF1.types";
-import { getWindDirection } from "../../utils/telemetryUtils";
+import { getWindDirection } from "../../utils/telemetry/telemetryUtils";
 import { trackImage } from "../../utils/helpers";
 import { Divider, Image } from "@heroui/react";
 import { useLiveSettings } from "@/context/LiveSettingsContext";
