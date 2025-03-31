@@ -1,25 +1,27 @@
 import type React from "react";
 
 export const getCompoundColor = (compound: string) => {
+  const opacity = "80";
   switch (compound) {
     case "SOFT":
-      return "#f00";
+      return `#ff0000${opacity}`;
     case "MEDIUM":
-      return "#ff0";
+      return `#ffff00${opacity}`;
     case "HARD":
-      return "#fff";
+      return `#ffffff${opacity}`;
     case "INTERMEDIATE":
-      return "#0a0";
+      return `#00aa00${opacity}`;
     case "WET":
-      return "#00f";
+      return `#0000ff${opacity}`;
     case "UNKNOWN":
-      return "#000";
+      return `#000000${opacity}`;
     case "TEST_UNKNOWN":
-      return "#000";
+      return `#000000${opacity}`;
     default:
       return null;
   }
-}
+};
+
 
 export const getCompoundComponent = (compound: string) => {
   switch (compound) {
