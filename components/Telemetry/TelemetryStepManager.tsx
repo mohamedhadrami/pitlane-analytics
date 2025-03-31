@@ -18,6 +18,7 @@ const TelemetryStepManager: React.FC = () => {
         meetings,
         sessions,
         selectedYear,
+        setSelectedYear,
         selectedMeeting,
         selectedSession,
         selectedDrivers,
@@ -73,7 +74,7 @@ const TelemetryStepManager: React.FC = () => {
     const renderContent = () => {
         switch (currentStep) {
             case "year":
-                return <SelectionPrompt label="Year" icon={<Calendar size={50} />} data={years} />;
+                return <SelectionPrompt label="Year" icon={<Calendar size={50} />} data={years} selectedValue={selectedYear} setData={setSelectedYear} />;
             case "meeting":
                 return <SelectionPrompt label="Meeting" icon={<Calendar size={50} />} data={meetings} />;
             case "session":

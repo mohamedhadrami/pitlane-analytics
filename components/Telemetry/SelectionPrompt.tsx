@@ -5,18 +5,21 @@ import type { JSX } from "react";
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { OFMeeting, OFSession } from "@/types/openF1.types";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface SelectionPromptProps {
     label: string;
     icon: JSX.Element;
     data: string[] | OFMeeting[] | OFSession[];
+    selectedValue?: string;
+    setData?: (data: string) => void;
 }
 
-const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) => {
+const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data, selectedValue, setData }) => {
     const renderDataContent = () => {
         switch (label) {
             case "Year":
-                return <YearData data={data as string[]} />;
+                return <YearData data={data as string[]} selectedYear={selectedValue!} setData={setData!} />;
             case "Meeting":
                 return (
                     <DataTable
@@ -105,12 +108,15 @@ const DataTable = <T extends object>({ headers, data }: DataTableProps<T>) => {
 };
 
 // YearData component remains the same
-const YearData: React.FC<{ data: string[] }> = ({ data }) => {
+const YearData: React.FC<{ data: string[]; selectedYear: string; setData: (year: string) => void; }> = ({ data, selectedYear, setData }) => {
     return (
-        <div>
-            {data.map((year) => (
-                <p key={year}>{year}</p>
+        <RadioGroup onValueChange={setData} value={selectedYear}>
+            {data.map((year: string) => (
+                <div key={year} className="flex items-center space-x-2">
+                    <RadioGroupItem value={year} id={year} />
+                    <p>{year}</p>
+                </div>
             ))}
-        </div>
+        </RadioGroup>
     );
 };
