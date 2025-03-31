@@ -4,7 +4,7 @@
 
 import type React from "react";
 import { type ReactNode, createContext, useContext, useMemo, useState } from "react"
-import type { OFMeeting, OFSession, OFWeather, OFRaceControl, OFDriver, OFStint } from "@/types/openF1.types";
+import type { OFMeeting, OFSession, OFWeather, OFRaceControl, OFDriver, OFStint, OFPosition } from "@/types/openF1.types";
 import type { DriverChartData } from "@/types/custom";
 import type { mvCircuit } from "@/types/multiviewer";
 import { type TelemetryStateShape, TelemetryStep } from "@/utils/telemetry/telemetrySteps";
@@ -31,6 +31,8 @@ interface TelemetryContextProps {
     setIsShowSession: React.Dispatch<React.SetStateAction<boolean>>;
     weather: OFWeather[];
     setWeather: React.Dispatch<React.SetStateAction<OFWeather[]>>;
+    positions: OFPosition[];
+    setPositions: React.Dispatch<React.SetStateAction<OFPosition[]>>;
     raceControl: OFRaceControl[];
     setRaceControl: React.Dispatch<React.SetStateAction<OFRaceControl[]>>;
     circuitData: mvCircuit | undefined;
@@ -88,6 +90,7 @@ export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
 
     const [isShowSession, setIsShowSession] = useState<boolean>(false);
     const [weather, setWeather] = useState<OFWeather[]>([]);
+    const [positions, setPositions] = useState<OFPosition[]>([]);
     const [raceControl, setRaceControl] = useState<OFRaceControl[]>([]);
     const [circuitData, setCircuitData] = useState<mvCircuit>();
 
@@ -156,6 +159,7 @@ export const TelemetryProvider = ({ children }: { children: ReactNode }) => {
             selectedSessionKey, setSelectedSessionKey,
             isShowSession, setIsShowSession,
             weather, setWeather,
+            positions, setPositions,
             raceControl, setRaceControl,
             circuitData, setCircuitData,
             isShowDriverSelect, setIsShowDriverSelect,
