@@ -107,6 +107,8 @@ export const teamNameConvertor = (name: string) => {
             return "RB";
         case "Alpine F1 Team":
             return "Alpine";
+        case "Haas F1 Team":
+            return "Haas";
         default:
             return name;
     }
@@ -173,7 +175,7 @@ export const carImage = (year: string, teamName: string) => {
 }
 
 export const logoImage = (year: string, teamName: string) => {
-    return `https://media.formula1.com/content/dam/fom-website/teams/${year}/${teamName}-logo.png.transform/2col/image.png`;
+    return `https://media.formula1.com/content/dam/fom-website/teams/${year}/${teamName}-logo.png`;
 }
 
 
