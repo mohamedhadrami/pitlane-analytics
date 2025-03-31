@@ -20,6 +20,8 @@ import { useHandleDriverSelect } from "@/hooks/Telemetry/useHandleDriverSelect";
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import TelemetryBreadcrumbs from "@/components/Telemetry/TelemetryBreadcrumbs";
 import { Button } from "@/components/ui/button";
+import { AlertDialogHeader, AlertDialogFooter } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 
 const PageContent: React.FC = () => {
     const { setFooterVisible } = useFooter();
@@ -92,7 +94,25 @@ const PageContent: React.FC = () => {
                             <Info />
                         </div>
                     )}
-                    <RotateCcw onClick={resetTelemetry} className="cursor-pointer" /> {/* Add confirmation dialog, tooltip, or popover */}
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <RotateCcw className="cursor-pointer" />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Reset telemetry?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will clear all selected data and return you to the first step. This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={resetTelemetry}>
+                                    Reset
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                     <Button
                         variant="ghost"
                         size="icon"
