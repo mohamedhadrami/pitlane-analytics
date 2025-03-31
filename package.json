@@ -37,6 +37,9 @@
     "@heroui/react": "^2.7.5",
     "@heroui/use-infinite-scroll": "^2.2.7",
     "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-select": "^2.1.6",
+    "@radix-ui/react-separator": "^1.1.2",
+    "@radix-ui/react-slot": "^1.1.2",
     "@react-stately/data": "^3.12.2",
     "@vercel/postgres": "^0.10.0",
     "class-variance-authority": "^0.7.1",
@@ -55,6 +58,7 @@
     "styled-components": "^6.1.16",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",
+    "use-debounce": "^10.0.4",
     "vaul": "^1.1.2"
   },
   "devDependencies": {
@@ -65,10 +69,10 @@
     "@types/react-dom": "^19.0.4",
     "eslint": "^9.22.0",
     "eslint-config-next": "^15.2.3",
+    "postcss": "^8",
     "prettier": "^3.5.3",
     "tailwindcss": "3",
-    "typescript": "^5.8.2",
-    "postcss": "^8"
+    "typescript": "^5.8.2"
   },
   "eslintConfig": {
     "extends": [
