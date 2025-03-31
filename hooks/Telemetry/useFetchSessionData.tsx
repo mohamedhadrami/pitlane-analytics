@@ -2,7 +2,7 @@
 
 import { useTelemetry } from "@/context/TelemetryContext";
 import { fetchCircuitByKey } from "@/services/mvApi";
-import { fetchWeather, fetchDrivers, fetchRaceControl, fetchStint } from "@/services/openF1Api";
+import { fetchWeather, fetchDrivers, fetchRaceControl, fetchStint, fetchPosition } from "@/services/openF1Api";
 import type { DriverChartData } from "@/types/custom";
 import type { OFWeatherParams, OFDriverParams, OFRaceControlParams, OFStintParams } from "@/types/openF1.types";
 import { delay } from "@/utils/helpers";
@@ -26,6 +26,7 @@ export const useFetchSessionData = () => {
         setIsShowTelemetry,
 
         setWeather,
+        setPositions,
         setDrivers,
         setRaceControl,
         setStints,
@@ -52,9 +53,19 @@ export const useFetchSessionData = () => {
             setWeather(weatherRes);
             setIsShowSession(true);
 
+            const positionRes = await fetchPosition(params);
+            if (!positionRes) throw new Error("Error fetching position data");
+            setPositions(positionRes);
+
             const driverRes = await fetchDrivers(params as OFDriverParams);
             if (!driverRes) throw new Error("Error fetching driver data");
-            setDrivers(driverRes);
+            
+            const recentPositions = driverRes.map(driver => {
+                const driverPositions = positionRes.filter(position => position.driver_number === driver.driver_number);
+                return { driver, position: driverPositions.pop()?.position || 0 };
+            });
+            const sorted = recentPositions.sort((a, b) => a.position - b.position).map(item => item.driver);
+            setDrivers(sorted);
             await delay(500);
             setIsShowDriverSelect(true);
 
@@ -114,6 +125,7 @@ export const useFetchSessionData = () => {
         setIsShowLapTimes,
         setIsShowTelemetry,
         setWeather,
+        setPositions,
         setDrivers,
         setRaceControl,
         setStints,
