@@ -6,6 +6,7 @@ import { useTelemetry } from "@/context/TelemetryContext";
 import DriverSelection from "./DriverSelection";
 import TyreStrategy from "./TyreStrategy";
 import LapTimesLineChart from "../Telemetry/LapTimesLineChart";
+import { TelemetryStep } from "@/utils/telemetry/telemetrySteps";
 
 
 const Dash1: React.FC = () => {
@@ -14,21 +15,24 @@ const Dash1: React.FC = () => {
         isShowDriverSelect,
         drivers,
         selectedDrivers,
+        currentStep
     } = useTelemetry();
 
     return (
-        <>
-            <div className="w-1/4 border-r border-default/50 items-center flex flex-col">
+        <div className="flex flex-row flex-grow overflow-hidden">
+            <div className="w-1/4 overflow-y-auto border-r border-default/50">
                 {isShowDriverSelect && drivers && selectedDrivers && (
-                    <div className="">
-                        <DriverSelection />
-                    </div>
+                    <DriverSelection />
                 )}
             </div>
-            <div className="flex-grow h-full">
+            <div className="flex-grow  border-default/50 overflow-y-auto">
+            {currentStep === TelemetryStep.StatsDrivers ? (
                 <Dash11 />
+            ) : (
+                <Dash12 />
+            )}
             </div>
-        </>
+        </div>
     )
 }
 

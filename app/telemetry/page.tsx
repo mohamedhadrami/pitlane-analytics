@@ -65,13 +65,13 @@ const PageContent: React.FC = () => {
     useFetchTelemetryData();
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="h-screen flex flex-col">
             <motion.div
                 key="breadcrumb"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="flex flex-row items-center p-1"
+                className="flex flex-row items-center p-1 w-full shrink-0"
             >
                 <div className="flex flex-row items-center gap-2">
                     <Button

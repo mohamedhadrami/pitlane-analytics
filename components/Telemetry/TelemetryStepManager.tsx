@@ -13,14 +13,14 @@ import TelemetryCharts from "./TelemetryCharts";
 import { TelemetryStep } from "@/utils/telemetry/telemetrySteps";
 
 const TelemetryStepManager: React.FC = () => {
-    const { 
+    const {
         years,
         meetings,
         sessions,
-        selectedYear, 
-        selectedMeeting, 
-        selectedSession, 
-        selectedDrivers, 
+        selectedYear,
+        selectedMeeting,
+        selectedSession,
+        selectedDrivers,
         selectedLap,
         isShowLapTimes,
         isShowTelemetry,
@@ -77,10 +77,10 @@ const TelemetryStepManager: React.FC = () => {
             case "meeting":
                 return <SelectionPrompt label="Meeting" icon={<Calendar size={50} />} data={meetings} />;
             case "session":
-                return <SelectionPrompt label="Session" icon={<Calendar size={50} />} data={sessions}/>;
+                return <SelectionPrompt label="Session" icon={<Calendar size={50} />} data={sessions} />;
             case "stats-drivers":
-                return <Dash1 />;
             case "driver-lap":
+                return <Dash1 />;
             case "lap-telemetry":
                 return (
                     <div className="flex flex-grow">
