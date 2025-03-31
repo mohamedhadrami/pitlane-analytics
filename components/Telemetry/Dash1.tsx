@@ -18,7 +18,7 @@ const Dash1: React.FC = () => {
 
     return (
         <>
-            <div className="w-1/4 border-r border-default/50">
+            <div className="w-1/4 border-r border-default/50 items-center flex flex-col">
                 {isShowDriverSelect && drivers && selectedDrivers && (
                     <div className="">
                         <DriverSelection />

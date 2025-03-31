@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Button, Divider } from "@heroui/react";
+import { Divider } from "@heroui/react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Info, RotateCcw } from "lucide-react";
 
@@ -19,6 +19,7 @@ import { useHandleDriverSelect } from "@/hooks/Telemetry/useHandleDriverSelect";
 
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import TelemetryBreadcrumbs from "@/components/Telemetry/TelemetryBreadcrumbs";
+import { Button } from "@/components/ui/button";
 
 const PageContent: React.FC = () => {
     const { setFooterVisible } = useFooter();
@@ -40,7 +41,8 @@ const PageContent: React.FC = () => {
         setSelectedYear,
         setSelectedMeetingKey,
         setSelectedSessionKey,
-        resetTelemetry
+        resetTelemetry,
+        currentStep
     } = useTelemetry();
 
     const searchParams = useSearchParams();
@@ -71,12 +73,13 @@ const PageContent: React.FC = () => {
                 transition={{ duration: 0.5 }}
                 className="flex flex-row items-center p-1"
             >
-                <div className="flex flex-row items-center">
+                <div className="flex flex-row items-center gap-2">
                     <Button
+                        variant="ghost"
+                        size="icon"
+                        className={`[&_svg]:size-6 ${isFirstStep ? "text-default-200" : ""}`}
                         onClick={goToPreviousStep}
-                        className={`${isFirstStep ? "text-default-200" : ""}`}
                         disabled={isFirstStep}
-                        isIconOnly
                     >
                         <ChevronLeft />
                     </Button>
@@ -90,7 +93,13 @@ const PageContent: React.FC = () => {
                         </div>
                     )}
                     <RotateCcw onClick={resetTelemetry} className="cursor-pointer" /> {/* Add confirmation dialog, tooltip, or popover */}
-                    <Button isIconOnly onClick={goToNextStep} disabled={isLastStep} className={`${isLastStep ? "text-default-200" : ""}`}>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className={`[&_svg]:size-6 ${isLastStep ? "text-default-200" : ""}`}
+                        onClick={goToNextStep}
+                        disabled={isLastStep}
+                    >
                         <ChevronRight />
                     </Button>
                 </div>

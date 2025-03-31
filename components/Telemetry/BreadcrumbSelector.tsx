@@ -6,6 +6,8 @@ import type React from "react";
 import type { OFMeeting, OFSession } from "@/types/openF1.types";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, type Selection } from "@heroui/react";
 import { ChevronDownIcon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { useEffect } from "react";
 
 type SelectorLabel = "year" | "meeting" | "session";
 
@@ -53,14 +55,43 @@ const BreadcrumbSelector = <L extends SelectorLabel>({
     const organizedValues = organizeValues(label, values, disabled);
     const selectedKeys = displayValue(label);
 
-    const handleChange = (e: any) => {
-        const chosenValue = [...e][0];
-        onChange(chosenValue, label);
+    const placeholderMap: Record<SelectorLabel, string> = {
+        year: "Select a year",
+        meeting: "Select a race",
+        session: "Select a session",
     };
 
     return (
         <>
-            <Dropdown
+            {label && organizedValues && (
+                <Select
+                    aria-label={`${label} selection`}
+                    value={selectedKeys}
+                    onValueChange={(e) => onChange(e, label)}
+                    required
+                >
+                    <SelectTrigger className="max-w-xs overflow-hidden truncate whitespace-nowrap">
+                        <div className="truncate w-full text-left text-white font-extralight">
+                            <SelectValue placeholder={placeholderMap[label]} />
+                        </div>
+                    </SelectTrigger>
+                    {organizedValues && organizedValues.length > 0 && (
+                        <SelectContent className="max-h-96">
+                            {organizedValues.map((value) => (
+                                <SelectItem key={value} value={value}>{value}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    )}
+                </Select>
+            )}
+        </>
+    )
+}
+
+export default BreadcrumbSelector;
+
+/**
+ *  <Dropdown
                 backdrop="blur"
                 isDisabled={disabled}
                 shouldBlockScroll={false}>
@@ -91,8 +122,4 @@ const BreadcrumbSelector = <L extends SelectorLabel>({
                     </DropdownMenu>
                 )}
             </Dropdown>
-        </>
-    )
-}
-
-export default BreadcrumbSelector;
+ */

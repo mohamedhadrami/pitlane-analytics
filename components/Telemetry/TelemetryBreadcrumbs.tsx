@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "lucide-react";
 import { useToggleDriverSelect } from "@/hooks/Telemetry/useToggleDriverSelect";
+import { Separator } from "../ui/separator";
 
 const TelemetryBreadcrumbs: React.FC = () => {
 
@@ -47,42 +48,36 @@ const TelemetryBreadcrumbs: React.FC = () => {
 
     const getValue = (label?: string): string | undefined => {
         if (!label) return undefined;
+
         switch (label) {
             case "year":
-                if (!selectedYear) return "Select a year";
-                return selectedYear;
+                return selectedYear ?? undefined;
             case "meeting":
-                if (!selectedMeeting) return "Select a race";
-                return selectedMeeting?.meeting_name;
+                return selectedMeeting?.meeting_official_name;
             case "session":
-                if (!selectedSession) return "Select a session";
                 return selectedSession?.session_name;
             default:
-                break;
+                return undefined;
         }
-    }
+    };
 
     const setValue = (value: string, label: string) => {
         switch (label) {
             case "year":
-                setSelectedYear(value)
+                setSelectedYear(value);
                 break;
             case "meeting": {
                 const meeting = meetings?.find(v => v.meeting_official_name === value);
-                setSelectedMeetingKey(Number(meeting?.meeting_key));
+                if (meeting) setSelectedMeetingKey(Number(meeting.meeting_key));
                 break;
             }
             case "session": {
                 const session = sessions?.find(v => v.session_name === value);
-                setSelectedSessionKey(Number(session?.session_key))
+                if (session) setSelectedSessionKey(Number(session.session_key));
                 break;
             }
-            default:
-                break;
         }
-    }
-
-
+    };
 
 
     const [driverBreadcrumb, setDriverBreadcrumb] = useState<string>("");
@@ -127,7 +122,7 @@ const TelemetryBreadcrumbs: React.FC = () => {
     return (
         <Breadcrumbs
             variant="light"
-            separator="|"
+            separator={<Separator orientation="vertical" className="h-8"/>}
         >
             {(Object.keys(selections) as SelectorLabel[])
                 .filter((key) => !selections[key].disabled)
