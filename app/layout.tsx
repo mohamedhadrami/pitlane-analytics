@@ -39,7 +39,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={inter.className}>
+      <body
+        className={`${inter.className} bg-layer`}
+      >
+
         <Providers>
           <CustomNavbar />
           <div className="sm:ml-16">

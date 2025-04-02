@@ -28,7 +28,7 @@ const Card = styled(motion.div) <{ isselected: string; bordercolor: string }>`
     props.isselected === "true" &&
     `
     background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
-    --tw-gradient-from: transparent var(--tw-gradient-from-position);
+    --tw-gradient-from: black var(--tw-gradient-from-position);
     --tw-gradient-to: transparent var(--tw-gradient-to-position);
     --tw-gradient-stops: var(--tw-gradient-from), ${props.bordercolor}99 var(--tw-gradient-via-position), var(--tw-gradient-to);
   `}
@@ -37,8 +37,8 @@ const Card = styled(motion.div) <{ isselected: string; bordercolor: string }>`
     props.isselected === "false" &&
     `
     background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
-    --tw-gradient-from: transparent var(--tw-gradient-from-position);
-    --tw-gradient-to: transparent var(--tw-gradient-to-position);
+    --tw-gradient-from: black var(--tw-gradient-from-position);
+    --tw-gradient-to: black var(--tw-gradient-to-position);
     --tw-gradient-stops: var(--tw-gradient-from), ${props.bordercolor}22 var(--tw-gradient-via-position), var(--tw-gradient-to);
   `}
   transition: background 0.75s ease-in, transform 0.5s ease, filter 0.5s ease;
