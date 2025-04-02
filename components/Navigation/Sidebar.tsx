@@ -62,9 +62,9 @@ const Sidebar: React.FC<SidebarProps> = ({ items }) => {
                 className={`flex flex-col p-4 fixed gap-4 top-0 left-0
                   h-full z-30 border-r border-white
                   ${isOpen ?
-                        'bg-gradient-to-r from-primary-300 to-primary-200 dark:from-primary-800 dark:to-primary-900'
+                        'bg-gradient-to-tr from-primary-900 to-primary-100 dark:from-red-950 dark:to-primary-900'
                         :
-                        'bg-primary-300 dark:bg-primary-800'}
+                        'bg-gradient-to-tr from-primary-900 to-primary-100 dark:from-red-950 dark:to-primary-900'}
                   transition-all duration-300`}
                 initial={{ width: '4rem' }}
                 animate={{ width: isOpen ? '16rem' : '4rem' }}
