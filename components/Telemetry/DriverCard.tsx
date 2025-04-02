@@ -24,10 +24,23 @@ const Card = styled(motion.div) <{ isselected: string; bordercolor: string }>`
   gap: 1rem;
   padding: 1rem;
   cursor: pointer;
-  background: ${(props) =>
-        props.isselected === "true"
-            ? `linear-gradient(135deg, ${props.bordercolor}88, #000000)`
-            : `linear-gradient(135deg, #000000, ${props.bordercolor}22)`};
+  ${(props) =>
+    props.isselected === "true" &&
+    `
+    background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
+    --tw-gradient-from: transparent var(--tw-gradient-from-position);
+    --tw-gradient-to: transparent var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), ${props.bordercolor}99 var(--tw-gradient-via-position), var(--tw-gradient-to);
+  `}
+
+  ${(props) =>
+    props.isselected === "false" &&
+    `
+    background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+    --tw-gradient-from: transparent var(--tw-gradient-from-position);
+    --tw-gradient-to: transparent var(--tw-gradient-to-position);
+    --tw-gradient-stops: var(--tw-gradient-from), ${props.bordercolor}22 var(--tw-gradient-via-position), var(--tw-gradient-to);
+  `}
   transition: background 0.75s ease-in, transform 0.5s ease, filter 0.5s ease;
   
   /*overflow: hidden;*/
@@ -200,8 +213,8 @@ const DriverCard: React.FC<DriverCardProps> = ({
                 />
                 <div className="flex flex-row justify-between w-full items-center">
                     <div className="flex flex-col">
-                        <p className="capitalize text-lg font-medium">{driver.full_name.toLowerCase()}</p>
-                        <p className="capitalize text-sm text-gray-500">{driver.team_name}</p>
+                        <p className="capitalize text-lg font-extralight">{driver.full_name.toLowerCase()}</p>
+                        <p className="capitalize text-sm font-light text-default-500">{driver.team_name}</p>
                     </div>
                     <div className="flex flex-col justify-between gap-4">
                         <Image
