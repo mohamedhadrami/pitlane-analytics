@@ -1,6 +1,7 @@
 // @/components/Telemetry/TelemetryStepManager.tsx
 
 import type React from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import SelectionPrompt from "./SelectionPrompt";
@@ -20,8 +21,27 @@ const TelemetryStepManager: React.FC = () => {
         sessions,
     } = useTelemetry();
 
-    const { currentStage } = useTelemetryUI();
+    const { currentStage, direction } = useTelemetryUI();
     useHandleCurrentStage();
+
+    const commonTransition = { duration: 0.5, ease: "easeInOut" };
+
+    const [initialX, setInitialX] = useState<number>();
+    const [exitX, setExitX] = useState<number>();
+
+    useEffect(() => {
+        const getAnimationValues = () => {
+            if (direction === 'next') {
+                setInitialX(300)
+                setExitX(-300)
+            } else {
+                setInitialX(-300)
+                setExitX(300)
+            }
+        };
+
+        getAnimationValues();
+    }, [direction])
 
     const renderLeftComponent = () => {
         switch (currentStage) {
@@ -48,14 +68,66 @@ const TelemetryStepManager: React.FC = () => {
     const renderContent = () => {
         switch (currentStage) {
             case TelemetryStage.Year:
-                return <SelectionPrompt label="Year" icon={<CalendarDays size={50} />} data={years} />;
+                return (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentStage}
+                            initial={{ x: initialX, y: 0, opacity: 0 }}
+                            animate={{ x: 0, y: 0, opacity: 1 }}
+                            exit={{ x: exitX, y: 0, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                            className="flex items-center justify-center w-full"
+                        >
+                            <SelectionPrompt label="Year" icon={<CalendarDays size={50} />} data={years} />
+                        </motion.div>
+                    </AnimatePresence>
+                )
             case TelemetryStage.Meeting:
-                return <SelectionPrompt label="Meeting" icon={<MapPin size={50} />} data={meetings} />;
+                return (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentStage}
+                            initial={{ x: initialX, y: 0, opacity: 0 }}
+                            animate={{ x: 0, y: 0, opacity: 1 }}
+                            exit={{ x: exitX, y: 0, opacity: 0 }}
+                            transition={{ duration: 0.5, ease: "easeInOut" }}
+                            className="flex items-center justify-center w-full"
+                        >
+                            <SelectionPrompt label="Meeting" icon={<MapPin size={50} />} data={meetings} />
+                        </motion.div>
+                    </AnimatePresence>
+                )
             case TelemetryStage.Session:
-                return <SelectionPrompt label="Session" icon={<Timer size={50} />} data={sessions}/>;
+                return (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentStage}
+                            initial={{ x: initialX, y: 0, opacity: 0 }}
+                            animate={{ x: 0, y: 0, opacity: 1 }}
+                            exit={{ x: exitX, y: 0, opacity: 0 }}
+                            transition={commonTransition}
+                            className="flex items-center justify-center w-full"
+                        >
+                            <SelectionPrompt label="Session" icon={<Timer size={50} />} data={sessions} />
+                        </motion.div>
+                    </AnimatePresence>
+                )
             case TelemetryStage.StatsDrivers:
             case TelemetryStage.DriverLap:
-                return <StatsDriverView />;
+                return (
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentStage}
+                            initial={{ opacity: 0, x: initialX }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: exitX }}
+                            transition={commonTransition}
+                            className="flex items-center justify-center w-full max-h-full"
+                        >
+                            <StatsDriverView />
+                        </motion.div>
+                    </AnimatePresence>
+                );
             case TelemetryStage.LapTelemetry:
                 return (
                     <div className="flex flex-grow">
@@ -86,6 +158,8 @@ const TelemetryStepManager: React.FC = () => {
                         </AnimatePresence>
                     </div>
                 );
+            case TelemetryStage.Telemetry:
+                return <TelemetryCharts />;
             default:
                 return null;
         }

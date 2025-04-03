@@ -17,6 +17,8 @@ interface TelemetryUIContextProps {
     setCurrentStage: React.Dispatch<React.SetStateAction<TelemetryStage>>;
     nextStage: TelemetryStage | undefined;
     previousStage: TelemetryStage | undefined;
+    direction: 'next' | 'previous';
+    setDirection: React.Dispatch<React.SetStateAction<'next' | 'previous'>>;
 }
 
 const TelemetryUIContext = createContext<TelemetryUIContextProps | undefined>(undefined);
@@ -33,6 +35,7 @@ export const TelemetryUIProvider = ({ children }: { children: ReactNode }) => {
     const [currentStage, setCurrentStage] = useState<TelemetryStage>(TelemetryStage.Year);
     const [nextStage, setNextStage] = useState<TelemetryStage | undefined>(TelemetryStage.Meeting);
     const [previousStage, setPreviousStage] = useState<TelemetryStage | undefined>();
+    const [direction, setDirection] = useState<'next' | 'previous'>('next');
 
     useEffect(() => {
         if (currentStage === TelemetryStage.Year) {
@@ -52,6 +55,7 @@ export const TelemetryUIProvider = ({ children }: { children: ReactNode }) => {
             currentStage, setCurrentStage,
             nextStage, 
             previousStage,
+            direction, setDirection
         }}>
             {children}
         </TelemetryUIContext.Provider>

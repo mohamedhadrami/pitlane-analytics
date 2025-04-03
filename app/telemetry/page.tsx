@@ -3,6 +3,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Divider } from "@heroui/react";
 import { motion } from "framer-motion";
@@ -19,13 +20,22 @@ import { useHandleDriverSelect } from "@/hooks/Telemetry/useHandleDriverSelect";
 
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import Header from "@/components/Telemetry/Header";
-import { TelemetryUIProvider } from "@/context/Telemetry/TelemetryUIContext";
+import { TelemetryUIProvider } from "@/context/Telemetry/Telemetry/TelemetryUIContext";
 import { Button } from "@/components/ui/button";
 import { AlertDialogHeader, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { LapTimeChartProvider } from "@/context/Telemetry/LapTimeChartContext";
 
 const PageContent: React.FC = () => {
     const { setFooterVisible } = useFooter();
+    const {
+        setSelectedYear,
+        setSelectedMeetingKey,
+        setSelectedSessionKey,
+    } = useTelemetry();
+
+    const searchParams = useSearchParams();
+    const [paramsProcessed, setParamsProcessed] = useState(false); // Flag to indicate when query params are processed
 
     useEffect(() => {
         setFooterVisible(false);
@@ -35,38 +45,30 @@ const PageContent: React.FC = () => {
         };
     }, [setFooterVisible]);
 
-    const {
-        goToNextStep,
-        goToPreviousStep,
-        isFirstStep,
-        isLastStep,
-        selectedMeeting,
-        setSelectedYear,
-        setSelectedMeetingKey,
-        setSelectedSessionKey,
-    } = useTelemetry();
-
-    const searchParams = useSearchParams();
     useEffect(() => {
         if (searchParams) {
             const queryYear = searchParams.get("year");
             const queryMeeting = searchParams.get("meeting");
             const querySession = searchParams.get("session");
+
             if (queryYear) setSelectedYear(queryYear);
             if (queryMeeting) setSelectedMeetingKey(Number.parseInt(queryMeeting));
             if (querySession) setSelectedSessionKey(Number.parseInt(querySession));
+
+            // Set the flag to true after processing the parameters
+            setParamsProcessed(true);
         }
     }, [searchParams, setSelectedYear, setSelectedMeetingKey, setSelectedSessionKey]);
 
-    useFetchYears();
-    useFetchMeetings();
-    useFetchSessions();
+    useFetchYears(paramsProcessed);
+    useFetchMeetings(paramsProcessed);
+    useFetchSessions(paramsProcessed);
     useFetchSessionData();
     useHandleDriverSelect();
     useFetchTelemetryData();
 
     return (
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen max-h-screen flex flex-col">
             <Header />
             <Divider />
             <TelemetryStepManager />
@@ -79,7 +81,9 @@ const Page: React.FC = () => {
     return (
         <TelemetryProvider>
             <TelemetryUIProvider>
-                <PageContent />
+                <LapTimeChartProvider>
+                    <PageContent />
+                </LapTimeChartProvider>
             </TelemetryUIProvider>
         </TelemetryProvider>
     );

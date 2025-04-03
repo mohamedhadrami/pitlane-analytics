@@ -72,21 +72,14 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
     };
 
     return (
-        <AnimatePresence mode="wait">
-            <motion.div
-                key={label}
-                initial={{ x: 0, y: 300, opacity: 0 }}
-                animate={{ x: 0, y: 0, opacity: 1 }}
-                exit={{ x: 0, y: -300, opacity: 0 }}
-                className="flex flex-col items-center justify-center w-full gap-5"
-            >
-                <div className="flex flex-row items-center gap-3">
-                    <div>{icon}</div>
-                    <div className="font-extralight text-xl">Select a {label}</div>
-                </div>
-                <div className="flex flex-col">{renderDataContent()}</div>
-            </motion.div>
-        </AnimatePresence>
+        <div className="flex flex-col items-center justify-center w-full gap-5">
+            <div className="flex flex-row items-center gap-3">
+                <div>{icon}</div>
+                <div className="font-extralight text-xl">Select a {label}</div>
+            </div>
+            <div className="flex flex-col">{renderDataContent()}</div>
+        </div>
+
     );
 };
 
@@ -98,7 +91,7 @@ interface DataTableProps<T> {
     selectedValue: number;
     data: T[];
     handler: (item: string) => void;
-    itemKey: keyof T;  // The key to use for each row
+    itemKey: keyof T;
 }
 
 const DataTable = <T extends object>({
@@ -140,6 +133,7 @@ const DataTable = <T extends object>({
         </Table>
     );
 };
+
 
 
 interface YearDataProps {

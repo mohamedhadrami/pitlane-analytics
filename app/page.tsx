@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { Watch } from "@/components/spinners/Watch";
 import Link from 'next/link';
 import type { JLPRace, JLPScheduleResponse } from "@/types/jolpica.types";
+import { useFooter } from "@/context/FooterContext";
 
 interface CountdownTimerProps {
   weeks: number;
@@ -58,6 +59,12 @@ const CountdownTimer: React.FC<{ timeRemaining: CountdownTimerProps }> = ({ time
 }
 
 const Home: React.FC = () => {
+  const { setFooterVisible } = useFooter();
+  useEffect(() => {
+    setFooterVisible(true);
+    return () => setFooterVisible(false);
+  }, [setFooterVisible]);
+
   const [data, setData] = useState<JLPScheduleResponse>();
   const [currentRace, setCurrentRace] = useState<JLPRace>();
   const [nextRaceIndex, setNextRaceIndex] = useState<number>(0);
@@ -198,7 +205,7 @@ const Home: React.FC = () => {
             ))}
           </>
         ) :
-          <p>No news available at the moment.</p>
+          <p>No news available at the moment. Implement new event tracker data</p>
         }
       </div>
     </div >

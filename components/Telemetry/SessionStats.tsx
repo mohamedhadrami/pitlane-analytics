@@ -94,7 +94,7 @@ const CircuitStatsContainer: React.FC<{ flag: any, selectedMeeting: OFMeeting }>
             </p>
             <div className="flex justify-center">
                 <Image
-                    className=""
+                    className="border-default/75"
                     alt="track image"
                     src={trackDetailedImage(selectedMeeting?.location, selectedMeeting?.country_name)}
                 />
@@ -148,7 +148,7 @@ const SessionStatsCards: React.FC<{
 }) => {
         return (
             <div className="flex md:flex-row flex-col gap-3 m-5 w-full">
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-transparent border border-default/75">
                     <CardHeader className="flex justify-between items-center">
                         <h1 className="text-lg font-light">Session</h1>
                         <CalendarFold />
@@ -158,11 +158,11 @@ const SessionStatsCards: React.FC<{
                         <SessionStatsContainer selectedSession={selectedSession} selectedMeeting={selectedMeeting} />
                     </CardBody>
                 </Card>
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-transparent border border-default/75">
                     <CardHeader className="flex justify-between items-center">
                         <h1 className="text-lg font-light">Circuit</h1>
                         <Image
-                            className="rounded-lg"
+                            className="rounded-md border border-default/75"
                             alt="flag image"
                             width={40}
                             src={flag?.png} />
@@ -172,7 +172,7 @@ const SessionStatsCards: React.FC<{
                         <CircuitStatsContainer flag={flag} selectedMeeting={selectedMeeting} />
                     </CardBody>
                 </Card>
-                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-gradient-to-tl from-zinc-800 to-[#111]">
+                <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-transparent border border-default/75">
                     <CardHeader className="flex justify-between items-center">
                         <h1 className="text-lg font-light">Weather</h1>
                         <Cloudy />

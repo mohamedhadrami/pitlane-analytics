@@ -1,7 +1,7 @@
 import type React from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import CustomNavbar from "@/components/Navigation/Navigator";
+import Navigator from "@/components/Navigation/Navigator";
 import { Providers } from "./providers";
 import NetworkStatusClient from "@/components/NetworkStatusClient";
 import { Toaster } from "@/components/ui/sonner";
@@ -44,7 +44,7 @@ export default function RootLayout({
       >
 
         <Providers>
-          <CustomNavbar />
+          <Navigator />
           <div className="sm:ml-16">
             {children}
             <Footer />

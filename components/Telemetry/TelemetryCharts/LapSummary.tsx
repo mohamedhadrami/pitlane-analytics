@@ -3,7 +3,7 @@
 import type React from 'react';
 import { useMemo } from 'react';
 import type { DriverChartData } from '@/types/custom';
-import SectorSegment from '@/components/Dashboard/SectorSegments';
+import SectorSegment from '@/components/Live/SectorSegments';
 import { formatSecondsToTime, isValidColor } from '@/utils/helpers';
 import { Table, TableHeader, TableColumn, TableBody, TableCell, TableRow } from '@heroui/react';
 import { getCompoundComponent } from '@/components/Tyres';

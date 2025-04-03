@@ -13,6 +13,9 @@ import { toast } from "sonner";
 import LapTimeSettings from "./LapTimeSettings";
 import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "@/components/Telemetry/LapTimes/outlierDetection";
 import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
+import { useLapTimeChart } from "@/context/Telemetry/LapTimeChartContext";
+import { motion } from "framer-motion";
+import { useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext";
 
 
 const LapTimes: React.FC = () => {
@@ -23,15 +26,17 @@ const LapTimes: React.FC = () => {
     setSelectedLap: onLapSelect,
   } = useTelemetry();
 
-  const [isRaceControl, setIsRaceControl] = useState<boolean>(true);
-  const [isTyres, setIsTyres] = useState<boolean>(true);
-  const [isOutlierDetection, setIsOutlierDetection] = useState<boolean>(true);
-  const [customLowerThreshold, setCustomLowerThreshold] = useState<number>(-1);
-  const [customUpperThreshold, setCustomUpperThreshold] = useState<number>(-1);
-  const [iqrMultiplier, setIqrMultiplier] = useState<number>(1.5);
-  const [zscoreThreshold, setZscoreThreshold] = useState<number>(3);
-  const [modZscoreThreshold, setModZscoreThreshold] = useState<number>(3);
-  const [outlierMethod, setOutlierMethod] = useState<string>("iqr");
+  const {
+    isRaceControl, setIsRaceControl,
+    isTyres, setIsTyres,
+    isOutlierDetection, setIsOutlierDetection,
+    customLowerThreshold, setCustomLowerThreshold,
+    customUpperThreshold, setCustomUpperThreshold,
+    iqrMultiplier, setIqrMultiplier,
+    zscoreThreshold, setZscoreThreshold,
+    modZscoreThreshold, setModZscoreThreshold,
+    outlierMethod, setOutlierMethod
+  } = useLapTimeChart()
 
   const maxLaps = Math.max(
     ...Array.from(driversData.values()).map(
@@ -173,35 +178,33 @@ const LapTimes: React.FC = () => {
     }
   }, [chartData]);
 
-  const handleMethodChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setOutlierMethod(event.target.value);
-  };
+  const { direction } = useTelemetryUI();
+  const commonTransition = { duration: 0.5, ease: "easeInOut" };
+  const [initialX, setInitialX] = useState<number>();
+  const [exitX, setExitX] = useState<number>();
+
+  useEffect(() => {
+    const getAnimationValues = () => {
+      if (direction === 'next') {
+        setInitialX(300)
+        setExitX(-300)
+      } else {
+        setInitialX(-300)
+        setExitX(300)
+      }
+    };
+
+    getAnimationValues();
+  }, [direction])
 
   return (
-    <div className="mt-7">
-      <div className="flex justify-center gap-5">
-        <LapTimeSettings
-          isRaceControl={isRaceControl}
-          setIsRaceControl={setIsRaceControl}
-          isTyres={isTyres}
-          setIsTyres={setIsTyres}
-          isOutlierDetection={isOutlierDetection}
-          setIsOutlierDetection={setIsOutlierDetection}
-          outlierMethod={outlierMethod}
-          setOutlierMethod={setOutlierMethod}
-          customLowerThreshold={customLowerThreshold}
-          setCustomLowerThreshold={setCustomLowerThreshold}
-          customUpperThreshold={customUpperThreshold}
-          setCustomUpperThreshold={setCustomUpperThreshold}
-          defaultThresholds={defaultThresholds}
-          iqrMultiplier={iqrMultiplier}
-          setIqrMultiplier={setIqrMultiplier}
-          zscoreThreshold={zscoreThreshold}
-          setZscoreThreshold={setZscoreThreshold}
-          modZscoreThreshold={modZscoreThreshold}
-          setModZscoreThreshold={setModZscoreThreshold} />
-      </div>
-
+    <motion.div
+      key="lap-times-chart"
+      initial={{ opacity: 0, y: exitX }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: initialX }}
+      transition={commonTransition}
+      className="w-full h-full flex justify-center items-center my-auto ">
       <div className="flex justify-center">
         <ResponsiveContainer width={800} aspect={1.75}>
           <LineChart
@@ -214,11 +217,11 @@ const LapTimes: React.FC = () => {
               }
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="lap_number" tick={false} />
+            <XAxis dataKey="lap_number" tick={false} stroke="white" />
             <YAxis
               domain={[minLapTime, maxLapTime]}
               tickFormatter={formatSecondsToTime}
+              stroke="white"
             />
             <Tooltip
               content={<LapTimeTooltip active={false} payload={[]} label={""} />}
@@ -249,8 +252,31 @@ const LapTimes: React.FC = () => {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      
+      <div className="absolute m-5 bottom-0 right-0">
+        <LapTimeSettings
+          isRaceControl={isRaceControl}
+          setIsRaceControl={setIsRaceControl}
+          isTyres={isTyres}
+          setIsTyres={setIsTyres}
+          isOutlierDetection={isOutlierDetection}
+          setIsOutlierDetection={setIsOutlierDetection}
+          outlierMethod={outlierMethod}
+          setOutlierMethod={setOutlierMethod}
+          customLowerThreshold={customLowerThreshold}
+          setCustomLowerThreshold={setCustomLowerThreshold}
+          customUpperThreshold={customUpperThreshold}
+          setCustomUpperThreshold={setCustomUpperThreshold}
+          defaultThresholds={defaultThresholds}
+          iqrMultiplier={iqrMultiplier}
+          setIqrMultiplier={setIqrMultiplier}
+          zscoreThreshold={zscoreThreshold}
+          setZscoreThreshold={setZscoreThreshold}
+          modZscoreThreshold={modZscoreThreshold}
+          setModZscoreThreshold={setModZscoreThreshold} />
+      </div>
 
-    </div>
+    </motion.div>
   );
 };
 

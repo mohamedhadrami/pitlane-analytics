@@ -57,11 +57,11 @@ const TyreStrategy: React.FC<TyreStrategyProps> = ({ stints, drivers }) => {
                         {driverStints.map((stint, index) => (
                             <div
                                 key={index}
-                                className="absolute h-full text-black rounded-md border-x-2 border-[#111] flex justify-center"
+                                className="absolute h-full text-foreground rounded-md border border-default flex justify-center"
                                 style={{
                                     left: `${(stint.lap_start - 1) / maxLap * 100}%`,
                                     width: `${(stint.lap_end - stint.lap_start + 1) / maxLap * 100}%`,
-                                    backgroundColor: getCompoundColor(stint.compound)!,
+                                    background: `${getCompoundColor(stint.compound)}33`,
                                 }}
                             >
                                 <p className="align-middle">{stint.lap_end - stint.lap_start}</p>
