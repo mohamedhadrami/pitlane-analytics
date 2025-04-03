@@ -9,6 +9,7 @@ export enum TelemetryStep {
     StatsDrivers = "stats-drivers",
     DriverLap = "driver-lap",
     LapTelemetry = "lap-telemetry",
+    Telemetry= "telemetry"
 }
 
 export const stepOrder: TelemetryStep[] = [
@@ -60,6 +61,7 @@ export const stepValidations: Record<TelemetryStep, StepValidationFn> = {
   [TelemetryStep.StatsDrivers]: (state) => !!state.selectedSessionKey,
   [TelemetryStep.DriverLap]: (state) => state.selectedDrivers.size > 0,
   [TelemetryStep.LapTelemetry]: (state) => !!state.selectedLap,
+  [TelemetryStep.Telemetry]: (state) => !!state.selectedLap
 };
 
 
