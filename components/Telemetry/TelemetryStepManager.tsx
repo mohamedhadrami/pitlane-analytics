@@ -5,12 +5,12 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTelemetry } from "@/context/TelemetryContext";
 import SelectionPrompt from "./SelectionPrompt";
-import Dash1 from "./Dash1";
 import DriverSelection from "./DriverSelection";
-import LapTimesLineChart from "./LapTimesLineChart";
+import LapTimesLineChart from "./LapTimes/LapTimesLineChart";
 import { Calendar } from "lucide-react";
-import TelemetryCharts from "./TelemetryCharts";
+import TelemetryCharts from "./TelemetryCharts/TelemetryCharts";
 import { TelemetryStep } from "@/utils/telemetry/telemetrySteps";
+import StatsDriverView from "./Views/StatsDriversView";
 
 const TelemetryStepManager: React.FC = () => {
     const {
@@ -81,7 +81,7 @@ const TelemetryStepManager: React.FC = () => {
                 return <SelectionPrompt label="Session" icon={<Calendar size={50} />} data={sessions} />;
             case "stats-drivers":
             case "driver-lap":
-                return <Dash1 />;
+                return <StatsDriverView />;
             case "lap-telemetry":
                 return (
                     <div className="flex flex-grow">
