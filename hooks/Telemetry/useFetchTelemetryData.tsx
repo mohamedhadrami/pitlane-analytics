@@ -1,6 +1,6 @@
 // @/hooks/Telemetry/useFetchTelemetryData.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { fetchCarData, fetchLocation } from "@/services/openF1Api";
 import { useCallback, useEffect } from "react";
 import { calculateLapTime } from "@/utils/telemetry/telemetryUtils";

@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import SelectionPrompt from "./SelectionPrompt";
 import DriverSelection from "./DriverSelection";
 import LapTimesLineChart from "./LapTimes/LapTimesLineChart";
@@ -11,7 +11,7 @@ import TelemetryCharts from "./TelemetryCharts/TelemetryCharts";
 import { Divider } from "@heroui/react";
 import StatsDriverView from "./Views/StatsDriversView";
 import { useHandleCurrentStage } from "@/hooks/Telemetry/useTelemetryUI";
-import { TelemetryStage, useTelemetryUI } from "@/context/TelemetryUIContext";
+import { TelemetryStage, useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext";
 
 const TelemetryStepManager: React.FC = () => {
     const {

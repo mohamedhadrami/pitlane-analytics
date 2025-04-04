@@ -1,7 +1,7 @@
 // @/hooks/useTelemetryUI.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
-import { TelemetryStage, useTelemetryUI } from "@/context/TelemetryUIContext"
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
+import { TelemetryStage, useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext"
 import { useEffect } from "react";
 
 

@@ -1,6 +1,6 @@
 // @/hooks/Telemetry/useToggleDriverSelect.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { fetchLaps } from "@/services/openF1Api";
 import type { OFDriver, OFStint } from "@/types/openF1.types";
 import { toast } from "sonner";

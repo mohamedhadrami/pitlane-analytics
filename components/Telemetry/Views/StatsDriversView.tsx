@@ -2,7 +2,7 @@
 
 import { Divider, ScrollShadow, Tab, Tabs } from "@heroui/react";
 import SessionStats from "../SessionStats";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import DriverSelection from "../DriverSelection";
 import TyreStrategy from "../TyreStrategy";
 import LapTimesLineChart from "../LapTimes/LapTimesLineChart";

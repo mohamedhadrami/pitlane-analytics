@@ -2,7 +2,7 @@
 
 import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, type Selection, Chip } from "@heroui/react";
 import BreadcrumbSelector from "./BreadcrumbSelector";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { CalendarDays, ChevronDownIcon, MapPin, Timer } from "lucide-react";

@@ -1,6 +1,6 @@
 // @/hooks/Telemetry/useFetchYears.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { useEffect } from "react";
 
 export const useFetchYears = () => {

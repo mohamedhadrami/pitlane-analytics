@@ -6,7 +6,7 @@ import { Listbox, ListboxItem, Table, TableBody, TableCell, TableColumn, TableHe
 import { AnimatePresence, motion } from "framer-motion";
 import type { OFMeeting, OFSession } from "@/types/openF1.types";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 
 interface SelectionPromptProps {
     label: string;

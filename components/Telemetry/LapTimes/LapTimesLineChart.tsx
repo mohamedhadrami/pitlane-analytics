@@ -12,7 +12,7 @@ import { DriverChartData } from "@/types/custom";
 import { toast } from "sonner";
 import LapTimeSettings from "./LapTimeSettings";
 import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "@/components/Telemetry/LapTimes/outlierDetection";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 
 
 const LapTimes: React.FC = () => {

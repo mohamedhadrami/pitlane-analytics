@@ -1,6 +1,6 @@
 // @/hooks/Telemetry/useFetchSessionData.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { fetchCircuitByKey } from "@/services/mvApi";
 import { fetchWeather, fetchDrivers, fetchRaceControl, fetchStint, fetchPosition } from "@/services/openF1Api";
 import type { DriverChartData } from "@/types/custom";

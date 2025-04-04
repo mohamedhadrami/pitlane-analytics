@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Info, RotateCcw } from "lucide-react";
 import TelemetryBreadcrumbs from "./TelemetryBreadcrumbs";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { Button, Divider, Image } from "@heroui/react";
 import { fetchCountryFlagByName } from "@/services/countryApi";
 import { useState, useEffect } from "react";
 import { useHandleNextStage, useHandlePreviousStage } from "@/hooks/Telemetry/useTelemetryUI";
-import { useTelemetryUI } from "@/context/TelemetryUIContext";
+import { useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext";
 
 const Header: React.FC = () => {
 

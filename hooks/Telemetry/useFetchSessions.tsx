@@ -1,6 +1,6 @@
 // @/hooks/Telemetry/useFetchSessions.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { fetchSession } from "@/services/openF1Api";
 import type { OFSessionParams } from "@/types/openF1.types";
 import { useEffect } from "react";

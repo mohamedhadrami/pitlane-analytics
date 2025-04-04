@@ -4,7 +4,7 @@
 
 import type React from "react";
 import DriverCard from "@/components/Telemetry/DriverCard";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { useToggleDriverSelect } from "@/hooks/Telemetry/useToggleDriverSelect";
 
 const DriverSelection: React.FC = () => {

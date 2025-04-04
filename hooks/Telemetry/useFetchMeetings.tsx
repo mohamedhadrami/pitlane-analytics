@@ -1,6 +1,6 @@
 // @/hooks/Telemetry/useFetchMeetings.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { fetchMeeting } from "@/services/openF1Api";
 import type { OFMeetingParams } from "@/types/openF1.types";
 import { useEffect } from "react";

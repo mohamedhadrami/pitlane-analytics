@@ -12,7 +12,7 @@ import { fetchCountryFlagByName } from "@/services/countryApi";
 import { parseISODateAndTime, trackDetailedImage } from "@/utils/helpers";
 import CustomTable from "@/components/tables/CustomTable";
 import { RaceHeaders } from "@/utils/const";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 
 const SessionStats: React.FC = () => {
 

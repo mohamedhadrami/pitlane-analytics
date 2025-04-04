@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Info, RotateCcw } from "lucide-react";
 
 import { useFooter } from "@/context/FooterContext";
-import { TelemetryProvider, useTelemetry } from "@/context/TelemetryContext";
+import { TelemetryProvider, useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { useFetchMeetings } from "@/hooks/Telemetry/useFetchMeetings";
 import { useFetchSessionData } from "@/hooks/Telemetry/useFetchSessionData";
 import { useFetchSessions } from "@/hooks/Telemetry/useFetchSessions";
@@ -19,7 +19,7 @@ import { useHandleDriverSelect } from "@/hooks/Telemetry/useHandleDriverSelect";
 
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import Header from "@/components/Telemetry/Header";
-import { TelemetryUIProvider } from "@/context/TelemetryUIContext";
+import { TelemetryUIProvider } from "@/context/Telemetry/TelemetryUIContext";
 import { Button } from "@/components/ui/button";
 import { AlertDialogHeader, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
