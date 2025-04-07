@@ -9,6 +9,7 @@ import { fetchCountryFlagByName } from "@/services/countryApi";
 import { useState, useEffect } from "react";
 import { useHandleNextStage, useHandlePreviousStage } from "@/hooks/Telemetry/useTelemetryUI";
 import { useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext";
+import type { RCFlags } from "@/types/restCountries";
 
 const Header: React.FC = () => {
 
@@ -17,11 +18,12 @@ const Header: React.FC = () => {
     const handleNextStage = useHandleNextStage();
     const handlePreviousStage = useHandlePreviousStage();
 
-    const [flag, setFlag] = useState<any>(null);
+    const [flag, setFlag] = useState<RCFlags>();
 
     useEffect(() => {
         const fetchData = async () => {
-            const flagApiData = await fetchCountryFlagByName(selectedMeeting?.country_name!);
+            if (!selectedMeeting) return
+            const flagApiData = await fetchCountryFlagByName(selectedMeeting?.country_name);
             setFlag(flagApiData);
         }
         if (selectedMeeting) fetchData();
