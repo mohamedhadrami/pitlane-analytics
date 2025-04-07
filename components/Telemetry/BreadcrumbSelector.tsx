@@ -23,7 +23,6 @@ type SelectorProps<L extends SelectorLabel> = {
     icon: JSX.Element;
     onChange: (value: string, label: L) => void;
     displayValue: (label: string | undefined) => string | undefined;
-    selectedValue: string | number;
     disabled?: boolean;
 };
 
@@ -52,7 +51,6 @@ const BreadcrumbSelector = <L extends SelectorLabel>({
     icon,
     onChange,
     displayValue,
-    selectedValue,
     disabled = false,
 }: SelectorProps<L>) => {
 
@@ -74,7 +72,7 @@ const BreadcrumbSelector = <L extends SelectorLabel>({
                     onValueChange={(e) => onChange(e, label)}
                     required
                 >
-                    <SelectTrigger className="max-w-xs overflow-hidden truncate whitespace-nowrap">
+                    <SelectTrigger className="max-w-xs overflow-hidden truncate whitespace-nowrap" icon={icon}>
                         <div className="truncate w-full text-left text-white font-extralight">
                             <SelectValue placeholder={placeholderMap[label]} />
                         </div>
