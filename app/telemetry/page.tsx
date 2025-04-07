@@ -3,11 +3,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Divider } from "@heroui/react";
-import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Info, RotateCcw } from "lucide-react";
 
 import { useFooter } from "@/context/FooterContext";
 import { TelemetryProvider, useTelemetry } from "@/context/Telemetry/TelemetryContext";
@@ -20,10 +17,7 @@ import { useHandleDriverSelect } from "@/hooks/Telemetry/useHandleDriverSelect";
 
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import Header from "@/components/Telemetry/Header";
-import { TelemetryUIProvider } from "@/context/Telemetry/Telemetry/TelemetryUIContext";
-import { Button } from "@/components/ui/button";
-import { AlertDialogHeader, AlertDialogFooter } from "@/components/ui/alert-dialog";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { TelemetryUIProvider } from "@/context/Telemetry/TelemetryUIContext";
 import { LapTimeChartProvider } from "@/context/Telemetry/LapTimeChartContext";
 
 const PageContent: React.FC = () => {
@@ -35,7 +29,7 @@ const PageContent: React.FC = () => {
     } = useTelemetry();
 
     const searchParams = useSearchParams();
-    const [paramsProcessed, setParamsProcessed] = useState(false); // Flag to indicate when query params are processed
+    const [paramsProcessed, setParamsProcessed] = useState(false);
 
     useEffect(() => {
         setFooterVisible(false);
