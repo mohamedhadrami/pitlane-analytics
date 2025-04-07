@@ -62,10 +62,14 @@ const PageContent: React.FC = () => {
     useFetchTelemetryData();
 
     return (
-        <div className="min-h-screen max-h-screen flex flex-col">
-            <Header />
-            <Divider />
-            <TelemetryStepManager />
+        <div className="h-screen flex flex-col">
+            <div className="w-full shrink-0">
+                <Header />
+                <Divider />
+            </div>
+            <div className="flex flex-row flex-grow overflow-hidden">
+                <TelemetryStepManager />
+            </div>
         </div>
     );
 };

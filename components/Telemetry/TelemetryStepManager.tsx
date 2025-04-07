@@ -122,7 +122,7 @@ const TelemetryStepManager: React.FC = () => {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: exitX }}
                             transition={commonTransition}
-                            className="flex items-center justify-center w-full max-h-full"
+                            className="flex flex-row flex-grow overflow-hidden"
                         >
                             <StatsDriverView />
                         </motion.div>
