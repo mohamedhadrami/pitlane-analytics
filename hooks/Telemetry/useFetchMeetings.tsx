@@ -6,10 +6,12 @@ import type { OFMeetingParams } from "@/types/openF1.types";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-export const useFetchMeetings = () => {
+export const useFetchMeetings = (paramsProcessed: boolean) => {
     const { selectedYear, setMeetings, setSelectedMeetingKey } = useTelemetry();
 
     useEffect(() => {
+        if (!paramsProcessed) return;
+
         if (!selectedYear) {
             setMeetings([]);
             setSelectedMeetingKey(undefined);
@@ -30,6 +32,5 @@ export const useFetchMeetings = () => {
             error: (e: Error) => `${e.message}`,
         });
 
-    }, [selectedYear, setMeetings, setSelectedMeetingKey]);
-
+    }, [paramsProcessed, selectedYear, setMeetings, setSelectedMeetingKey]);
 };

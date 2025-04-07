@@ -76,3 +76,20 @@ const Dash11: React.FC = () => {
         </div>
     );
 };
+
+
+const Dash12: React.FC = () => {
+    const {
+        raceControl,
+        selectedDrivers,
+        isShowLapTimes,
+    } = useTelemetry();
+
+    return (
+        <>
+            {isShowLapTimes && selectedDrivers && raceControl && (
+                <LapTimesLineChart />
+            )}
+        </>
+    )
+}

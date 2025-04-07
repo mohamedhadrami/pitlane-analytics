@@ -1,11 +1,12 @@
 
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { driverImage, parseISOTimeFull } from "../../utils/helpers";
-import { Image, ScrollShadow } from "@nextui-org/react";
-import { useLiveSettings } from "../../context/LiveSettingsContext";
+import { Image, ScrollShadow } from "@heroui/react";
+import { useLiveSettings } from "@/context/LiveSettingsContext";
 import Radio from "./Radio";
-import { LiveDriverList, LiveTeamRadio, LiveTeamRadioCapture } from "@/interfaces/liveTiming.type";
+import type { LiveDriverList, LiveTeamRadio, LiveTeamRadioCapture } from "@/types/liveTiming.types";
 
 const TeamRadios: React.FC<{ drivers: LiveDriverList, rawTeamRadio: LiveTeamRadio, path: string, gmtOffset: string }> = ({ drivers, rawTeamRadio, path, gmtOffset }) => {
 
@@ -13,7 +14,7 @@ const TeamRadios: React.FC<{ drivers: LiveDriverList, rawTeamRadio: LiveTeamRadi
 
     useEffect(() => {
         if (rawTeamRadio) {
-            const data = [...rawTeamRadio.Captures].sort((a, b) => Date.parse(b.Utc!) - Date.parse(a.Utc!));
+            const data = [...rawTeamRadio.Captures].sort((a, b) => Date.parse(b.Utc) - Date.parse(a.Utc));
             setSortedTeamRadio(data)
         }
     }, [rawTeamRadio])
@@ -41,9 +42,9 @@ const RadioItem: React.FC<{ drivers: LiveDriverList, radio: LiveTeamRadioCapture
             {isShowTeamRadioTime && (<div className="text-[#999] text-left font-extralight w-[12%]">
                 {parseISOTimeFull(radio.Utc, gmtOffset)}
             </div>)}
-            <div style={{ backgroundColor: `#${driver?.TeamColour}` }} className={`flex text-left h-auto w-[75px] rounded-full`}>
+            <div style={{ backgroundColor: `#${driver?.TeamColour}` }} className={"flex text-left h-auto w-[75px] rounded-full"}>
                 <Image
-                    src={driverImage(driver?.FirstName!, driver?.LastName!)}
+                    src={driverImage(driver?.FirstName, driver?.LastName)}
                     alt={`${driver?.FirstName} ${driver?.LastName}`}
                     className="rounded-full w-[25px]"
                 />

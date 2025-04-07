@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { LiveDriverList, LiveTimingDataF1, LivePosition, LiveTrackStatus, LiveRaceControlMessage, LivePositionItemData, objectEntries, LiveRaceControlMessages } from "@/interfaces/liveTiming.type";
-import { mvCircuit } from "@/interfaces/multiviewer";
+import { LiveDriverList, LiveTimingDataF1, LivePosition, LiveTrackStatus, LiveRaceControlMessage, LivePositionItemData, objectEntries, LiveRaceControlMessages } from "@/types/liveTiming.types";
+import type { mvCircuit } from "@/types/multiviewer";
 import utc from 'moment';
 
-// This is basically fearlessly copied from
+// This is basically shamelessly copied from
 // https://github.com/tdjsnelling/monaco
 
-// Completely ripped of F1-Dash
+// Completely ripped off F1-Dash
 // https://github.com/slowlydev/f1-dash/tree/main
 
 type Props = {
@@ -35,11 +35,11 @@ const rotate = (x: number, y: number, a: number, px: number, py: number) => {
   const c = Math.cos(rad(a));
   const s = Math.sin(rad(a));
 
-  x -= px;
-  y -= py;
+  const new_x = x - px;
+  const new_y = y - py;
 
-  const newX = x * c - y * s;
-  const newY = y * c + x * s;
+  const newX = new_x * c - y * s;
+  const newY = new_y * c + x * s;
 
   return { y: newX + px, x: newY + py };
 };
@@ -52,11 +52,11 @@ type Sector = {
 };
 
 const calculateDistance = (x1: number, y1: number, x2: number, y2: number) => {
-  return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 };
 
 const findMinDistance = (point: TrackPosition, points: TrackPosition[]) => {
-  let min = Infinity;
+  let min = Number.POSITIVE_INFINITY;
   let minIndex = -1;
   for (let i = 0; i < points.length; i++) {
     const distance = calculateDistance(point.x, point.y, points[i].x, points[i].y);
@@ -81,10 +81,10 @@ const createSectors = (map: mvCircuit) => {
     });
   }
 
-  let dividers: number[] = sectors.map((s) => findMinDistance(s.start, points));
+  const dividers: number[] = sectors.map((s) => findMinDistance(s.start, points));
   for (let i = 0; i < dividers.length; i++) {
-    let start = dividers[i];
-    let end = dividers[i + 1] ? dividers[i + 1] : dividers[0];
+    const start = dividers[i];
+    const end = dividers[i + 1] ? dividers[i + 1] : dividers[0];
     if (start < end) {
       sectors[i].points = points.slice(start, end + 1);
     } else {
@@ -187,7 +187,7 @@ export const getTrackStatusMessage = (statusCode: number | undefined): StatusMes
 
 const rotationFIX = 90;
 
-export default function Map({
+export default function CircuitMap({
   circuitData,
   drivers,
   timingDrivers,
@@ -240,16 +240,15 @@ export default function Map({
 
   const [renderedSectors, setRenderedSectors] = useState<RenderedSector[]>([]);
   useEffect(() => {
-    const status = getTrackStatusMessage(trackStatus?.Status ? parseInt(trackStatus?.Status) : undefined);
+    const status = getTrackStatusMessage(trackStatus?.Status ? Number.parseInt(trackStatus?.Status) : undefined);
     let color: (sector: Sector) => string;
     if (status?.bySector) {
       const yellowSectors = findYellowSectors(raceControlMessages.Messages);
       color = (sector) => {
         if (yellowSectors.has(sector.number)) {
           return status?.trackColor || "stroke-white";
-        } else {
-          return "stroke-white";
         }
+          return "stroke-white";
       };
     } else {
       color = (_) => status?.trackColor || "stroke-white";
@@ -321,7 +320,7 @@ export default function Map({
           {/* theres also 242 and 243 which might be medical car and something else  */}
           {positions?.Position[positions?.Position.length - 1].Entries["241"] && (
             <CarDot
-              key={`map.car.241`}
+              key={"map.car.241"}
               name="Safety Car"
               pit={false}
               hidden={false}
@@ -390,9 +389,9 @@ const CarDot = ({ pos, name, color, pit, hidden, rotation, centerX, centerY }: C
         ...(color && { fill: `#${color}` }),
       }}
     >
-      <circle id={`map.driver.circle`} r={120} />
+      <circle id={"map.driver.circle"} r={120} />
       <text
-        id={`map.driver.text`}
+        id={"map.driver.text"}
         fontWeight="bold"
         fontSize={120 * 3}
         style={{

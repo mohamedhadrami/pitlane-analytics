@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { useHandleNextStage, useHandlePreviousStage } from "@/hooks/Telemetry/useTelemetryUI";
 import { useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext";
 import type { RCFlags } from "@/types/restCountries";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel, AlertDialogAction, AlertDialogFooter, AlertDialogHeader } from "@/components/ui/alert-dialog";
 
 const Header: React.FC = () => {
 
@@ -71,7 +72,25 @@ const Header: React.FC = () => {
                             <Info />
                         </motion.div>
                     )}
-                    <RotateCcw onClick={() => setSelectedYear(undefined)} />
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <RotateCcw className="cursor-pointer" />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Reset telemetry?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will clear all selected data and return you to the first step. This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => setSelectedYear(undefined)}>
+                                    Reset
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </div>
 

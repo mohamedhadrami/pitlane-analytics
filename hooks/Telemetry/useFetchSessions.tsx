@@ -6,7 +6,7 @@ import type { OFSessionParams } from "@/types/openF1.types";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
-export const useFetchSessions = () => {
+export const useFetchSessions = (paramsProcessed: boolean) => {
     const {
         meetings,
         selectedMeetingKey,
@@ -16,6 +16,8 @@ export const useFetchSessions = () => {
     } = useTelemetry();
 
     useEffect(() => {
+        if (!paramsProcessed) return;
+
         if (!selectedMeetingKey || !meetings) {
             setSelectedMeeting(undefined);
             setSessions([]);
@@ -38,6 +40,6 @@ export const useFetchSessions = () => {
             success: "Sessions loaded successfully!",
             error: (e: Error) => `${e.message}`,
         });
-    }, [selectedMeetingKey, meetings, setSessions, setSelectedMeeting, setSelectedSessionKey]);
+    }, [paramsProcessed, selectedMeetingKey, setSelectedMeeting, setSelectedSessionKey, setSessions, meetings]);
 
 };

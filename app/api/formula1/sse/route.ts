@@ -15,8 +15,8 @@ export async function GET() {
         }
         try {
           const jsonData = JSON.stringify(data); // Ensure data is serialized to JSON
-          //controller.enqueue(encoder.encode(`data: ${jsonData}\n\n`));
-          controller.enqueue(encoder.encode(`data: hello\n\n`));
+          controller.enqueue(encoder.encode(`data: ${jsonData}\n\n`));
+          //controller.enqueue(encoder.encode(`data: hello\n\n`));
         } catch (error) {
           console.error('Error sending data:', error);
         }

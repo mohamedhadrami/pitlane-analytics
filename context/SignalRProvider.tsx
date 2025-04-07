@@ -1,8 +1,9 @@
 // @/context/SignalRProvider.tsx
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import type React from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { startSignalRHub } from '@/services/signalr';
-import { LiveTimingSignalRSubs } from '@/interfaces/liveTiming.type';
+import type { LiveTimingSignalRSubs } from '@/types/liveTiming.types';
 
 type SignalRContextType = {
 	data: LiveTimingSignalRSubs | null;

@@ -111,7 +111,8 @@ const LapSummary: React.FC<LapSummaryProps> = ({ driversData, lapSelected }) => 
                                 </TableCell>
                                 <TableCell>{avgSpeed}</TableCell>
                                 <TableCell className="flex justify-center">
-                                    {driverLap ? <SectorSegment lap={driverLap} /> : "-"}
+                                    Removed
+                                    {/*driverLap ? <SectorSegment lap={driverLap} /> : "-"*/}
                                 </TableCell>
                             </TableRow>
                         );
