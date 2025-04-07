@@ -201,7 +201,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({
 				const tyreAge = stint?.TotalLaps;
 				return (
 					<div className="flex flex-col mx-auto">
-						{isShowTyre ? (
+						{isShowTyre && stint ? (
 							<div className="flex justify-center gap-1 items-center">
 								<div className="w-[25px]">
 									{getCompoundComponent(stint?.Compound)}

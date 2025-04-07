@@ -1,9 +1,10 @@
 // @/components/CircuitMap.tsx
 
-import React, { useEffect, useState } from 'react';
-import { mvCircuit, trackElement } from '@/interfaces/multiviewer';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import { type mvCircuit, trackElement } from '@/types/multiviewer';
 import Loading from '../Loading';
-import { LiveDriverList, LivePosition } from '@/interfaces/liveTiming.type';
+import type { LiveDriverList, LivePosition } from '@/types/liveTiming.types';
 
 interface CircuitMapProps {
   circuitData: mvCircuit | undefined;
@@ -68,7 +69,7 @@ const TrackMap: React.FC<CircuitMapProps> = ({ circuitData, drivers, positions }
     }));
     setScaledLights(scaledLights);
 
-    if (positions && positions.Position && positions.Position.length > 0) {
+    if (positions?.Position && positions.Position.length > 0) {
       const latestPositions = positions.Position[positions.Position.length - 1].Entries;
       const scaledDrivers: { [key: string]: ScaledPosition } = {};
 
