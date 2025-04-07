@@ -2,11 +2,11 @@
 
 import type React from "react";
 import type { JSX } from "react";
-import { Listbox, ListboxItem, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
-import { AnimatePresence, motion } from "framer-motion";
-import type { OFMeeting, OFSession } from "@/types/openF1.types";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
+import { parseISODateAndTime, parseSessionDateTime } from "@/utils/helpers";
+import type { OFMeeting, OFSession } from "@/types/openF1.types";
 
 interface SelectionPromptProps {
     label: string;
@@ -29,13 +29,13 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
                 return (
                     <YearData
                         data={data as string[]}
-                        selectedValue={selectedYear!}
+                        selectedValue={selectedYear}
                         handler={setSelectedYear}
                     />
                 );
             case "Meeting":
                 return (
-                    <DataTable
+                    <DataTable<OFMeeting>
                         headers={[
                             { key: "meeting_key", label: "Meeting Key" },
                             { key: "meeting_name", label: "Meeting Name" },
@@ -44,7 +44,7 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
                             { key: "date_start", label: "Start Date" },
                             { key: "year", label: "Year" },
                         ]}
-                        selectedValue={selectedMeetingKey!}
+                        selectedValue={selectedMeetingKey}
                         data={data as OFMeeting[]}
                         itemKey="meeting_key"
                         handler={(value) => setSelectedMeetingKey(Number.parseInt(value))}
@@ -52,18 +52,25 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
                 );
             case "Session":
                 return (
-                    <DataTable
+                    <DataTable<OFSession>
                         headers={[
+                            { key: "session_key", label: "Session Key" },
                             { key: "session_name", label: "Session Name" },
                             { key: "session_type", label: "Session Type" },
                             { key: "circuit_short_name", label: "Circuit Name" },
                             { key: "date_start", label: "Start Date" },
                             { key: "date_end", label: "End Date" },
                         ]}
-                        selectedValue={selectedSessionKey!}
+                        selectedValue={selectedSessionKey}
                         data={data as OFSession[]}
                         itemKey="session_key"
                         handler={(value) => setSelectedSessionKey(Number.parseInt(value))}
+                        formatters={{
+                            date_start: (val) =>
+                                typeof val === "string" ? parseSessionDateTime(val) : "",
+                            date_end: (val) =>
+                                typeof val === "string" ? parseSessionDateTime(val) : "",
+                        }}
                     />
                 );
             default:
@@ -79,7 +86,6 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
             </div>
             <div className="flex flex-col">{renderDataContent()}</div>
         </div>
-
     );
 };
 
@@ -88,10 +94,14 @@ export default SelectionPrompt;
 // Abstract DataTable component
 interface DataTableProps<T> {
     headers: { key: keyof T; label: string }[];
-    selectedValue: number;
+    selectedValue: number | undefined;
     data: T[];
     handler: (item: string) => void;
     itemKey: keyof T;
+    gmtOffset?: string;
+    formatters?: Partial<
+        Record<keyof T, (value: string | number | undefined) => string>
+    >;
 }
 
 const DataTable = <T extends object>({
@@ -99,36 +109,54 @@ const DataTable = <T extends object>({
     selectedValue,
     data,
     handler,
-    itemKey
+    itemKey,
+    gmtOffset,
+    formatters,
 }: DataTableProps<T>) => {
-    const selectedKeyString = selectedValue?.toString() || '';
+    const selectedKeyString = selectedValue?.toString() || "";
 
     return (
-        <Table
-            color="primary"
-            selectionMode="single"
-            removeWrapper
-            selectedKeys={new Set([selectedKeyString])}
-        >
-            <TableHeader columns={headers}>
-                {(column) => <TableColumn key={String(column.key)}>{column.label}</TableColumn>}
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    {headers.map((column) => (
+                        <TableHead key={String(column.key)}>{column.label}</TableHead>
+                    ))}
+                </TableRow>
             </TableHeader>
-            <TableBody items={data}>
-                {(item: T) => {
+            <TableBody>
+                {data.map((item) => {
                     const key =
-                        "key" in item && typeof item.key === "string"
-                            ? (item.key as string)
+                        typeof item[itemKey] === "string" || typeof item[itemKey] === "number"
+                            ? String(item[itemKey])
                             : headers.map((h) => String(item[h.key])).join("-");
+
                     return (
-                        <TableRow key={key} onClick={() => handler(key)}>
-                            {headers.map((header) => (
-                                <TableCell key={String(header.key)}>
-                                    {String(item[header.key])}
-                                </TableCell>
-                            ))}
+                        <TableRow
+                            key={key}
+                            data-state={selectedKeyString === key ? "selected" : undefined}
+                            onClick={() => handler(key)}
+                            className="cursor-pointer"
+                        >
+                            {headers.map((header) => {
+                                const rawValue = item[header.key];
+                                const formatter = formatters?.[header.key];
+
+                                let displayValue: string;
+
+                                if (formatter && (typeof rawValue === "string" || typeof rawValue === "number" || typeof rawValue === "undefined")) {
+                                    displayValue = formatter(rawValue);
+                                } else {
+                                    displayValue = String(rawValue ?? "");
+                                }
+
+                                return (
+                                    <TableCell key={String(header.key)}>{displayValue}</TableCell>
+                                );
+                            })}
                         </TableRow>
                     );
-                }}
+                })}
             </TableBody>
         </Table>
     );
@@ -138,12 +166,15 @@ const DataTable = <T extends object>({
 
 interface YearDataProps {
     data: string[];
-    selectedValue: string;
+    selectedValue: string | undefined;
     handler: (year: string) => void;
 }
 
-// YearData component
-const YearData: React.FC<YearDataProps> = ({ data, selectedValue, handler }) => {
+const YearData: React.FC<YearDataProps> = ({
+    data,
+    selectedValue,
+    handler,
+}) => {
     return (
         <RadioGroup
             aria-label="Year Selection"

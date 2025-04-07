@@ -35,7 +35,6 @@ export function parseISODateAndTime(time: string, gmt_offset = "00:00:00") {
         day: "numeric",
         hour: "numeric",
         minute: "numeric",
-        second: "numeric",
         timeZoneName: "short"
     };
 
@@ -64,6 +63,24 @@ export function parseISOTimeFull(time: string | undefined, gmt_offset = "00:00:0
     return date.toLocaleString("en-US", options);
 };
 
+export function parseSessionDateTime(time: string | undefined, gmt_offset = "00:00:00"): string {
+    if (!time) return "";
+    const date = new Date(time);
+    const [hours, minutes, seconds] = gmt_offset.split(":").map(Number);
+
+    date.setUTCHours(date.getUTCHours() + hours);
+    date.setUTCMinutes(date.getUTCMinutes() + minutes);
+    date.setUTCSeconds(date.getUTCSeconds() + seconds);
+
+    const options: Intl.DateTimeFormatOptions = {
+        weekday: "long",
+        hour: "numeric",
+        minute: "numeric",
+        timeZoneName: "short"
+    };
+
+    return date.toLocaleString("en-US", options);
+};
 
 export function findNextRace(races: JLPBaseRace[]) {
     const currentDate = new Date();
@@ -121,7 +138,7 @@ export const teamNameConvertor = (name: string) => {
 export const trackImage = (cityName: string | undefined, countryName: string | undefined) => {
     let name: string | undefined = countryName;
     if (name === "UK") name = "Great Britain";
-    else if(cityName === "Imola") name = "Emilia Romagna";
+    else if (cityName === "Imola") name = "Emilia Romagna";
     else if (name === "UAE") name = "Abu Dhabi";
     else if (name === "United States" || name === "USA") name = cityName;
     if (cityName === "Austin") name = "USA";
@@ -134,7 +151,7 @@ export const trackDetailedImage = (cityName: string | undefined, countryName: st
     else if (name === "Monaco") name = "Monoco";
     else if (name === "UK") name = "Great Britain";
     else if (name === "UAE") name = "Abu Dhabi";
-    else if(cityName === "Imola") name = "Emilia Romagna";
+    else if (cityName === "Imola") name = "Emilia Romagna";
     return `https://media.formula1.com/image/upload/f_auto/q_auto/v1677244984/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/${name?.replace(" ", "_")}_Circuit.png.transform/6col/image.png`;
 };
 
