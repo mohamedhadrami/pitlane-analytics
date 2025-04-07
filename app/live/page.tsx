@@ -1,13 +1,14 @@
 // @/app/dashboard/page.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 import { useSignalR } from "@/context/SignalRProvider";
 import { LiveSettingsProvider, useLiveSettings } from "@/context/LiveSettingsContext";
 import { fetchCircuitByKey } from "@/services/mvApi";
-import { mvCircuit } from "@/interfaces/multiviewer";
-import {
+import type { mvCircuit } from "@/types/multiviewer";
+import type {
     LiveArchiveStatus,
     LiveAudioStreams,
     LiveCarData,
@@ -39,7 +40,7 @@ import {
     LiveTyreStintSeries,
     LiveWeatherData,
     LiveWeatherDataSeries
-} from "@/interfaces/liveTiming.type";
+} from "@/types/liveTiming.types";
 
 import TopBanner from "@/components/Live/TopBanner";
 import LiveTiming from "@/components/Live/LiveTiming";
@@ -48,7 +49,7 @@ import TeamRadios from "@/components/Live/TeamRadio";
 import LiveSettings from "@/components/Live/LiveSettings";
 import RaceStatus from "@/components/Live/RaceStatus";
 
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 import CircuitMap from "@/components/Live/CircuitMap";
 
 const LiveDashboard: React.FC = () => {
@@ -133,7 +134,7 @@ const LiveDashboard: React.FC = () => {
 
     useEffect(() => {
         const fetchCircuitData = async () => {
-            if (sessionInfo && sessionInfo.Meeting.Circuit.Key) {
+            if (sessionInfo?.Meeting.Circuit.Key) {
                 // TODO: get year dynamically
                 const res = await fetchCircuitByKey(sessionInfo.Meeting.Circuit.Key, "2024");
                 setCircuitData(res);
@@ -286,8 +287,8 @@ const LiveDashboardContent: React.FC<DashboardContentProps> = ({
 
             <div className="my-10">
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-1 xl:grid-cols-2">
-                    <div className="col-span-1 xl:col-span-1 m-3">
-                        {driverList && false && isLive && (
+                    <div className="col-span-1 xl:col-span-1 m-3 overflow-y-scroll">
+                        {driverList && isLive && (
                             <LiveTiming
                                 drivers={driverList}
                                 currentTyres={currentTyres}
@@ -307,7 +308,7 @@ const LiveDashboardContent: React.FC<DashboardContentProps> = ({
                             )}
                         </div>
                         <div className="col-span-1 xl:col-span-1 xl:row-span-1 xl:p-5">
-                            {isRadio && false && sessionInfo && teamRadio && (
+                            {isRadio && sessionInfo && teamRadio && (
                                 <TeamRadios drivers={driverList} rawTeamRadio={teamRadio} path={sessionInfo.Path} gmtOffset={sessionInfo.GmtOffset} />
                             )}
                         </div>
@@ -315,11 +316,11 @@ const LiveDashboardContent: React.FC<DashboardContentProps> = ({
                             <div className="col-span-3 lg:col-span-1 xl:p-5 xl:border-t border-zinc-800">
                                 <CircuitMap
                                     circuitData={circuitData}
-                                    drivers={driverList!}
-                                    positions={position!}
-                                    timingDrivers={timingDataF1!}
-                                    trackStatus={trackStatus!}
-                                    raceControlMessages={raceControlMessages!} />
+                                    drivers={driverList}
+                                    positions={position}
+                                    timingDrivers={timingDataF1}
+                                    trackStatus={trackStatus}
+                                    raceControlMessages={raceControlMessages} />
                             </div>
                         )}
                     </div>

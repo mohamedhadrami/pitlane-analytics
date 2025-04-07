@@ -1,6 +1,7 @@
 // @/components/Dashboard/LiveTiming.tsx
 
-import React, { useEffect, useMemo, useState } from 'react';
+import type React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	Progress,
 	Table,
@@ -9,12 +10,12 @@ import {
 	TableColumn,
 	TableHeader,
 	TableRow,
-} from '@nextui-org/react';
+} from '@heroui/react';
 import SectorSegment from './SectorSegments';
 import { getCompoundComponent } from '@/components/Tyres';
 import { useLiveSettings } from '../../context/LiveSettingsContext';
 import { Minus } from 'lucide-react';
-import {
+import type {
 	LiveCarData,
 	LiveCarDataEntryDataChannels,
 	LiveCurrentTyres,
@@ -29,7 +30,7 @@ import {
 	LiveTimingStatsLine,
 	LiveTyreStintSeries,
 	StintInfo,
-} from '@/interfaces/liveTiming.type';
+} from '@/types/liveTiming.types';
 import {
 	buildStyles,
 	CircularProgressbar,
@@ -109,7 +110,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({
 
 		const driversWithPositions = driverArray.map(driver => {
 			const lastPosition = lapSeries[driver.RacingNumber]?.LapPosition.pop();
-			return { ...driver, lastPosition: parseInt(lastPosition || '0', 10) };
+			return { ...driver, lastPosition: Number.parseInt(lastPosition || '0', 10) };
 		});
 
 		const sorted = driversWithPositions.sort((a, b) => a.lastPosition - b.lastPosition);
@@ -148,7 +149,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({
 			case 'lapTime':
 				return (
 					<div className="flex flex-col">
-						{lap && lap.LastLapTime ? (
+						{lap?.LastLapTime ? (
 							<div className="">{lap.LastLapTime.Value}</div>
 						) : (
 							<div className="mx-auto">
@@ -175,7 +176,7 @@ const LiveTiming: React.FC<LiveTimingProps> = ({
 			case 'gap':
 				return (
 					<div className="flex flex-col">
-						{lap.IntervalToPositionAhead! && (
+						{lap.IntervalToPositionAhead && (
 							<span
 								className={`${lap.IntervalToPositionAhead.Catching ? 'text-success' : ''}`}
 							>
@@ -195,15 +196,15 @@ const LiveTiming: React.FC<LiveTimingProps> = ({
 						)}
 					</div>
 				);
-			case 'tyre':
-				let stint = stints.pop();
-				let tyreAge = stint?.TotalLaps;
+			case 'tyre': {
+				const stint = stints.pop();
+				const tyreAge = stint?.TotalLaps;
 				return (
 					<div className="flex flex-col mx-auto">
 						{isShowTyre ? (
 							<div className="flex justify-center gap-1 items-center">
 								<div className="w-[25px]">
-									{getCompoundComponent(stint?.Compound!)}
+									{getCompoundComponent(stint?.Compound)}
 								</div>
 								<div className="">{tyreAge}</div>
 							</div>
@@ -217,10 +218,11 @@ const LiveTiming: React.FC<LiveTimingProps> = ({
 						)}
 					</div>
 				);
+			}
 			case 'sectors':
 				return <SectorSegment sectors={lap.Sectors} />;
-			case 'telemetry':
-				let drsColor;
+			case 'telemetry': {
+				let drsColor: string;
 				switch (data['45']) {
 					case 0:
 						drsColor = '#a0a0a0';
@@ -296,18 +298,19 @@ const LiveTiming: React.FC<LiveTimingProps> = ({
 						</div>
 					</div>
 				);
+			}
 		}
 	};
 
 	const renderRow = (driver: LiveDriver) => {
-		let lap = timingDataF1.Lines[driver.RacingNumber];
+		const lap = timingDataF1.Lines[driver.RacingNumber];
 
 		let isGreyedOut = false; //lap.KnockedOut;
 		if (!lap) isGreyedOut = true;
 
-		let stints = tyreStintSeries.Stints[driver.RacingNumber];
-		let timingStat = timingStats.Lines[driver.RacingNumber];
-		let data = carData.Entries[carData.Entries.length - 1]?.Cars[driver.RacingNumber]?.Channels;
+		const stints = tyreStintSeries.Stints[driver.RacingNumber];
+		const timingStat = timingStats.Lines[driver.RacingNumber];
+		const data = carData.Entries[carData.Entries.length - 1]?.Cars[driver.RacingNumber]?.Channels;
 
 		return (
 			<TableRow key={driver.RacingNumber} className={isGreyedOut ? 'brightness-[0.35]' : ''}>
