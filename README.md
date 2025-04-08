@@ -2,7 +2,7 @@
 # Pitlane Analytics
 Welcome to the Pitlane Analytics! This web app provides telemetry, schedule, standings, results, and historical data for Formula 1 enthusiasts. Below you'll find information on how to build, run, and contribute to this project.
 
-
+![alt text](docs/sample.png)
 ## Getting Started
 ### Prerequisites
 

@@ -40,5 +40,5 @@ next-env.d.ts
 misc/
 vscode/
 test/
-docs/
+#docs/
 .archive/
