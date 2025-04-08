@@ -1,7 +1,7 @@
 import type React from "react";
 
 export const getCompoundColor = (compound: string) => {
-  const opacity = "80";
+  const opacity = "";
   switch (compound) {
     case "SOFT":
       return `#ff0000${opacity}`;

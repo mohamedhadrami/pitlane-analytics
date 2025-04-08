@@ -2,11 +2,11 @@
 
 "use client";
 
-import type React from 'react';
+import React from 'react';
 import { useMemo } from 'react';
 import { getCompoundColor } from "@/components/Tyres";
 import type { OFDriver, OFStint } from "@/types/openF1.types";
-import { driverImage } from "@/utils/helpers";
+import { driverImage, numberImage } from "@/utils/helpers";
 import { Image } from "@heroui/react";
 
 interface TyreStrategyProps {
@@ -41,36 +41,67 @@ const TyreStrategy: React.FC<TyreStrategyProps> = ({ stints, drivers }) => {
     }, [stints]);
 
     return (
-        <div className="max-w-screen-xl mx-auto p-4 w-full">
-            {Object.entries(stintsByDriver).map(([driverNumber, driverStints]) => (
-                <div key={driverNumber} className="flex items-center my-3">
-                    <Image
-                        className="rounded-full w-7 mr-2"
-                        src={driverImage(driverNameMap[Number.parseInt(driverNumber)].name!)}
-                        alt={`${driverNameMap[Number.parseInt(driverNumber)].name}`} />
-                    <div
-                        className="w-16 text-xl font-semibold"
-                        style={{ color: `${driverNameMap[Number.parseInt(driverNumber)].color}` }}>
-                        {driverNameMap[Number.parseInt(driverNumber)].acronym}
-                    </div>
-                    <div className="flex-1 relative bg-[#111] h-8 overflow-hidden rounded-md">
-                        {driverStints.map((stint, index) => (
-                            <div
-                                key={index}
-                                className="absolute h-full text-foreground rounded-md border border-default flex justify-center"
-                                style={{
-                                    left: `${(stint.lap_start - 1) / maxLap * 100}%`,
-                                    width: `${(stint.lap_end - stint.lap_start + 1) / maxLap * 100}%`,
-                                    background: `${getCompoundColor(stint.compound)}33`,
-                                }}
-                            >
-                                <p className="align-middle">{stint.lap_end - stint.lap_start}</p>
-                            </div>
-                        ))}
+        <div className="max-w-screen-xl mx-auto p-4 w-full space-y-3">
+            {Object.entries(stintsByDriver).map(([driverNumber, driverStints]) => {
+                const driverInfo = driverNameMap[Number(driverNumber)];
+                const driverColor = driverInfo?.color || "#ccc";
 
+                return (
+                    <div key={driverNumber} className="flex items-center gap-4">
+                        {/* Driver Info */}
+                        <div className="flex items-center gap-2">
+                            <Image
+                                className="rounded-sm p-1 w-8 h-8 bg-white"
+                                src={numberImage(driverInfo.name?.split(" ")[0], driverInfo.name?.split(" ")[1])}
+                                alt={driverInfo.name}
+                            />
+                            <div className="flex flex-col leading-tight">
+                                <span
+                                    className="text-lg font-light"
+                                    style={{ color: driverColor }}
+                                >
+                                    {driverInfo.acronym}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Strategy Line (this is the fix: make it flex) */}
+                        <div className="flex flex-1 items-center h-4">
+                            {driverStints.map((stint, index) => {
+                                const width = ((stint.lap_end - stint.lap_start + 1) / maxLap) * 100;
+                                const isLast = index === driverStints.length - 1;
+
+                                return (
+                                    <React.Fragment key={`${driverNumber}-${stint.stint_number}`}>
+                                        {/* Colored Stint Line */}
+                                        <div
+                                            className="h-[2px] rounded-sm"
+                                            style={{
+                                                width: `${width}%`,
+                                                background: getCompoundColor(stint.compound),
+                                            }}
+                                            title={`Laps ${stint.lap_start}–${stint.lap_end} (${stint.compound})`}
+                                        />
+
+                                        {/* Pit Lap Marker between stints */}
+                                        {!isLast && (
+                                            <div
+                                                className="text-lg font-extralight mx-1 text-muted-foreground text-center"
+                                                style={{
+                                                    width: "1%",
+                                                    minWidth: "20px", // Ensures it's readable even on short stints
+                                                }}
+                                            >
+                                                {driverStints[index + 1].lap_start}
+                                            </div>
+                                        )}
+                                    </React.Fragment>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
         </div>
     );
 };
