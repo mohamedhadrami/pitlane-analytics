@@ -72,3 +72,18 @@ body {
     transform: scale(1.025) translate(2px, 2px); /* 🔄 Tiny subtle drift */
   }
 }
+
+.glow-color::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at top right, rgba(232, 0, 32, 0.25), transparent 60%),
+    radial-gradient(circle at bottom left, rgba(39, 244, 210, 0.2), transparent 70%);
+  filter: blur(60px);
+  animation: pulseGlow 20s ease-in-out infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform: scale(1.01);
+  z-index: -1;
+}

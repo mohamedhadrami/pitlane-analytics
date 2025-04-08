@@ -76,7 +76,9 @@ const Header: React.FC = () => {
                         <AlertDialogTrigger asChild>
                             <RotateCcw className="cursor-pointer" />
                         </AlertDialogTrigger>
-                        <AlertDialogContent>
+                        <AlertDialogContent
+                            className="glow-color"
+                        >
                             <AlertDialogHeader>
                                 <AlertDialogTitle>Reset telemetry?</AlertDialogTitle>
                                 <AlertDialogDescription>
