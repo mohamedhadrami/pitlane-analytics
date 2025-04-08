@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { LiveDriverList, LiveTimingDataF1, LivePosition, LiveTrackStatus, LiveRaceControlMessage, LivePositionItemData, objectEntries, LiveRaceControlMessages } from "@/types/liveTiming.types";
+import { type LiveDriverList, type LiveTimingDataF1, type LivePosition, type LiveTrackStatus, type LiveRaceControlMessage, type LivePositionItemData, objectEntries, type LiveRaceControlMessages } from "@/types/liveTiming.types";
 import type { mvCircuit } from "@/types/multiviewer";
 import utc from 'moment';
 
