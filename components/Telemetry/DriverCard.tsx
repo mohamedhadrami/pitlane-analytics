@@ -25,8 +25,8 @@ const Card = styled(motion.div) <{ isselected: string; bordercolor: string }>`
   padding: 1rem;
   cursor: pointer;
   ${(props) =>
-    props.isselected === "true" &&
-    `
+        props.isselected === "true" &&
+        `
     background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
     --tw-gradient-from: black var(--tw-gradient-from-position);
     --tw-gradient-to: transparent var(--tw-gradient-to-position);
@@ -34,8 +34,8 @@ const Card = styled(motion.div) <{ isselected: string; bordercolor: string }>`
   `}
 
   ${(props) =>
-    props.isselected === "false" &&
-    `
+        props.isselected === "false" &&
+        `
     background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
     --tw-gradient-from: black var(--tw-gradient-from-position);
     --tw-gradient-to: black var(--tw-gradient-to-position);
@@ -123,26 +123,48 @@ const DriverCard: React.FC<DriverCardProps> = ({
     useEffect(() => {
         const fetchData = async () => {
             if (driver !== undefined) {
-                const countryCode: string | undefined = driver.country_code;
+                let countryCode: string | undefined = driver.country_code;
+
+                switch (driver.last_name) {
+                    case "Antonelli":
+                        countryCode = "ITA";
+                        break;
+                    case "Hadjar":
+                        countryCode = "FRA";
+                        break;
+                    case "Bearman":
+                        countryCode = "GBR";
+                        break;
+                    case "Doohan":
+                        countryCode = "AUS";
+                        break;
+                    case "Bortoleto":
+                        countryCode = "BRA";
+                        break;
+                    case "Lawson":
+                        countryCode = "AUS";
+                        break;
+                }
+
                 if (countryCode) {
                     const name = await fetchCountryNameByCode(countryCode);
                     setCountryName(name);
-                    setFlagUrl(flagImage(name))
+                    setFlagUrl(flagImage(name));
                 }
                 setTeamColor(
                     isValidColor(`#${driver.team_colour}`)
                         ? `#${driver.team_colour}`
                         : "#000000"
                 );
-                setNumberUrl(numberImage(driver.first_name, driver.last_name))
+                setNumberUrl(numberImage(driver.first_name, driver.last_name));
                 const correctedTeamName = teamNameConvertor(driver.team_name)
                     ?.replace(/\s+/g, "-")
                     .toLowerCase();
-                setLogoUrl(logoImage("2025", correctedTeamName))
+                setLogoUrl(logoImage("2025", correctedTeamName));
             }
         };
         fetchData();
-    });
+    }, [driver]);
 
     const borderColor = isValidColor(`#${driver.team_colour}`)
         ? `#${driver.team_colour}`
