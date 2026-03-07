@@ -4,11 +4,16 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 
 import { useFooter } from "@/context/FooterContext";
 import { TelemetryProvider, useTelemetry } from "@/context/Telemetry/TelemetryContext";
-import { useFetchMeetings, useFetchSessionData, useFetchSessions, useFetchTelemetryData, useFetchYears, useHandleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
+import { useFetchMeetings } from "@/hooks/Telemetry/useFetchMeetings";
+import { useFetchSessionData } from "@/hooks/Telemetry/useFetchSessionData";
+import { useFetchSessions } from "@/hooks/Telemetry/useFetchSessions";
+import { useFetchTelemetryData } from "@/hooks/Telemetry/useFetchTelemetryData";
+import { useFetchYears } from "@/hooks/Telemetry/useFetchYears";
+import { useHandleDriverSelect } from "@/hooks/Telemetry/useHandleDriverSelect";
 
 import TelemetryStepManager from "@/components/Telemetry/TelemetryStepManager";
 import Header from "@/components/Telemetry/Header";
@@ -24,7 +29,7 @@ const PageContent: React.FC = () => {
     } = useTelemetry();
 
     const searchParams = useSearchParams();
-    const [paramsProcessed, setParamsProcessed] = useState(false); // Flag to indicate when query params are processed
+    const [paramsProcessed, setParamsProcessed] = useState(false);
 
     useEffect(() => {
         setFooterVisible(false);
@@ -41,8 +46,8 @@ const PageContent: React.FC = () => {
             const querySession = searchParams.get("session");
 
             if (queryYear) setSelectedYear(queryYear);
-            if (queryMeeting) setSelectedMeetingKey(parseInt(queryMeeting));
-            if (querySession) setSelectedSessionKey(parseInt(querySession));
+            if (queryMeeting) setSelectedMeetingKey(Number.parseInt(queryMeeting));
+            if (querySession) setSelectedSessionKey(Number.parseInt(querySession));
 
             // Set the flag to true after processing the parameters
             setParamsProcessed(true);
@@ -57,10 +62,14 @@ const PageContent: React.FC = () => {
     useFetchTelemetryData();
 
     return (
-        <div className="min-h-screen max-h-screen flex flex-col">
-            <Header />
-            <Divider />
-            <TelemetryStepManager />
+        <div className="h-screen flex flex-col">
+            <div className="w-full shrink-0">
+                <Header />
+                <Divider />
+            </div>
+            <div className="flex flex-row flex-grow overflow-hidden">
+                <TelemetryStepManager />
+            </div>
         </div>
     );
 };
@@ -80,48 +89,3 @@ const Page: React.FC = () => {
 
 
 export default Page;
-
-/*
-    const {
-        years,
-        setYears,
-        meetings,
-        setMeetings,
-        sessions,
-        setSessions,
-        selectedYear,
-        setSelectedYear,
-        selectedMeeting,
-        setSelectedMeeting,
-        selectedMeetingKey,
-        setSelectedMeetingKey,
-        selectedSession,
-        setSelectedSession,
-        selectedSessionKey,
-        setSelectedSessionKey,
-        isShowSession,
-        setIsShowSession,
-        weather,
-        setWeather,
-        raceControl,
-        setRaceControl,
-        circuitData,
-        setCircuitData,
-        isShowDriverSelect,
-        setIsShowDriverSelect,
-        drivers,
-        setDrivers,
-        selectedDrivers,
-        setSelectedDrivers,
-        isShowPitStrategy,
-        setIsShowPitStrategy,
-        stints,
-        setStints,
-        isShowLapTimes,
-        setIsShowLapTimes,
-        selectedLap,
-        setSelectedLap,
-        isShowTelemetry,
-        setIsShowTelemetry,
-    } = useTelemetry();
-*/

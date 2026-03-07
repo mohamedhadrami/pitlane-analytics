@@ -2,12 +2,20 @@
 
 "use client"
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ResponsiveContainer } from "recharts";
+<<<<<<< HEAD
 import { RaceControlParams } from "@/interfaces/openF1";
 import LapTimeTooltip from "@/components/Telemetry/LapTimes/LapTimeTooltip";
 import { formatSecondsToTime, isValidColor } from "../../../utils/helpers";
 import { DriverChartData } from "@/interfaces/custom";
+=======
+import type { OFRaceControl } from "@/types/openF1.types";
+import LapTimeTooltip from "@/components/Telemetry/LapTimes/LapTimeTooltip";
+import { formatSecondsToTime, isValidColor } from "../../../utils/helpers";
+import { DriverChartData } from "@/types/custom";
+>>>>>>> a228fa74733b8a69d6e4daf52175562fcf0c156c
 import { toast } from "sonner";
 import LapTimeSettings from "./LapTimeSettings";
 import { getZScoreThresholds, getModifiedZScoreThresholds, getChauvenetThresholds, getIQRThresholds } from "@/components/Telemetry/LapTimes/outlierDetection";
@@ -47,9 +55,9 @@ const LapTimes: React.FC = () => {
 
   interface LapData {
     lap_number: number;
-    raceControl: RaceControlParams[];
+    raceControl: OFRaceControl[];
     interpolated?: boolean;
-    [key: string]: number | RaceControlParams[] | string | undefined | boolean;
+    [key: string]: number | OFRaceControl[] | string | undefined | boolean;
   }
 
   const getLapTimes = (): number[] => {
@@ -57,7 +65,7 @@ const LapTimes: React.FC = () => {
       .flatMap((driverData) =>
         driverData.laps
           .filter((lap) => lap.lap_duration !== null)// && !lap.is_pit_out_lap)
-          .map((lap) => lap.lap_duration!)
+          .map((lap) => lap.lap_duration)
       );
   };
 
@@ -87,17 +95,17 @@ const LapTimes: React.FC = () => {
   const chartData: LapData[] = xData.map((lap_number) => {
     const lapData: LapData = { lap_number, raceControl: [] };
 
-    Array.from(driversData.values()).forEach((driverData) => {
+    for (const driverData of driversData.values()) {
       const lap = driverData.laps.find(
         (lap) =>
           lap.lap_number === lap_number &&
           lap.lap_duration !== null &&
           //!lap.is_pit_out_lap &&
-          (!isOutlierDetection || (lap.lap_duration! >= lowerThreshold && lap.lap_duration! <= upperThreshold))
+          (!isOutlierDetection || (lap.lap_duration >= lowerThreshold && lap.lap_duration <= upperThreshold))
       );
 
       if (lap) {
-        lapData[`time_${driverData.driver.name_acronym}` as keyof typeof lapData] = lap.lap_duration!;
+        lapData[`time_${driverData.driver.name_acronym}` as keyof typeof lapData] = lap.lap_duration;
       } else if (isOutlierDetection) {
         const previousLap = driverData.laps
           .slice(0, lap_number)
@@ -106,8 +114,8 @@ const LapTimes: React.FC = () => {
             (prevLap) =>
               prevLap.lap_duration !== null &&
               //!prevLap.is_pit_out_lap &&
-              prevLap.lap_duration! >= lowerThreshold &&
-              prevLap.lap_duration! <= upperThreshold
+              prevLap.lap_duration >= lowerThreshold &&
+              prevLap.lap_duration <= upperThreshold
           );
 
         const nextLap = driverData.laps
@@ -116,16 +124,16 @@ const LapTimes: React.FC = () => {
             (nextLap) =>
               nextLap.lap_duration !== null &&
               //!nextLap.is_pit_out_lap &&
-              nextLap.lap_duration! >= lowerThreshold &&
-              nextLap.lap_duration! <= upperThreshold
+              nextLap.lap_duration >= lowerThreshold &&
+              nextLap.lap_duration <= upperThreshold
           );
 
         if (previousLap && nextLap) {
           const interpolatedTime = interpolate(
-            previousLap.lap_duration!,
-            nextLap.lap_duration!,
-            previousLap.lap_number!,
-            nextLap.lap_number!,
+            previousLap.lap_duration,
+            nextLap.lap_duration,
+            previousLap.lap_number,
+            nextLap.lap_number,
             lap_number
           );
           lapData[`time_${driverData.driver.name_acronym}` as keyof typeof lapData] = interpolatedTime;
@@ -139,13 +147,13 @@ const LapTimes: React.FC = () => {
 
       if (isRaceControl) {
         if (raceControlForLap.length > 0) {
-          lapData[`raceControl` as keyof typeof lapData] = raceControlForLap;
+          lapData["raceControl" as keyof typeof lapData] = raceControlForLap;
         }
       }
 
       if (isTyres) {
         for (const stint of driverData.stintData) {
-          if (lap_number >= stint.lap_start! && lap_number <= stint.lap_end!) {
+          if (lap_number >= stint.lap_start && lap_number <= stint.lap_end) {
             const tyreKey = `tyre_${driverData.driver.name_acronym}` as keyof LapData;
             const compoundValue = stint.compound;
             lapData[tyreKey] = compoundValue;
@@ -153,18 +161,17 @@ const LapTimes: React.FC = () => {
           }
         }
       }
-    });
+    };
 
     return lapData;
   });
 
   const filteredLapTimes: number[] = chartData
-    .map((data) =>
+    .flatMap((data) =>
       Object.entries(data)
         .filter(([key, value]) => key !== "lap_number" && typeof value === "number")
         .map(([key, value]) => value)
     )
-    .flat()
     .filter((value): value is number => typeof value === "number");
 
   const minLapTime: number = Math.min(...filteredLapTimes);
@@ -210,7 +217,12 @@ const LapTimes: React.FC = () => {
           <LineChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
-            onClick={(data, index) => onLapSelect(parseInt(data.activeLabel!))}
+            onClick={(data, index) => {
+              const lap = data?.activeLabel;
+              if (lap !== undefined) {
+                onLapSelect(Number.parseInt(lap));
+              }
+            }}
           >
             <XAxis dataKey="lap_number" tick={false} stroke="white" />
             <YAxis

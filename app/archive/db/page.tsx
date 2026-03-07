@@ -1,12 +1,13 @@
 // @/app/archive/db/page.tsx
 
 "use client"
-import React, { useEffect, useState } from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spinner, getKeyValue, Link } from "@nextui-org/react";
-import { useInfiniteScroll } from "@nextui-org/use-infinite-scroll";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spinner, getKeyValue, Link } from "@heroui/react";
+import { useInfiniteScroll } from "@heroui/use-infinite-scroll";
 import { useAsyncList } from "@react-stately/data";
 import Loading from "@/components/Loading";
-import { DbCircuits } from "@/interfaces/ergast";
+import type { DbCircuits } from "@/types/ergast";
 
 const Page: React.FC = () => {
     const [tables, setTables] = useState<[]>([]);
@@ -22,9 +23,9 @@ const Page: React.FC = () => {
         fetchData()
     }, [])
 
-    let list = useAsyncList<DbCircuits>({
+    const list = useAsyncList<DbCircuits>({
         async load({ signal, cursor }) {
-            const url = cursor ? cursor : `/api/db/tables/circuits`;
+            const url = cursor ? cursor : "/api/db/tables/circuits";
             const res = await fetch(url, { signal });
             const json = await res.json();
 

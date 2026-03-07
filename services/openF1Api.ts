@@ -1,39 +1,38 @@
 // services/api.ts
 
-import {
+import type {
   OpenF1ApiParams,
-  CarDataParams,
-  DateRangeParams,
-  DriverParams,
-  IntervalParams,
-  LapParams,
-  LocationParams,
-  MeetingParams,
-  PitParams,
-  PositionParams,
-  RaceControlParams,
-  SessionParams,
-  StintParams,
-  TeamRadioParams,
-  WeatherParams,
-} from "@/interfaces/openF1"
+  OFDateRangeParams,
+  OFCarData,
+  OFDriver,
+  OFInterval,
+  OFLap,
+  OFLocation,
+  OFMeeting,
+  OFPit,
+  OFPosition,
+  OFRaceControl,
+  OFSession,
+  OFStint,
+  OFTeamRadio,
+  OFWeather,
+} from "@/types/openF1.types"
 
-const fetchApiData = async (
+const fetchApiData = async <T>(
   endpoint: string,
   params?: OpenF1ApiParams,
-  dateRangeParams?: DateRangeParams
-) => {
+  dateRangeParams?: OFDateRangeParams
+): Promise<T[]> => {
   try {
     const queryParams = new URLSearchParams(params as Record<string, string>).toString();
     let url = `https://api.openf1.org/v1${endpoint}${queryParams ? `?${queryParams}` : ""}`;
-    
+
     if (dateRangeParams) {
       if (dateRangeParams.date_gt) url += `&date>=${dateRangeParams.date_gt}`;
       if (dateRangeParams.date_lt) url += `&date<=${dateRangeParams.date_lt}`;
     }
 
     const response = await fetch(`/api/proxy?url=${encodeURIComponent(url)}`);
-    
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -45,33 +44,26 @@ const fetchApiData = async (
     throw error;
   }
 };
+const createFetcher = <T>(endpoint: string) => (
+  params?: OpenF1ApiParams,
+  dateRangeParams?: OFDateRangeParams
+): Promise<T[]> => fetchApiData<T>(endpoint, params, dateRangeParams);
 
 /**
  * Some data about each car, at a sample rate of about 3.7 Hz.
  *
- * Basically the telemetry
+ * Basically the telemetry.
  * @param params query parameters
  * @returns data
  */
-export const fetchCarData = async (
-  params: CarDataParams,
-  dateRangeParams?: DateRangeParams
-) => {
-  const endpoint = "/car_data";
-  const data = await fetchApiData(endpoint, params, dateRangeParams);
-  return data;
-};
+export const fetchCarData = createFetcher<OFCarData>("/car_data");
 
 /**
  * Provides information about drivers for each session.
  * @param params query parameters
  * @returns data
  */
-export const fetchDrivers = async (params: DriverParams) => {
-  const endpoint = "/drivers";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchDrivers = createFetcher<OFDriver>("/drivers");
 
 /**
  * Fetches real-time interval data between drivers and their gap to the race leader.
@@ -79,36 +71,22 @@ export const fetchDrivers = async (params: DriverParams) => {
  * @param params query parameters
  * @returns data
  */
-export const fetchIntervals = async (params: IntervalParams) => {
-  const endpoint = "/intervals";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchIntervals = createFetcher<OFInterval>("/intervals");
 
 /**
  * Provides detailed information about individual laps.
  * @param params query parameters
  * @returns data
  */
-export const fetchLaps = async (params: LapParams) => {
-  const endpoint = "/laps";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchLaps = createFetcher<OFLap>("/laps");
 
 /**
  * The approximate location of the cars on the circuit, at a sample rate of about 3.7 Hz.
- * Useful for gauging their progress along the track, but lacks details about lateral placement
- * — i.e. whether the car is on the left or right side of the track. The origin point (0, 0, 0)
- * appears to be arbitrary and not tied to any specific location on the track.
+ * Useful for gauging their progress along the track, but lacks details about lateral placement.
  * @param params query parameters
  * @returns data
  */
-export const fetchLocation = async (params: LocationParams, dateRangeParams?: DateRangeParams) => {
-  const endpoint = "/location";
-  const data = await fetchApiData(endpoint, params, dateRangeParams);
-  return data;
-};
+export const fetchLocation = createFetcher<OFLocation>("/location");
 
 /**
  * Provides information about meetings.
@@ -118,22 +96,14 @@ export const fetchLocation = async (params: LocationParams, dateRangeParams?: Da
  * @param params query parameters
  * @returns data
  */
-export const fetchMeeting = async (params?: MeetingParams) => {
-  const endpoint = "/meetings";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchMeeting = createFetcher<OFMeeting>("/meetings");
 
 /**
  * Provides information about cars going through the pit lane.
  * @param params query parameters
  * @returns data
  */
-export const fetchPit = async (params: PitParams) => {
-  const endpoint = "/pit";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchPit = createFetcher<OFPit>("/pit");
 
 /**
  * Provides driver positions throughout a session, including
@@ -141,22 +111,14 @@ export const fetchPit = async (params: PitParams) => {
  * @param params query parameters
  * @returns data
  */
-export const fetchPosition = async (params: PositionParams) => {
-  const endpoint = "/position";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchPosition = createFetcher<OFPosition>("/position");
 
 /**
  * Provides information about race control (racing incidents, flags, safety car, ...).
  * @param params query parameters
  * @returns data
  */
-export const fetchRaceControl = async (params: RaceControlParams) => {
-  const endpoint = "/race_control";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchRaceControl = createFetcher<OFRaceControl>("/race_control");
 
 /**
  * Provides information about sessions.
@@ -165,11 +127,7 @@ export const fetchRaceControl = async (params: RaceControlParams) => {
  * @param params query parameters
  * @returns data
  */
-export const fetchSession = async (params: SessionParams) => {
-  const endpoint = "/sessions";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchSession = createFetcher<OFSession>("/sessions");
 
 /**
  * Provides information about individual stints.
@@ -178,11 +136,7 @@ export const fetchSession = async (params: SessionParams) => {
  * @param params query parameters
  * @returns data
  */
-export const fetchStint = async (params: StintParams) => {
-  const endpoint = "/stints";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchStint = createFetcher<OFStint>("/stints");
 
 /**
  * Provides a collection of radio exchanges between Formula 1 drivers
@@ -192,20 +146,11 @@ export const fetchStint = async (params: StintParams) => {
  * @param params query parameters
  * @returns data
  */
-export const fetchTeamRadio = async (params: TeamRadioParams) => {
-  const endpoint = "/team_radio";
-  const data = await fetchApiData(endpoint, params);
-  return data;
-};
+export const fetchTeamRadio = createFetcher<OFTeamRadio>("/team_radio");
 
 /**
  * The weather over the track, updated every minute.
  * @param params query parameters
  * @returns data
  */
-export const fetchWeather = async (params: WeatherParams,
-  dateRangeParams?: DateRangeParams) => {
-  const endpoint = "/weather";
-  const data = await fetchApiData(endpoint, params, dateRangeParams);
-  return data;
-};
+export const fetchWeather = createFetcher<OFWeather>("/weather");

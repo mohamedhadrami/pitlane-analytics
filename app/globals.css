@@ -38,3 +38,52 @@ body {
 ::-webkit-scrollbar {
   display: none;
 }
+
+
+.bg-layer {
+  position: relative;
+  min-height: 100vh;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bg-layer::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: 
+    radial-gradient(circle at top right, rgba(232, 0, 32, 0.25), transparent 60%),
+    radial-gradient(circle at bottom left, rgba(39, 244, 210, 0.2), transparent 70%);
+  filter: blur(60px); /* 🔥 Softens the glow */
+  animation: pulseGlow 20s ease-in-out infinite; /* 🔁 Slow, smooth loop */
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform: scale(1.01); /* subtle motion anchor */
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1.01) translate(0px, 0px);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.025) translate(2px, 2px); /* 🔄 Tiny subtle drift */
+  }
+}
+
+.glow-color::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at top right, rgba(232, 0, 32, 0.25), transparent 60%),
+    radial-gradient(circle at bottom left, rgba(39, 244, 210, 0.2), transparent 70%);
+  filter: blur(60px);
+  animation: pulseGlow 20s ease-in-out infinite;
+  pointer-events: none;
+  will-change: transform, opacity;
+  transform: scale(1.01);
+  z-index: -1;
+}

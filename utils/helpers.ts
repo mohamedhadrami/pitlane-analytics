@@ -1,10 +1,12 @@
 // @/utils/helper.ts
 
+import type { JLPBaseRace } from "@/types/jolpica.types";
+
 /* TIME */
 
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export function formatSecondsToTime(seconds: any) {
+export function formatSecondsToTime(seconds: number) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     const formattedSeconds = remainingSeconds.toFixed(3).padStart(6, '0');
@@ -12,10 +14,10 @@ export function formatSecondsToTime(seconds: any) {
 };
 
 export function parseISOTime(time: string) {
-    return parseInt(time.split("T")[1]).toFixed(2);
+    return Number.parseInt(time.split("T")[1]).toFixed(2);
 };
 
-export function parseISODateAndTime(time: string, gmt_offset: string = "00:00:00") {
+export function parseISODateAndTime(time: string, gmt_offset = "00:00:00") {
     const date = new Date(time);
 
     // Extract hours, minutes, and seconds from GMT offset string
@@ -33,14 +35,13 @@ export function parseISODateAndTime(time: string, gmt_offset: string = "00:00:00
         day: "numeric",
         hour: "numeric",
         minute: "numeric",
-        second: "numeric",
         timeZoneName: "short"
     };
 
     return date.toLocaleString("en-US", options);
 };
 
-export function parseISOTimeFull(time: string | undefined, gmt_offset: string = "00:00:00") {
+export function parseISOTimeFull(time: string | undefined, gmt_offset = "00:00:00") {
     if (!time) return null;
     const date = new Date(time);
 
@@ -62,11 +63,29 @@ export function parseISOTimeFull(time: string | undefined, gmt_offset: string = 
     return date.toLocaleString("en-US", options);
 };
 
+export function parseSessionDateTime(time: string | undefined, gmt_offset = "00:00:00"): string {
+    if (!time) return "";
+    const date = new Date(time);
+    const [hours, minutes, seconds] = gmt_offset.split(":").map(Number);
 
-export function findNextRace(races: any[]) {
+    date.setUTCHours(date.getUTCHours() + hours);
+    date.setUTCMinutes(date.getUTCMinutes() + minutes);
+    date.setUTCSeconds(date.getUTCSeconds() + seconds);
+
+    const options: Intl.DateTimeFormatOptions = {
+        weekday: "long",
+        hour: "numeric",
+        minute: "numeric",
+        timeZoneName: "short"
+    };
+
+    return date.toLocaleString("en-US", options);
+};
+
+export function findNextRace(races: JLPBaseRace[]) {
     const currentDate = new Date();
     for (let i = 0; i < races.length; i++) {
-        const raceDate = new Date(races[i].date + " " + races[i].time);
+        const raceDate = new Date(`${races[i].date} ${races[i].time}`);
         if (raceDate > currentDate) {
             return i;
         }
@@ -80,10 +99,10 @@ export function findNextRace(races: any[]) {
 
 /* VALIDATORS */
 export const isValidColor = (str: string) => {
-    if (str[0] != '#')
+    if (str[0] !== '#')
         return false;
 
-    if (!(str.length == 4 || str.length == 7))
+    if (!(str.length === 4 || str.length === 7))
         return false;
 
     for (let i = 1; i < str.length; i++)
@@ -105,6 +124,8 @@ export const teamNameConvertor = (name: string) => {
             return "RB";
         case "Alpine F1 Team":
             return "Alpine";
+        case "Haas F1 Team":
+            return "Haas";
         default:
             return name;
     }
@@ -116,21 +137,21 @@ export const teamNameConvertor = (name: string) => {
 
 export const trackImage = (cityName: string | undefined, countryName: string | undefined) => {
     let name: string | undefined = countryName;
-    if (name == "UK") name = "Great Britain";
-    else if(cityName == "Imola") name = "Emilia Romagna";
-    else if (name == "UAE") name = "Abu Dhabi";
-    else if (name == "United States" || name == "USA") name = cityName;
-    if (cityName == "Austin") name = "USA";
+    if (name === "UK") name = "Great Britain";
+    else if (cityName === "Imola") name = "Emilia Romagna";
+    else if (name === "UAE") name = "Abu Dhabi";
+    else if (name === "United States" || name === "USA") name = cityName;
+    if (cityName === "Austin") name = "USA";
     return `https://media.formula1.com/content/dam/fom-website/2018-redesign-assets/Track%20icons%204x3/${name}.png.transform/2col/image.png`;
 };
 
 export const trackDetailedImage = (cityName: string | undefined, countryName: string | undefined) => {
     let name: string | undefined = countryName;
-    if (name == "USA" || name == "United States" && cityName != "Austin" || name == "Azerbaijan") name = cityName;
-    else if (name == "Monaco") name = "Monoco";
-    else if (name == "UK") name = "Great Britain";
-    else if (name == "UAE") name = "Abu Dhabi";
-    else if(cityName == "Imola") name = "Emilia Romagna";
+    if (name === "USA" || name === "United States" && cityName !== "Austin" || name === "Azerbaijan") name = cityName;
+    else if (name === "Monaco") name = "Monoco";
+    else if (name === "UK") name = "Great Britain";
+    else if (name === "UAE") name = "Abu Dhabi";
+    else if (cityName === "Imola") name = "Emilia Romagna";
     return `https://media.formula1.com/image/upload/f_auto/q_auto/v1677244984/content/dam/fom-website/2018-redesign-assets/Circuit%20maps%2016x9/${name?.replace(" ", "_")}_Circuit.png.transform/6col/image.png`;
 };
 
@@ -141,7 +162,7 @@ export const flagImage = (countryName: string | undefined) => {
 export function driverImage(firstName: string, lastName: string): string;
 export function driverImage(name: string): string;
 export function driverImage(firstNameOrName: string, lastName?: string): string {
-    const fallbackUrl = `https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/null/null01_null_null/null01.png.transform/1col/image.png`;
+    const fallbackUrl = "https://media.formula1.com/d_driver_fallback_image.png/content/dam/fom-website/drivers/null/null01_null_null/null01.png.transform/1col/image.png";
 
     if (lastName !== undefined) {
         const firstName = firstNameOrName
@@ -171,7 +192,7 @@ export const carImage = (year: string, teamName: string) => {
 }
 
 export const logoImage = (year: string, teamName: string) => {
-    return `https://media.formula1.com/content/dam/fom-website/teams/${year}/${teamName}-logo.png.transform/2col/image.png`;
+    return `https://media.formula1.com/content/dam/fom-website/teams/${year}/${teamName}-logo.png`;
 }
 
 

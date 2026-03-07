@@ -1,9 +1,9 @@
 // @/utils/telemetryUtils.ts
 
-import { DriverChartData } from "@/interfaces/custom";
-import { CarDataParams, WeatherParams } from "@/interfaces/openF1"
+import type { DriverChartData } from "@/types/custom";
+import type { OFCarData, OFWeather } from "@/types/openF1.types"
 
-export const calculateWeatherStats = (weatherData: WeatherParams[]) => {
+export const calculateWeatherStats = (weatherData: OFWeather[]) => {
     if (weatherData?.length === 0) return null;
 
     const airTemperatureAvg =
@@ -42,15 +42,15 @@ export const calculateWeatherStats = (weatherData: WeatherParams[]) => {
 };
 
 
-export const calculateLapTime = (carApiData: CarDataParams[]): CarDataParams[] => {
+export const calculateLapTime = (carApiData: OFCarData[]): OFCarData[] => {
     if (carApiData.length === 0) {
         return [];
     }
 
-    const firstTimestamp = new Date(carApiData[0].date!).getTime();
+    const firstTimestamp = new Date(carApiData[0].date).getTime();
 
     const carDataWithLapTime = carApiData.map((carData) => {
-        const currentTimestamp = new Date(carData.date!).getTime();
+        const currentTimestamp = new Date(carData.date).getTime();
         const lapTimeSeconds = (currentTimestamp - firstTimestamp) / 1000;
 
         return {

@@ -2,59 +2,50 @@
 
 "use client"
 
-import { MeetingParams, SessionParams } from "@/interfaces/openF1";
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
+import type React from "react";
+import type { OFMeeting, OFSession } from "@/types/openF1.types";
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, type Selection } from "@heroui/react";
 import { ChevronDownIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { type JSX, useEffect } from "react";
 
-interface SelectorProps {
-    id: string;
-    label: string;
-    values: any[] | null;
+type SelectorLabel = "year" | "meeting" | "session";
+
+type ValueMap = {
+    year: string;
+    meeting: OFMeeting;
+    session: OFSession;
+};
+
+type SelectorProps<L extends SelectorLabel> = {
+    label: L;
+    values: ValueMap[L][] | null;
     icon: JSX.Element;
-    onChange: (value: any, name: any) => void;
-    displayValue: (selectedValue: any) => string | undefined;
-    selectedValue: any;
+    onChange: (value: string, label: L) => void;
+    displayValue: (label: string | undefined) => string | undefined;
     disabled?: boolean;
-}
+};
 
-const organizeValues = (label: string, values: any[] | null, isDisabled: boolean) => {
-    let verifiedValues: any[] = [];
-    if (!values || isDisabled) return verifiedValues;
-    
+const organizeValues = <L extends SelectorLabel>(
+    label: L,
+    values: ValueMap[L][] | null,
+    isDisabled: boolean
+): string[] | null => {
+    if (!values || isDisabled) return null;
+
     switch (label) {
-        case "year":
-            values.forEach((value) => {
-                verifiedValues.push({
-                    key: value,
-                    value: value
-                });
-            });
-            break;
         case "meeting":
-            values.forEach((value: MeetingParams) => {
-                verifiedValues.push({
-                    key: value.meeting_key,
-                    value: value.meeting_name
-                });
-            });
-            break;
+            return (values as OFMeeting[]).map((v) => v.meeting_official_name);
         case "session":
-            values.forEach((value: SessionParams) => {
-                verifiedValues.push({
-                    key: value.session_key,
-                    value: value.session_name
-                });
-            });
-            break;
+            return (values as OFSession[]).map((v) => v.session_name);
+        //case "year":
         default:
-            break;
+            return values as string[];
     }
-    return verifiedValues;
-}
+};
 
-const BreadcrumbSelector: React.FC<SelectorProps> = ({
-    id,
+
+const BreadcrumbSelector = <L extends SelectorLabel>({
     label,
     values,
     icon,
@@ -62,60 +53,76 @@ const BreadcrumbSelector: React.FC<SelectorProps> = ({
     displayValue,
     selectedValue,
     disabled = false,
-}) => {
-    const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
+}: SelectorProps<L>) => {
 
     const organizedValues = organizeValues(label, values, disabled);
+    const selectedKeys = displayValue(label);
 
-    useEffect(() => {
-        if (selectedValue) {
-            setSelectedKeys(new Set([selectedValue.toString()]));
-        }
-    }, [selectedValue]);
-
-    const handleChange = (e: any) => {
-        const chosenValue = [...e][0];
-        onChange(chosenValue, label);
-        setSelectedKeys(new Set([chosenValue]));
+    const placeholderMap: Record<SelectorLabel, string> = {
+        year: "Select a year",
+        meeting: "Select a race",
+        session: "Select a session",
     };
 
-    const selectedDisplayValue = displayValue(label);
-
     return (
-        <Dropdown
-            backdrop="opaque"
-            isDisabled={disabled}
-            shouldBlockScroll={false}
-        >
-            <DropdownTrigger>
-                <Button
-                    variant="light"
-                    color="default"
-                    size="sm"
-                    radius="sm"
-                    startContent={icon}
-                    endContent={<ChevronDownIcon className="text-default-500" />}
-                    className="flex items-center capitalize font-extralight"
-                >
-                    {selectedDisplayValue || `Select ${label}`}
-                </Button>
-            </DropdownTrigger>
-            {organizedValues && organizedValues.length > 0 && (
-                <DropdownMenu
+        <>
+            {label && organizedValues && (
+                <Select
                     aria-label={`${label} selection`}
-                    variant="solid"
-                    color="primary"
-                    selectionMode="single"
-                    selectedKeys={selectedKeys}
-                    onSelectionChange={handleChange}
+                    value={selectedKeys}
+                    onValueChange={(e) => onChange(e, label)}
+                    required
                 >
-                    {organizedValues.map((data) => (
-                        <DropdownItem key={data.key}>{data.value}</DropdownItem>
-                    ))}
-                </DropdownMenu>
+                    <SelectTrigger className="max-w-xs overflow-hidden truncate whitespace-nowrap" icon={icon}>
+                        <div className="truncate w-full text-left text-white font-extralight">
+                            <SelectValue placeholder={placeholderMap[label]} />
+                        </div>
+                    </SelectTrigger>
+                    {organizedValues && organizedValues.length > 0 && (
+                        <SelectContent className="max-h-96">
+                            {organizedValues.map((value) => (
+                                <SelectItem key={value} value={value}>{value}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    )}
+                </Select>
             )}
-        </Dropdown>
-    );
+        </>
+    )
 }
 
 export default BreadcrumbSelector;
+
+/**
+ *  <Dropdown
+                backdrop="blur"
+                isDisabled={disabled}
+                shouldBlockScroll={false}>
+                <DropdownTrigger>
+                    <Button
+                        variant="light"
+                        color="default"
+                        size="sm"
+                        radius="sm"
+                        endContent={<ChevronDownIcon className="text-default-500" />}
+                        className="capitalize"
+                    >
+                        {label ? displayValue(label) : ''}
+                    </Button>
+                </DropdownTrigger>
+                {organizedValues && organizedValues.length > 0 && (
+                    <DropdownMenu
+                        aria-label={`${label} selection`}
+                        variant="solid"
+                        color="primary"
+                        selectionMode="single"
+                        selectedKeys={selectedKeys}
+                        onSelectionChange={handleChange}
+                    >
+                        {organizedValues.map((value) => (
+                            <DropdownItem key={value}>{value}</DropdownItem>
+                        ))}
+                    </DropdownMenu>
+                )}
+            </Dropdown>
+ */

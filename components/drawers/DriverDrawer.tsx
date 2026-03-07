@@ -1,23 +1,25 @@
 // @/components/drawers/DriverDrawer.tsx
 
-import React, { useState, useEffect } from "react";
-import { DriverParams } from "@/interfaces/openF1";
-import { fetchDriverResults } from "@/services/ergastApi";
-import { Link, Button, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter, DrawerOverlay } from "../ui/drawer";
+import type React from "react";
+import { useState, useEffect } from "react";
+import type { OFDriver } from "@/types/openF1.types";
+import { fetchDriverResults } from "@/services/jolpicaApi";
+import { Link, Button, Tabs, Tab, Card, CardBody } from "@heroui/react";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerOverlay } from "../ui/drawer";
 import { X, Minus } from "lucide-react";
 import CustomTable from "../tables/CustomTable";
 import { DriverHeader } from "@/utils/const";
+import type { JLPDriverStandingItem, JLPRaceResults } from "@/types/jolpica.types";
 
 interface DriverDrawerProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
-  driver: any;
-  driverData: DriverParams;
+  driver: JLPDriverStandingItem;
+  driverData: OFDriver;
 }
 
 const DriverDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, driver, driverData }) => {
-  const [results, setResults] = useState<any>();
+  const [results, setResults] = useState<JLPRaceResults[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {

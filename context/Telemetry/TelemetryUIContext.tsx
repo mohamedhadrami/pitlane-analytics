@@ -1,15 +1,15 @@
 // @/hooks/TelemetryUIContext.tsx
 
-import { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { createContext, type ReactNode, useContext, useEffect, useState } from "react";
 
 export enum TelemetryStage {
-    Year,
-    Meeting,
-    Session,
-    StatsDrivers,
-    DriverLap,
-    LapTelemetry,
-    Telemetry
+    Year = 0,
+    Meeting = 1,
+    Session = 2,
+    StatsDrivers = 3,
+    DriverLap = 4,
+    LapTelemetry = 5,
+    Telemetry = 6
 }
 
 interface TelemetryUIContextProps {
@@ -49,7 +49,6 @@ export const TelemetryUIProvider = ({ children }: { children: ReactNode }) => {
             setNextStage(currentStage + 1);
         }
     }, [currentStage]);
-
 
     return (
         <TelemetryUIContext.Provider value={{

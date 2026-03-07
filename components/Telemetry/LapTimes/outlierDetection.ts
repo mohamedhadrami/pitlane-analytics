@@ -12,16 +12,16 @@ export const getIQRThresholds = (data: number[], multiplier: number): [number, n
 };
 
 // Z-Score Method
-export const getZScoreThresholds = (data: number[], threshold: number = 3): [number, number] => {
+export const getZScoreThresholds = (data: number[], threshold = 3): [number, number] => {
     const mean = data.reduce((a, b) => a + b, 0) / data.length;
-    const stdDev = Math.sqrt(data.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / data.length);
+    const stdDev = Math.sqrt(data.map(x => (x - mean) ** 2).reduce((a, b) => a + b) / data.length);
     const lowerThreshold = mean - threshold * stdDev;
     const upperThreshold = mean + threshold * stdDev;
     return [lowerThreshold, upperThreshold];
 };
 
 // Modified Z-Score Method
-export const getModifiedZScoreThresholds = (data: number[], threshold: number = 3.5): [number, number] => {
+export const getModifiedZScoreThresholds = (data: number[], threshold = 3.5): [number, number] => {
     const median = data.sort((a, b) => a - b)[Math.floor(data.length / 2)];
     const mad = data.map(x => Math.abs(x - median)).sort((a, b) => a - b)[Math.floor(data.length / 2)];
     const modifiedZScores = data.map(x => 0.6745 * (x - median) / mad);
@@ -33,7 +33,7 @@ export const getModifiedZScoreThresholds = (data: number[], threshold: number = 
 // Chauvenet's Criterion
 export const getChauvenetThresholds = (data: number[]): [number, number] => {
     const mean = data.reduce((a, b) => a + b, 0) / data.length;
-    const stdDev = Math.sqrt(data.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / data.length);
+    const stdDev = Math.sqrt(data.map(x => (x - mean) ** 2).reduce((a, b) => a + b) / data.length);
     const N = data.length;
     const criterion = 1 / (2 * N);
     const zValue = Math.abs(criterion);

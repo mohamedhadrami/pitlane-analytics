@@ -3,7 +3,7 @@
 "use client"
 
 import { useFooter } from "@/context/FooterContext";
-import { Link } from "@nextui-org/react";
+import { Link } from "@heroui/react";
 
 const Footer = () => {
     const { isFooterVisible } = useFooter();

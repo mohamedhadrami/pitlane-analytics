@@ -1,15 +1,25 @@
 // @/components/table/CustomTable.tsxt
 
-import { RetiredStatuses } from "@/utils/const";
-import { Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Table, PaginationItemRenderProps, PaginationItemType, cn, getKeyValue, Skeleton } from "@nextui-org/react";
+import { RetiredStatuses, type TableHeaderType } from "@/utils/const";
+import { Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Table, type PaginationItemRenderProps, PaginationItemType, cn, getKeyValue } from "@heroui/react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { type JSX, type SetStateAction, useMemo, useState } from "react";
 import SkeletonRow from "./SkeletonRow";
+import type { JLPBaseRace, JLPConstructorStandingItem, JLPDriverStandingItem, JLPRaceResults, JLPResult } from "@/types/jolpica.types";
+
+
+interface TableRowData {
+    key: string | number;
+    endpoint?: string;
+    className?: string;
+    [key: string]: React.ReactNode;
+}
+
 
 interface TableProps {
-    rawData: any;
-    headers: any[];
+    rawData: JLPResult[] | JLPRaceResults[] | JLPDriverStandingItem[] | JLPConstructorStandingItem[];
+    headers: TableHeaderType[];
     type: string;
     isPagination?: boolean;
 }
@@ -22,7 +32,7 @@ const CustomTable: React.FC<TableProps> = ({
 }) => {
 
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState<number>();
+    const [totalPages, setTotalPages] = useState<number>(1);
     const rowsPerPage = 4;
     const totalSkeletonRows = 10;
     const router = useRouter();
@@ -30,22 +40,24 @@ const CustomTable: React.FC<TableProps> = ({
     const data = useMemo(() => {
         if (rawData) {
             switch (type) {
-                case 'race':
-                    return rawData.map((datum: any, index: number) => ({
-                        key: datum.number,
-                        endpoint: datum.Driver.code,
-                        className: RetiredStatuses.includes(datum.status) ? "brightness-50" : "",
-                        position: datum.position,
-                        driver: `${datum.Driver.givenName} ${datum.Driver.familyName}`,
-                        team: datum.Constructor.name,
-                        points: datum.points,
-                        time: datum.Time ? datum.Time.time : datum.status,
-                        fastestLap: datum.FastestLap ? datum.FastestLap.Time.time : "No time set",
-                        fastestLapClass: datum.FastestLap?.rank == 1 ? "font-bold text-[#FF00FF]" : "",
-                        status: datum.status
+                case 'race': {
+                    const data = rawData as JLPResult[];
+                    return data.map((datum): TableRowData => ({
+                      key: datum.number,
+                      endpoint: datum.Driver.code,
+                      className: RetiredStatuses.includes(datum.status) ? "brightness-50" : "",
+                      position: datum.position,
+                      driver: `${datum.Driver.givenName} ${datum.Driver.familyName}`,
+                      team: datum.Constructor.name,
+                      points: datum.points,
+                      time: datum.Time ? datum.Time.time : datum.status,
+                      fastestLap: datum.FastestLap ? datum.FastestLap.Time.time : "No time set",
+                      fastestLapClass: datum.FastestLap?.rank === "1" ? "font-bold text-[#FF00FF]" : "",
+                      status: datum.status
                     }));
+                  }
                 case 'race2':
-                    return rawData.map((datum: any, index: number) => ({
+                    return rawData.map((datum: any): TableRowData => ({
                         key: datum.number,
                         endpoint: datum.driver_id,
                         className: RetiredStatuses.includes(datum.status_id) ? "brightness-50" : "",
@@ -55,12 +67,13 @@ const CustomTable: React.FC<TableProps> = ({
                         points: datum.points,
                         time: datum.time ? datum.time : datum.status_id,
                         fastestLap: datum.fastest_lap ? datum.fastest_lap_time : "No time set",
-                        fastestLapClass: datum.fastest_lap == 1 ? "font-bold text-[#FF00FF]" : "",
+                        fastestLapClass: datum.fastest_lap === 1 ? "font-bold text-[#FF00FF]" : "",
                         status: datum.status_id
                     }));
                 case 'driversChampionship':
-                case 'archiveDriversChampionship':
-                    return rawData.map((datum: any, index: number) => ({
+                case 'archiveDriversChampionship':{
+                    const data = rawData as JLPDriverStandingItem[];
+                    return data.map((datum: JLPDriverStandingItem, index: number): TableRowData => ({
                         key: datum.Driver.code ? datum.Driver.code : index,
                         endpoint: datum.Driver.code,
                         position: datum.position,
@@ -70,9 +83,11 @@ const CustomTable: React.FC<TableProps> = ({
                         team: datum.Constructors[0].name,
                         points: datum.points
                     }));
+                }
                 case 'constructorsChampionship':
-                case 'archiveConstructorsChampionship':
-                    return rawData.map((datum: any, index: number) => ({
+                case 'archiveConstructorsChampionship': {
+                    const data = rawData as JLPConstructorStandingItem[];
+                    return data.map((datum: JLPConstructorStandingItem, index: number): TableRowData => ({
                         key: datum.Constructor.constructorId,
                         endpoint: datum.Constructor.name,
                         position: datum.position,
@@ -81,8 +96,10 @@ const CustomTable: React.FC<TableProps> = ({
                         wins: datum.wins,
                         points: datum.points
                     }));
-                case 'archiveSeasonRaces':
-                    return rawData.map((datum: any, index: number) => ({
+                }
+                case 'archiveSeasonRaces': {
+                    const data = rawData as JLPRaceResults[];
+                    return data.map((datum: JLPRaceResults, index: number): TableRowData => ({
                         key: datum.raceName,
                         endpoint: datum.raceName,
                         race: datum.raceName,
@@ -90,8 +107,10 @@ const CustomTable: React.FC<TableProps> = ({
                         second: `${datum.Results[1].Driver.givenName} ${datum.Results[1].Driver.familyName}`,
                         third: `${datum.Results[2].Driver.givenName} ${datum.Results[2].Driver.familyName}`
                     }));
-                case 'driver':
-                    return rawData.map((datum: any, index: number) => ({
+                }
+                case 'driver': {
+                    const data = rawData as JLPRaceResults[];
+                    return data.map((datum: JLPRaceResults, index: number): TableRowData => ({
                         key: datum.round,
                         endpoint: datum.raceName,
                         race: datum.raceName,
@@ -100,15 +119,18 @@ const CustomTable: React.FC<TableProps> = ({
                         points: datum.Results[0].points,
                         status: datum.Results[0].status,
                     }));
-                case 'constructor':
-                    return rawData.map((datum: any, index: number) => ({
+                }
+                case 'constructor': {
+                    const data = rawData as JLPRaceResults[];
+                    return data.map((datum: JLPRaceResults, index: number): TableRowData => ({
                         key: datum.round,
                         endpoint: datum.raceName,
                         race: datum.raceName,
                         best: `${datum.Results[0].Driver.givenName} ${datum.Results[0].Driver.familyName}`,
                         final: datum.Results[0].position,
-                        points: parseInt(datum.Results[0].points) + parseInt(datum.Results[1]?.points)
+                        points: Number.parseInt(datum.Results[0].points) + Number.parseInt(datum.Results[1]?.points)
                     }));
+                }
                 default:
                     return null;
             }
@@ -116,15 +138,14 @@ const CustomTable: React.FC<TableProps> = ({
     }, [rawData, type]);
 
     const items = useMemo(() => {
-        if (isPagination) {
-            setTotalPages(Math.ceil(data.length / rowsPerPage));
+        if (isPagination && data) {
+            const total = Math.ceil(data.length / rowsPerPage);
+            setTotalPages(total);
             const start = (page - 1) * rowsPerPage;
             const end = start + rowsPerPage;
-
             return data.slice(start, end);
-        } else {
-            return data;
         }
+        return data ?? [];
     }, [page, data, isPagination]);
 
     const classNames = useMemo(
@@ -175,7 +196,7 @@ const CustomTable: React.FC<TableProps> = ({
         const rowData = headers.reduce((acc, header) => {
             acc[header.key] = <SkeletonRow />;
             return acc;
-        }, { key: rowIndex });
+        }, { key: rowIndex } as { [key: string]: JSX.Element | number });
         return rowData;
     });
 
@@ -198,9 +219,9 @@ const CustomTable: React.FC<TableProps> = ({
                                 radius="md"
                                 variant="flat"
                                 page={page}
-                                total={totalPages!}
+                                total={totalPages}
                                 renderItem={renderPaginationStyle}
-                                onChange={(page: any) => setPage(page)}
+                                onChange={(page: SetStateAction<number>) => setPage(page)}
                             />
                         </div>
                     }
@@ -210,20 +231,27 @@ const CustomTable: React.FC<TableProps> = ({
                     </TableHeader>
                     {data ? (
                         <TableBody items={items}>
-                            {(item: any) => (
-                                <TableRow key={item.key} className={item.className} onClick={() => handleRowClick(item.endpoint)}>
-                                    {(columnKey) => {
-                                        let className = ""
-                                        if (type == "race") {
-                                            if (item.fastestLapClass !== "" && columnKey == "fastestLap") className = item.fastestLapClass;
-                                        }
-                                        return (
-                                            <TableCell className={className}>{getKeyValue(item, columnKey)}</TableCell>
-                                        )
-                                    }}
-                                </TableRow>
-                            )}
-                        </TableBody>
+                        {(item: TableRowData) => (
+                          <TableRow
+                            key={item.key}
+                            className={item.className}
+                            onClick={() => handleRowClick(item.endpoint ?? "")}
+                          >
+                            {(columnKey) => {
+                              const className =
+                                type === "race" && columnKey === "fastestLap" && item.fastestLapClass
+                                  ? (item.fastestLapClass as string)
+                                  : "";
+                      
+                              return (
+                                <TableCell className={className}>
+                                  {item[columnKey] ?? ""}
+                                </TableCell>
+                              );
+                            }}
+                          </TableRow>
+                        )}
+                      </TableBody>                      
                     ) : (
                         <TableBody items={skeletonRows}>
                             {(item: any) =>
@@ -253,7 +281,7 @@ const renderPaginationStyle = ({
 }: PaginationItemRenderProps) => {
     if (value === PaginationItemType.NEXT) {
         return (
-            <button key={key} className={cn(className, "bg-transparent min-w-8 w-8 h-8")} onClick={onNext}>
+            <button type="button" key={key} className={cn(className, "bg-transparent min-w-8 w-8 h-8")} onClick={onNext}>
                 <ChevronRight />
             </button>
         );
@@ -261,19 +289,20 @@ const renderPaginationStyle = ({
 
     if (value === PaginationItemType.PREV) {
         return (
-            <button key={key} className={cn(className, "bg-transparent min-w-8 w-8 h-8")} onClick={onPrevious}>
+            <button type="button" key={key} className={cn(className, "bg-transparent min-w-8 w-8 h-8")} onClick={onPrevious}>
                 <ChevronLeft />
             </button>
         );
     }
 
     if (value === PaginationItemType.DOTS) {
-        return <button key={key} className={className}>...</button>;
+        return <button type="button" key={key} className={className}>...</button>;
     }
 
     // cursor is the default item
     return (
         <button
+            type="button"
             ref={ref}
             key={key}
             className={cn(

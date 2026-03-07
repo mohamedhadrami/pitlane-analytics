@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import getPaginatedData from "../../paginatedData";
-import { CircuitKeys } from "@/interfaces/ergast";
+import { CircuitKeys } from "@/types/ergast";
 
 
 export async function GET(request: NextRequest) {

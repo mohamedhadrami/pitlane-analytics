@@ -1,26 +1,28 @@
 // @/components/drawers/ConstructorDrawer.tsx
 
-import React, { useState, useEffect } from "react";
-import { fetchConstructorResults } from "@/services/ergastApi";
-import { Link, Button, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
+import type React from "react";
+import { useState, useEffect } from "react";
+import { fetchConstructorResults } from "@/services/jolpicaApi";
+import { Link, Button, Tabs, Tab, Card, CardBody } from "@heroui/react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerFooter, DrawerOverlay } from "../ui/drawer";
 import { X, Minus } from "lucide-react";
 import { ConstructorHeader } from "@/utils/const";
 import CustomTable from "../tables/CustomTable";
+import type { JLPConstructorStandingItem, JLPRaceResults } from "@/types/jolpica.types";
 
 interface DriverDrawerProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
-  constructor: any;
+  constructorTeam: JLPConstructorStandingItem;
   teamName: string;
 }
 
-const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, constructor, teamName }) => {
-  const [results, setResults] = useState<any>();
+const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, constructorTeam, teamName }) => {
+  const [results, setResults] = useState<JLPRaceResults[]>([]);
   
   useEffect(() => {
     const fetchData = async () => {
-      const data = await fetchConstructorResults(constructor.Constructor.constructorId, undefined, true);
+      const data = await fetchConstructorResults(constructorTeam.Constructor.constructorId, undefined, true);
       setResults(data?.MRData.RaceTable.Races);
     }
     fetchData();
@@ -34,7 +36,7 @@ const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, con
             <DrawerHeader className="flex w-full justify-evenly">
               <div className="mr-auto">
                 <DrawerTitle>
-                  <Link href={`/constructor/${constructor.Constructor.constructorId}`} className="text-white text-lg font-extralight" showAnchorIcon>
+                  <Link href={`/constructor/${constructorTeam.Constructor.constructorId}`} className="text-white text-lg font-extralight" showAnchorIcon>
                     {teamName}
                   </Link>
                 </DrawerTitle>
@@ -62,7 +64,7 @@ const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, con
                   </CardBody>
                 </Card>
               </Tab>
-              <Tab key="resutls-table" title="Results">
+              <Tab key="results-table" title="Results">
                 <CustomTable
                   rawData={results}
                   headers={ConstructorHeader}
@@ -74,7 +76,7 @@ const ConstructorDrawer: React.FC<DriverDrawerProps> = ({ isOpen, setIsOpen, con
           </div>
         </DrawerContent>
         <DrawerFooter>
-          <div className="h-2"></div>
+          <div className="h-2" />
         </DrawerFooter>
         <DrawerOverlay className="bg-[#e10600aa]" />
       </Drawer>

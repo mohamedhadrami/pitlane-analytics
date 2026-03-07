@@ -1,8 +1,8 @@
 // @/components/Dashboard/RaceStatus.tsx
 
-import { LiveArchiveStatus, LiveExtrapolatedClock, LiveHeartbeat, LiveLapCount, LiveTrackStatus } from "@/interfaces/liveTiming.type";
-import { Divider } from "@nextui-org/react";
-import React from 'react';
+import type { LiveArchiveStatus, LiveExtrapolatedClock, LiveHeartbeat, LiveLapCount, LiveTrackStatus } from "@/types/liveTiming.types";
+import { Divider } from "@heroui/react";
+import type React from 'react';
 
 interface RaceStatusProps {
     heartbeat: LiveHeartbeat;

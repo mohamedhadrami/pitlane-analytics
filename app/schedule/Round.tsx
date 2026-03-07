@@ -1,39 +1,40 @@
 // components/Round.tsx
 
-import React, { useState, useEffect } from "react";
-import { fetchRaceResults } from "../../services/ergastApi";
+import type React from "react";
+import { useState, useEffect } from "react";
+import { fetchRaceResults } from "../../services/jolpicaApi";
 import { fetchCountryFlagByName } from "../../services/countryApi";
-import { MeetingParams } from "../../interfaces/openF1";
-import { driverImage, trackDetailedImage, trackImage } from "../../utils/helpers";
-import { Minus, X } from "lucide-react";
-import { Image, Divider, Spacer, Button, Table, TableHeader, TableColumn, TableBody, TableCell, TableRow, Pagination, Link, Tabs, Tab, Card, CardBody } from "@nextui-org/react";
-import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerOverlay, DrawerTitle } from "@/components/ui/drawer";
+import type { OFMeeting } from "../../types/openF1.types";
+import { driverImage, trackImage } from "../../utils/helpers";
+import { Minus } from "lucide-react";
+import { Image, Divider, Spacer } from "@heroui/react";
 import RaceDrawer from "@/components/drawers/RaceDrawer";
+import type { JLPRace, JLPRaceResultsResponse, JLPResult } from "@/types/jolpica.types";
+import type { RCFlags } from "@/types/restCountries";
 
 function formatDateRange(startDate: string, endDate: string) {
   const options: Intl.DateTimeFormatOptions = { month: "short", day: "2-digit" };
   const formattedStartDate = new Date(startDate.replace(/-/g, "/")).toLocaleDateString("en-US", options);
   const formattedEndDate = new Date(endDate.replace(/-/g, "/")).toLocaleDateString("en-US", options);
-  const startMonthDay = formattedStartDate.substr(0, 3) + " " + formattedStartDate.substr(4);
-  const endMonthDay = formattedEndDate.substr(0, 3) + " " + formattedEndDate.substr(4);
+  const startMonthDay = `${formattedStartDate.substr(0, 3)} ${formattedStartDate.substr(4)}`;
+  const endMonthDay = `${formattedEndDate.substr(0, 3)} ${formattedEndDate.substr(4)}`;
   return (startMonthDay + (startMonthDay === endMonthDay ? "" : ` - ${endMonthDay}`));
 }
 
 
-const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceData, meetings }) => {
-  const [results, setResults] = useState<any>(null);
-  const [meeting, setMeeting] = useState<MeetingParams>();
-  const [raceDates, setRaceDates] = useState<any>(null);
-  const [flagData, setFlagData] = useState<any>(null);
+const Round: React.FC<{ raceData: JLPRace, meetings: OFMeeting[] }> = ({ raceData, meetings }) => {
+  const [results, setResults] = useState<JLPResult[]>([]);
+  const [meeting, setMeeting] = useState<OFMeeting>();
+  const [raceDates, setRaceDates] = useState<string>("");
+  const [flagData, setFlagData] = useState<RCFlags>();
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        const raceResults = await fetchRaceResults(
+        const raceResults: JLPRaceResultsResponse = await fetchRaceResults(
           raceData.round,
-          undefined,
-          true,
+          undefined
         );
         const parsedData = raceResults.MRData.RaceTable.Races[0].Results;
         setResults(parsedData);
@@ -42,7 +43,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
       }
     };
 
-    const raceDate = new Date(raceData.date + " " + raceData.time);
+    const raceDate = new Date(`${raceData.date} ${raceData.time}`);
     const currentDate = new Date();
 
     if (raceDate < currentDate) {
@@ -53,7 +54,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
   useEffect(() => {
     const getFlag = async () => {
       try {
-        let countryName = raceData.Circuit.Location.country;
+        const countryName = raceData.Circuit.Location.country;
         const flagApiData = await fetchCountryFlagByName(countryName);
         setFlagData(flagApiData);
       } catch (error) {
@@ -62,7 +63,7 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
     };
 
     getFlag();
-    setRaceDates(formatDateRange(raceData.FirstPractice.date, raceData.date));
+    if (raceData.FirstPractice) setRaceDates(formatDateRange(raceData.FirstPractice.date, raceData.date));
   }, [raceData]);
 
   useEffect(() => {
@@ -77,12 +78,16 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
   return (
     <>
       <div
-        className="flex flex-col justify-evenly 
-                  bg-gradient-to-b from-zinc-800 to-[#111]
-                  hover:scale-[0.99] 
-                  ml-auto w-full md:w-5/12 rounded-lg p-5"
+        className="bg-gradient-to-t from-zinc-700 to-[#222]
+             p-5 w-full
+             border-r-1 border-l-1"
         key={`${raceData.round}-container`}
         onClick={handleCardClick}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            handleCardClick();
+          }
+        }}
       >
         <div className="flex flex-row items-center justify-between">
           <p key={`${raceData.date}`} className="font-extralight">{raceDates}</p>
@@ -107,15 +112,17 @@ const Round: React.FC<{ raceData: any, meetings: MeetingParams[] }> = ({ raceDat
           <Image src={trackImage(raceData.Circuit.Location.locality, raceData.Circuit.Location.country)} alt="track image" />
         </div>
 
-        {results && <ResultsContainer results={results} />}
+        {results && meeting && <ResultsContainer meeting={meeting} results={results} />}
       </div>
-      <RaceDrawer
-        isOpen={openDrawer}
-        setIsOpen={setOpenDrawer}
-        raceData={raceData}
-        raceResults={results}
-        meeting={meeting!}
-      />
+      {meeting && (
+        <RaceDrawer
+          isOpen={openDrawer}
+          setIsOpen={setOpenDrawer}
+          raceData={raceData}
+          raceResults={results}
+          meeting={meeting}
+        />
+      )}
     </>
   );
 };
@@ -125,15 +132,15 @@ export default Round;
 
 
 
-const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
+const ResultsContainer: React.FC<{ meeting: OFMeeting; results: JLPResult[] }> = ({ meeting, results }) => {
   const driverClasses = "flex flex-col items-center gap-2"
   const driverImageClasses = "rounded-full"
 
   return (
     <div>
       <Divider className="my-3" />
-      <h3 key={`${results.round}-results-title`} className="text-center font-light text-lg m-3">Race Results</h3>
-      <div key={`${results.round}-results-container`} className="flex flex-row justify-center gap-5">
+      <h3 key={`${meeting.meeting_key}-results-title`} className="text-center font-light text-lg m-3">Race Results</h3>
+      <div key={`${meeting.meeting_key}-results-container`} className="flex flex-row justify-center gap-5">
         <div className={driverClasses}>
           <Image
             src={driverImage(
@@ -143,7 +150,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
             alt={`${results[1].Driver.givenName} ${results[1].Driver.familyName} driver image`}
             className={driverImageClasses}
           />
-          <span key={`${results.round}-2`} className="flex items-center">
+          <span key={`${meeting.meeting_key}-2`} className="flex items-center">
             <span className="font-extralight">2</span>
             <Spacer x={2} />
             <Divider orientation="vertical" className="h-5" />
@@ -160,7 +167,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
             alt={`${results[0].Driver.givenName} ${results[0].Driver.familyName} driver image`}
             className={`${driverImageClasses} w-32`}
           />
-          <span key={`${results.round}-2`} className="flex items-center">
+          <span key={`${meeting.meeting_key}-2`} className="flex items-center">
             <span className="font-extralight">1</span>
             <Spacer x={2} />
             <Divider orientation="vertical" className="h-5" />
@@ -177,7 +184,7 @@ const ResultsContainer: React.FC<{ results: any }> = ({ results }) => {
             alt={`${results[2].Driver.givenName} ${results[2].Driver.familyName} driver image`}
             className={driverImageClasses}
           />
-          <span key={`${results.round}-2`} className="flex items-center">
+          <span key={`${meeting.meeting_key}-2`} className="flex items-center">
             <span className="font-extralight">3</span>
             <Spacer x={2} />
             <Divider orientation="vertical" className="h-5" />

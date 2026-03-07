@@ -1,8 +1,8 @@
 // @/components/Live/SectorSegments.tsx
 
-import React from "react";
-import { segmentColor } from "../../interfaces/openF1";
-import { LiveTimingDataF1LineDataSectors } from "@/interfaces/liveTiming.type";
+import type React from "react";
+import { segmentColor } from "@/types/openF1.types";
+import type { LiveTimingDataF1LineDataSectors } from "@/types/liveTiming.types";
 
 const Segment: React.FC<{ segment: number }> = ({ segment }) => (
     <div
@@ -15,7 +15,7 @@ const Segment: React.FC<{ segment: number }> = ({ segment }) => (
 
 const SectorSegment: React.FC<{ sectors: LiveTimingDataF1LineDataSectors[] }> = ({ sectors }) => {
 
-    var arr = Array<number>(7).fill(2064);
+    const arr = Array<number>(7).fill(2064);
     /*
     {sectors.length === 0
                 ? arr.map((segment, index) => (
@@ -24,8 +24,8 @@ const SectorSegment: React.FC<{ sectors: LiveTimingDataF1LineDataSectors[] }> = 
     */
     const getSectorColor = (sector: LiveTimingDataF1LineDataSectors) => {
         if (sector.OverallFastest) return "#FF00FF";
-        else if (sector.PersonalFastest) return "#00FF00";
-        else return "#FFFF00"
+        if (sector.PersonalFastest) return "#00FF00";
+        return "#FFFF00"
     }
 
     const renderSegments = () => (
@@ -38,7 +38,7 @@ const SectorSegment: React.FC<{ sectors: LiveTimingDataF1LineDataSectors[] }> = 
                         ))}
                     </div>
                     <div style={{ color: getSectorColor(sector) }} className="text-left">{sector.Value}</div>
-                    <div  className="w-full h-1 rounded"></div>
+                    <div  className="w-full h-1 rounded" />
                 </div>
             ))}
         </div>

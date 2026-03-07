@@ -1,5 +1,7 @@
 // services/countryApi.ts
 
+import type { RCFlags } from "@/types/restCountries";
+
 const fetchRestCountryApi = async (endpoint: string) => {
     try {
         const response = await fetch(`https://restcountries.com/v3.1${endpoint}`);
@@ -11,7 +13,7 @@ const fetchRestCountryApi = async (endpoint: string) => {
     }
 }
 
-export const fetchCountryFlagByName = async (country: string) => {
+export const fetchCountryFlagByName = async (country: string): Promise<RCFlags> => {
     let countryName = country;
     if (countryName === "UK") countryName = "United Kingdom";
     else if (countryName === "China") countryName = "Zhōngguó";
@@ -38,7 +40,7 @@ export const fetchCountryFlagByDemonym = async (demonym: string) => {
 
 export const fetchCountryNameByCode = async (country_code: string) => {
     let endpoint = `/alpha/${country_code}`;
-    if (country_code == undefined) endpoint = "USA"
+    if (country_code === undefined) endpoint = "USA"
     const data = await fetchRestCountryApi(endpoint);
     const name = data[0]?.name.common;
     return name;

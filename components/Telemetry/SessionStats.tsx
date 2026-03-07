@@ -2,11 +2,12 @@
 
 "use client"
 
-import React, { useEffect, useState } from "react";
-import { Image, Accordion, AccordionItem, Card, CardBody, CardHeader, Divider } from "@nextui-org/react";
-import { MeetingParams, SessionParams } from "@/interfaces/openF1";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { Image, Accordion, AccordionItem, Card, CardBody, CardHeader, Divider } from "@heroui/react";
+import type { OFSession, OFMeeting } from "@/types/openF1.types";
 import { Thermometer, Droplets, ThermometerSun, AirVent, Wind, Milestone, MoveUp, CloudRainWind, Cloudy, CalendarFold } from "lucide-react";
-import { calculateWeatherStats } from "@/utils/telemetryUtils";
+import { calculateWeatherStats } from "@/utils/telemetry/telemetryUtils";
 import { fetchCountryFlagByName } from "@/services/countryApi";
 import { parseISODateAndTime, trackDetailedImage } from "@/utils/helpers";
 import CustomTable from "@/components/tables/CustomTable";
@@ -31,7 +32,8 @@ const SessionStats: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const flagApiData = await fetchCountryFlagByName(selectedMeeting?.country_name!);
+            if (!selectedMeeting) return;
+            const flagApiData = await fetchCountryFlagByName(selectedMeeting.country_name);
             setFlag(flagApiData);
             //const res = await fetch(`/api/db/tables/results?year=${selectedMeeting?.year}&name=${selectedMeeting?.selectedMeeting_name}`);
             //const data = await res.json();
@@ -44,8 +46,14 @@ const SessionStats: React.FC = () => {
 
     return (
         <div className="flex justify-center w-full max-w-screen-lg mx-auto">
-            <SessionStatsCards selectedSession={selectedSession!} selectedMeeting={selectedMeeting!} flag={flag} weatherAvg={weatherAvg} />
-
+            {selectedSession && selectedMeeting &&
+                <SessionStatsCards
+                    selectedSession={selectedSession}
+                    selectedMeeting={selectedMeeting}
+                    flag={flag}
+                    weatherAvg={weatherAvg}
+                />
+            }
             {results && show && (
                 <CustomTable rawData={results} headers={RaceHeaders} type='race2' />
             )}
@@ -55,7 +63,7 @@ const SessionStats: React.FC = () => {
 
 export default SessionStats;
 
-const SessionStatsContainer: React.FC<{ selectedSession: SessionParams, selectedMeeting: MeetingParams }> = ({ selectedSession, selectedMeeting }) => {
+const SessionStatsContainer: React.FC<{ selectedSession: OFSession, selectedMeeting: OFMeeting }> = ({ selectedSession, selectedMeeting }) => {
     return (
         <>
             <span className="text-center">{selectedMeeting?.meeting_official_name}</span>
@@ -63,14 +71,14 @@ const SessionStatsContainer: React.FC<{ selectedSession: SessionParams, selected
             <p>
                 Start:{" "}
                 {parseISODateAndTime(
-                    selectedSession.date_start!,
+                    selectedSession.date_start,
                     selectedSession.gmt_offset
                 )}
             </p>
             <p>
                 End:{" "}
                 {parseISODateAndTime(
-                    selectedSession.date_end!,
+                    selectedSession.date_end,
                     selectedSession.gmt_offset
                 )}
             </p>
@@ -78,7 +86,7 @@ const SessionStatsContainer: React.FC<{ selectedSession: SessionParams, selected
     )
 }
 
-const CircuitStatsContainer: React.FC<{ flag: any, selectedMeeting: MeetingParams }> = ({ flag, selectedMeeting }) => {
+const CircuitStatsContainer: React.FC<{ flag: any, selectedMeeting: OFMeeting }> = ({ flag, selectedMeeting }) => {
     return (
         <>
             <p>
@@ -128,8 +136,8 @@ const WeatherStatsContainer: React.FC<{ weatherAvg: any }> = ({ weatherAvg }) =>
 }
 
 const SessionStatsCards: React.FC<{
-    selectedSession: SessionParams,
-    selectedMeeting: MeetingParams,
+    selectedSession: OFSession,
+    selectedMeeting: OFMeeting,
     flag: any,
     weatherAvg: any
 }> = ({
@@ -147,7 +155,7 @@ const SessionStatsCards: React.FC<{
                     </CardHeader>
                     <Divider />
                     <CardBody className="font-extralight">
-                        <SessionStatsContainer selectedSession={selectedSession!} selectedMeeting={selectedMeeting!} />
+                        <SessionStatsContainer selectedSession={selectedSession} selectedMeeting={selectedMeeting} />
                     </CardBody>
                 </Card>
                 <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-transparent border border-default/75">
@@ -161,7 +169,7 @@ const SessionStatsCards: React.FC<{
                     </CardHeader>
                     <Divider />
                     <CardBody className="flex flex-col items-center font-extralight">
-                        <CircuitStatsContainer flag={flag} selectedMeeting={selectedMeeting!} />
+                        <CircuitStatsContainer flag={flag} selectedMeeting={selectedMeeting} />
                     </CardBody>
                 </Card>
                 <Card className="md:w-1/3 md:min-w-0 min-w-full rounded-lg bg-transparent border border-default/75">
@@ -181,8 +189,8 @@ const SessionStatsCards: React.FC<{
 
 
 const SessionStatsAccordian: React.FC<{
-    selectedSession: SessionParams,
-    selectedMeeting: MeetingParams,
+    selectedSession: OFSession,
+    selectedMeeting: OFMeeting,
     flag: any,
     weatherAvg: any
 }> = ({
@@ -237,7 +245,7 @@ const SessionStatsAccordian: React.FC<{
                         startContent={<CalendarFold className="mx-2" />}
                         subtitle={`Get information about the ${selectedMeeting.meeting_name} ${selectedSession.session_name}`}
                     >
-                        <SessionStatsContainer selectedSession={selectedSession!} selectedMeeting={selectedMeeting!} />
+                        <SessionStatsContainer selectedSession={selectedSession} selectedMeeting={selectedMeeting} />
                     </AccordionItem>
                     <AccordionItem
                         key="circuit" aria-label="Circuit" title="Circuit"
@@ -248,7 +256,7 @@ const SessionStatsAccordian: React.FC<{
                             src={flag?.png} />}
                         subtitle={`Get information about ${selectedMeeting.circuit_short_name}`}
                     >
-                        <CircuitStatsContainer flag={flag} selectedMeeting={selectedMeeting!} />
+                        <CircuitStatsContainer flag={flag} selectedMeeting={selectedMeeting} />
                     </AccordionItem>
                     <AccordionItem
                         key="weather" aria-label="Weather" title="Weather"

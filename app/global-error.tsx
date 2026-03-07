@@ -2,7 +2,7 @@
 
 "use client";
 
-import { Card, CardBody, ScrollShadow, Button } from "@nextui-org/react";
+import { Card, CardBody, ScrollShadow, Button } from "@heroui/react";
 import { useEffect } from "react";
 
 const GlobalError: React.FC<{
@@ -33,7 +33,7 @@ const GlobalError: React.FC<{
         className="flex mx-auto mt-5"
         color="primary"
         variant="ghost"
-        onClick={() => reset()}
+        onPress={() => reset()}
       >
         Try again
       </Button>

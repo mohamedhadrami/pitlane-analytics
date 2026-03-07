@@ -2,11 +2,12 @@
 
 "use client"
 
-import { DriverChartData } from '@/interfaces/custom';
-import { mvCircuit, trackElement } from '@/interfaces/multiviewer';
-import { LocationParams } from '@/interfaces/openF1';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import type { DriverChartData } from '@/types/custom';
+import type { mvCircuit, trackElement } from '@/types/multiviewer';
+import type { OFLocation } from '@/types/openF1.types';
 import { isValidColor } from '@/utils/helpers';
-import React, { useEffect, useState } from 'react';
 import { ScatterChart, Scatter, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import TrackVisualizerTooltip from './TrackVisualizerTooltip';
 import PindropShape from '../Pindrop';
@@ -151,8 +152,8 @@ const TrackVisualizer: React.FC<TrackVisualizerProps> = ({ circuitData, driverDa
                     {Array.from(driverData).map(([driverId, driver]) => {
                         const locationData = driver.locationData;
                         if (locationData && locationData.length > 0) {
-                            const rotatedLocationData = locationData.map((location: LocationParams) => {
-                                const rotatedPoint = rotatePoint(location.x!, location.y!, (rotation * Math.PI) / 180);
+                            const rotatedLocationData = locationData.map((location: OFLocation) => {
+                                const rotatedPoint = rotatePoint(location.x, location.y, (rotation * Math.PI) / 180);
                                 return { x: rotatedPoint.x, y: rotatedPoint.y };
                             });
 
@@ -166,9 +167,8 @@ const TrackVisualizer: React.FC<TrackVisualizerProps> = ({ circuitData, driverDa
                                     shape={() => <div />}
                                 />
                             );
-                        } else {
-                            return null;
                         }
+                        return null;
                     })}
 
                     <Scatter

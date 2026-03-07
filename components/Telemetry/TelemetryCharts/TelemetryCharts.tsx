@@ -1,10 +1,11 @@
 // @/components/Telemetry/TelemetryCharts.tsx
 
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 import { isValidColor, parseISOTimeFull } from '@/utils/helpers';
 import LapStatsTooltip from './TelemetryChartsTooltip';
-import { Popover, PopoverContent, PopoverTrigger, Switch } from '@nextui-org/react';
+import { Popover, PopoverContent, PopoverTrigger, Switch } from '@heroui/react';
 import { Cog } from 'lucide-react';
 import { useTelemetry } from '@/context/Telemetry/TelemetryContext';
 
@@ -106,7 +107,7 @@ const TelemetryCharts: React.FC = () => {
                 if (!lapStartDate) return; // Skip this driver if the start date is not valid
                 const carData = driverData.carData.find(data => data.date === date);
                 dataPoint["time"] = (new Date(carData?.date!).getTime() - lapStartDate) / 1000;
-                dataPoint[driverData.driver.name_acronym!] = carData ? carData[parameter as keyof typeof carData] : null;
+                dataPoint[driverData.driver.name_acronym] = carData ? carData[parameter as keyof typeof carData] : null;
             });
             return dataPoint;
         });
@@ -118,7 +119,7 @@ const TelemetryCharts: React.FC = () => {
             const dataPoint: { [key: string]: any } = { date };
             driversData.forEach((driverData, driverKey) => {
                 const carData = driverData.carData.find(data => data.date === date);
-                dataPoint[driverData.driver.name_acronym!] = carData ? carData[parameter as keyof typeof carData] : null;
+                dataPoint[driverData.driver.name_acronym] = carData ? carData[parameter as keyof typeof carData] : null;
             });
             return dataPoint;
         });

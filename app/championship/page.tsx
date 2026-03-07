@@ -4,19 +4,20 @@ import { useEffect, useState } from "react";
 import {
     fetchCurrentConstructors,
     fetchCurrentDrivers,
-} from "../../services/ergastApi";
+} from "@/services/jolpicaApi";
 import DriverChampionshipCard from "./DriverChampionshipCard";
 import ConstructorChampionshipCard from "./ConstructorChampionshipCard";
-import { DriverParams } from "@/interfaces/openF1";
+import type { OFDriver, OFDriverParams } from "@/types/openF1.types";
 import { fetchDrivers } from "@/services/openF1Api";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
+import type { JLPDriverStandingsResponse, JLPConstructorStandingsResponse, JLPConstructorStandingItem, JLPDriverStandingItem } from "@/types/jolpica.types";
 
 
 const Page: React.FC = () => {
 
-    const [driverData, setDriverData] = useState<any>(null);
-    const [drivers, setDrivers] = useState<DriverParams[]>([]);
-    const [constructorData, setConstructorData] = useState<any>(null);
+    const [driverData, setDriverData] = useState<JLPDriverStandingsResponse>();
+    const [drivers, setDrivers] = useState<OFDriver[]>([]);
+    const [constructorData, setConstructorData] = useState<JLPConstructorStandingsResponse>();
     const [year, setYear] = useState<string>("");
 
     useEffect(() => {
@@ -28,7 +29,7 @@ const Page: React.FC = () => {
                 setConstructorData(apiConstructorData);
                 setYear(apiDriverData.MRData.StandingsTable.season);
 
-                const params: DriverParams = {
+                const params: OFDriverParams = {
                     session_key: "latest"
                 }
                 const openApiDrivers = await fetchDrivers(params);
@@ -47,25 +48,26 @@ const Page: React.FC = () => {
         <>
             <h1 className="text-3xl font-light py-5 text-center">Driver Standings</h1>
             <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-8 px-15 pb-30">
-                {drivers.length > 1 && driverData?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map((driver: any, index: number) => (
-                    <div key={index} className="flex justify-center">
-                        <DriverChampionshipCard
-                            key={`${driver.Driver.code}_champ-card`}
-                            driver={driver}
-                            drivers={drivers}
-                            year={year} />
-                    </div>
-                ))}
+                {drivers.length > 1 && driverData?.MRData.StandingsTable.StandingsLists[0].DriverStandings.map(
+                    (driver: JLPDriverStandingItem) => (
+                        <div key={driver.Driver.code} className="flex justify-center">
+                            <DriverChampionshipCard
+                                key={`${driver.Driver.code}_champ-card`}
+                                driver={driver}
+                                drivers={drivers}
+                                year={year} />
+                        </div>
+                    ))}
             </div>
             <Divider className="m-5 w-3/4 mx-auto" />
             <h1 className="text-3xl font-light py-5 text-center">Constructors Standings</h1>
             <div className="max-w-screen-xl mx-auto flex flex-wrap justify-center gap-8 px-15 pb-30">
                 {drivers.length > 1 && constructorData?.MRData.StandingsTable.StandingsLists[0].ConstructorStandings.map(
-                    (constructor: any, index: number) => (
-                        <div key={index} className="flex justify-center">
+                    (constructorTeam: JLPConstructorStandingItem) => (
+                        <div key={constructorTeam.Constructor.constructorId} className="flex justify-center">
                             <ConstructorChampionshipCard
-                                key={`${constructor.Constructor.constructorId}_champ-card`}
-                                constructor={constructor}
+                                key={`${constructorTeam.Constructor.constructorId}_champ-card`}
+                                constructorTeam={constructorTeam}
                                 drivers={drivers}
                                 year={year}
                             />

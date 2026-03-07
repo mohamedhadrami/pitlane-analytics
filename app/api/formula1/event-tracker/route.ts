@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
 
     const searchParams = new URLSearchParams(request.nextUrl.searchParams);
     const meetingKey = searchParams.get('meetingKey');
-    let url;
+    let url: string;
 
     if (!meetingKey) {
         url = "https://api.formula1.com/v1/event-tracker";
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     const headers = {
-        apikey: 'qPgPPRJyGCIPxFT3el4MF7thXHyJCzAP',
+        apikey: 'xZ7AOODSjiQadLsIYWefQrpCSQVDbHGC',
         locale: 'en'
     };
 

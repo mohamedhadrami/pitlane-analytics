@@ -1,6 +1,7 @@
 // @/components/Telemetry/TelemetryStepManager.tsx
 
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import SelectionPrompt from "./SelectionPrompt";
@@ -8,7 +9,7 @@ import DriverSelection from "./DriverSelection";
 import LapTimesLineChart from "./LapTimes/LapTimesLineChart";
 import { CalendarDays, MapPin, Timer } from "lucide-react";
 import TelemetryCharts from "./TelemetryCharts/TelemetryCharts";
-import { Divider } from "@nextui-org/react";
+import { Divider } from "@heroui/react";
 import StatsDriverView from "./Views/StatsDriversView";
 import { useHandleCurrentStage } from "@/hooks/Telemetry/useTelemetryUI";
 import { TelemetryStage, useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext";
@@ -112,6 +113,7 @@ const TelemetryStepManager: React.FC = () => {
                     </AnimatePresence>
                 )
             case TelemetryStage.StatsDrivers:
+            case TelemetryStage.DriverLap:
                 return (
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -120,42 +122,41 @@ const TelemetryStepManager: React.FC = () => {
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: exitX }}
                             transition={commonTransition}
-                            className="flex items-center justify-center w-full max-h-full"
+                            className="flex flex-row flex-grow overflow-hidden"
                         >
                             <StatsDriverView />
                         </motion.div>
                     </AnimatePresence>
                 );
-            case TelemetryStage.DriverLap:
             case TelemetryStage.LapTelemetry:
                 return (
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={currentStage}
-                            initial={{ opacity: 0, x: initialX }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: exitX }}
-                            transition={commonTransition}
-                            className="flex flex-grow"
-                        >
-                            <AnimatePresence mode="wait">
+                    <div className="flex flex-grow">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`${currentStage}-left`}
+                                initial={{ opacity: 0, x: -100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                                transition={{ duration: 0.5 }}
+                                className="w-1/2"
+                            >
                                 {renderLeftComponent()}
-                            </AnimatePresence>
-                            <Divider orientation="vertical" className="h-full" />
-                            <AnimatePresence mode="wait">
-                                <motion.div
-                                    key={currentStage + "-right"}
-                                    initial={{ opacity: 0, y: exitX }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: initialX }}
-                                    transition={commonTransition}
-                                    className="w-full"
-                                >
-                                    {renderRightComponent()}
-                                </motion.div>
-                            </AnimatePresence>
-                        </motion.div>
-                    </AnimatePresence>
+                            </motion.div>
+                        </AnimatePresence>
+                        <Divider orientation="vertical" className="h-full" />
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`${currentStage}-right`}
+                                initial={{ opacity: 0, x: 100 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -100 }}
+                                transition={{ duration: 0.5 }}
+                                className="w-1/2"
+                            >
+                                {renderRightComponent()}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
                 );
             case TelemetryStage.Telemetry:
                 return <TelemetryCharts />;

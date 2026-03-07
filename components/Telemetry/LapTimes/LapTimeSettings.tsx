@@ -1,6 +1,6 @@
 // @/components/Telemetry/LapTimeSettings.tsx
 
-import { Input, Popover, PopoverTrigger, PopoverContent, Switch, Divider, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem, Select, SelectItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Input, Popover, PopoverTrigger, PopoverContent, Switch, Divider, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem, Select, SelectItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@heroui/react";
 import { Cog, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -66,7 +66,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         onClear={() => setZscoreThreshold(3)}
                         isInvalid={zscoreThreshold < 0}
                         errorMessage="Value must be greater than zero"
-                        onChange={(e) => setZscoreThreshold(parseFloat(e.target.value))}
+                        onChange={(e) => setZscoreThreshold(Number.parseFloat(e.target.value))}
                         size="sm"
                     />
                 )
@@ -80,7 +80,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         onClear={() => setModZscoreThreshold(3)}
                         isInvalid={modZscoreThreshold < 0}
                         errorMessage="Value must be greater than zero"
-                        onChange={(e) => setModZscoreThreshold(parseFloat(e.target.value))}
+                        onChange={(e) => setModZscoreThreshold(Number.parseFloat(e.target.value))}
                         size="sm"
                     />
                 )
@@ -98,7 +98,7 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         onClear={() => setIqrMultiplier(1.5)}
                         isInvalid={iqrMultiplier < 0}
                         errorMessage="Value must be greater than zero"
-                        onChange={(e) => setIqrMultiplier(parseFloat(e.target.value))}
+                        onChange={(e) => setIqrMultiplier(Number.parseFloat(e.target.value))}
                         size="sm"
                     />
                 )

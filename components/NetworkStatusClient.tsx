@@ -1,7 +1,7 @@
 // @/components/NetworkStatusClient.tsx
 "use client";
 
-import React from "react";
+import type React from "react";
 import NetworkStatus from "@/components/NetworkStatus";
 
 const NetworkStatusClient: React.FC = () => {

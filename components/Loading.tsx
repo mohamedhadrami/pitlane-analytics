@@ -1,7 +1,7 @@
 // component/Loading.tsx
 
-import React from "react";
-import { Triangle } from "react-loader-spinner";
+import type React from "react";
+import { Triangle } from "./spinners/Triangle";
 
 const Loading: React.FC<{ size?: number }> = ({ size }) => {
   return (

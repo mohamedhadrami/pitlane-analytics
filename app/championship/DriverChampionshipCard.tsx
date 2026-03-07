@@ -1,10 +1,11 @@
 // components/Championships/DriverChampionshipCard.tsx
 
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 import styled from "styled-components";
-import { fetchCountryNameByCode } from "../../services/countryApi";
-import { DriverParams } from "../../interfaces/openF1";
-import { Image, Divider, Spacer } from "@nextui-org/react";
+import { fetchCountryNameByCode } from "@/services/countryApi";
+import type { OFDriver } from "@/types/openF1.types";
+import { Image, Divider, Spacer } from "@heroui/react";
 import {
   driverImage,
   flagImage,
@@ -14,13 +15,14 @@ import {
   teamNameConvertor,
 } from "../../utils/helpers";
 import DriverDrawer from "@/components/drawers/DriverDrawer";
+import type { JLPDriverStandingItem } from "@/types/jolpica.types";
 
 const DriverChampionshipCard: React.FC<{
-  driver: any;
-  drivers: DriverParams[];
+  driver: JLPDriverStandingItem;
+  drivers: OFDriver[];
   year: string;
 }> = ({ driver, drivers, year }) => {
-  const [driverData, setDriverData] = useState<DriverParams>();
+  const [driverData, setDriverData] = useState<OFDriver>();
   const [countryName, setCountryName] = useState<string>("");
   const [teamColor, setTeamColor] = useState<string>("");
   const [numberUrl, setNumberUrl] = useState<string>("");
@@ -35,10 +37,11 @@ const DriverChampionshipCard: React.FC<{
   useEffect(() => {
     const fetchData = async () => {
       if (drivers) {
-        const apiDriverData: DriverParams | undefined = drivers.find(v => v.name_acronym === driver.Driver.code);
+        const apiDriverData: OFDriver | undefined = drivers.find(v => v.name_acronym === driver.Driver.code);
         setDriverData(apiDriverData);
-        if (apiDriverData != undefined) {
-          const countryCode: string = apiDriverData.country_code!;
+        if (apiDriverData !== undefined) {
+          const countryCode: string | undefined = apiDriverData.country_code;
+          if (!countryCode) return;
           const name = await fetchCountryNameByCode(countryCode);
           setCountryName(name);
           setTeamColor(
@@ -150,6 +153,6 @@ const CardContainer = styled.div<{ bordercolor: string }>`
   
   &:hover ${DriverImage} {
     ${(props) => `--tw-gradient-from: ${props.bordercolor} var(--tw-gradient-from-position);`}
-    ${(props) => `--tw-gradient-to: #111 var(--tw-gradient-to-position);`}
+    ${(props) => "--tw-gradient-to: #111 var(--tw-gradient-to-position);"}
   }
 `;
