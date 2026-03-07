@@ -1,26 +1,19 @@
 // @/components/Telemetry/Views/StatsDriverView.tsx
 
-import { Divider, ScrollShadow, Tab, Tabs } from "@nextui-org/react";
+import { Card, CardBody, Divider, ScrollShadow, Tab, Tabs } from "@nextui-org/react";
 import SessionStats from "../SessionStats";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import DriverSelection from "../DriverSelection";
 import TyreStrategy from "../TyreStrategy";
-import LapTimesLineChart from "../LapTimes/LapTimesLineChart";
-
 
 const StatsDriverView: React.FC = () => {
-
-    const {
-        isShowDriverSelect,
-        drivers,
-        selectedDrivers,
-    } = useTelemetry();
+    const { isShowDriverSelect, drivers, selectedDrivers } = useTelemetry();
 
     return (
-        <>
+        <div className="flex flex-row w-full max-h-full">
             <div className="w-1/4 border-r border-default/50">
                 {isShowDriverSelect && drivers && selectedDrivers && (
-                    <div className="">
+                    <div className="h-full">
                         <DriverSelection />
                     </div>
                 )}
@@ -28,12 +21,11 @@ const StatsDriverView: React.FC = () => {
             <div className="flex-grow h-full">
                 <Dash11 />
             </div>
-        </>
-    )
-}
+        </div>
+    );
+};
 
 export default StatsDriverView;
-
 
 const Dash11: React.FC = () => {
     const {
@@ -47,44 +39,29 @@ const Dash11: React.FC = () => {
     } = useTelemetry();
 
     return (
-        <>
-            <div className="min-h-1/2 flex flex-grow">
+        <div className="flex flex-col">
+            <div className="h-1/2">
                 {isShowSession && selectedMeeting && selectedSession && weather && (
                     <SessionStats />
                 )}
             </div>
             <Divider />
-            <div className="h-1/2">
-                <ScrollShadow hideScrollBar className="">
+            <div className="h-1/2 overflow-hidden">
+                <ScrollShadow hideScrollBar className="h-full">
                     {isShowPitStrategy && stints && drivers && (
-                        <div className="">
-                            <Tabs className="" color="primary">
-                                <Tab key="tyre-strategy" title="Tyre Strategy" className="">
+                        <div className="h-full">
+                            <Tabs className="h-full" color="primary">
+                                <Tab key="tyre-strategy" title="Tyre Strategy" className="h-full">
                                     <TyreStrategy stints={stints} drivers={drivers} />
                                 </Tab>
-                                <Tab key="results" title="Results" className="">
+                                <Tab key="results" title="Results" className="h-full">
+                                    {/* Content for Results */}
                                 </Tab>
                             </Tabs>
                         </div>
                     )}
                 </ScrollShadow>
             </div>
-        </>
-    )
-}
-
-const Dash12: React.FC = () => {
-    const {
-        raceControl,
-        selectedDrivers,
-        isShowLapTimes,
-    } = useTelemetry();
-
-    return (
-        <>
-            {isShowLapTimes && selectedDrivers && raceControl && (
-                <LapTimesLineChart />
-            )}
-        </>
-    )
-}
+        </div>
+    );
+};

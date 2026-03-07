@@ -1,6 +1,6 @@
 // @/components/Telemetry/LapTimeSettings.tsx
 
-import { Input, Popover, PopoverTrigger, PopoverContent, Switch, Divider, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import { Input, Popover, PopoverTrigger, PopoverContent, Switch, Divider, Dropdown, DropdownTrigger, Button, DropdownMenu, DropdownItem, Select, SelectItem, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
 import { Cog, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -62,6 +62,8 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         label="Z-Score Threshold"
                         type="number"
                         value={zscoreThreshold.toString()}
+                        isClearable
+                        onClear={() => setZscoreThreshold(3)}
                         isInvalid={zscoreThreshold < 0}
                         errorMessage="Value must be greater than zero"
                         onChange={(e) => setZscoreThreshold(parseFloat(e.target.value))}
@@ -74,6 +76,8 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         label="Modified Z-Score Threshold"
                         type="number"
                         value={modZscoreThreshold.toString()}
+                        isClearable
+                        onClear={() => setModZscoreThreshold(3)}
                         isInvalid={modZscoreThreshold < 0}
                         errorMessage="Value must be greater than zero"
                         onChange={(e) => setModZscoreThreshold(parseFloat(e.target.value))}
@@ -90,6 +94,8 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                         label="IQR Multiplier"
                         type="number"
                         value={iqrMultiplier.toString()}
+                        isClearable
+                        onClear={() => setIqrMultiplier(1.5)}
                         isInvalid={iqrMultiplier < 0}
                         errorMessage="Value must be greater than zero"
                         onChange={(e) => setIqrMultiplier(parseFloat(e.target.value))}
@@ -98,125 +104,145 @@ const LapTimeSettings: React.FC<LapTimeSettingsProps> = ({
                 )
         }
     };
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     return (
         <div className="align-middle">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.8 }} // Initial animation values
-                animate={{ opacity: 1, scale: 1 }}    // Animation values to animate to
-                transition={{ duration: 0.5 }}        // Transition duration
-            >
-                <Popover
-                    placement="right"
-                    showArrow={true}
-                    motionProps={{
-                        variants: {
-                            enter: {
-                                opacity: 1,
-                                scale: 1,
-                                transition: {
-                                    opacity: { duration: 0.8 },
-                                    scale: { duration: 0.8, ease: "easeOut" }
-                                }
-                            },
-                            exit: {
-                                opacity: 0,
-                                scale: 0.8,
-                                transition: {
-                                    opacity: { duration: 0.2 },
-                                    scale: { duration: 0.2, ease: "easeOut" }
-                                }
+            <div className="flex flex-wrap gap-3">
+                <Button
+                    variant="flat"
+                    onPress={onOpen}
+                    isIconOnly
+                    className="capitalize"
+                >
+                    <Cog className="rotate-0 hover:rotate-180 transition-transform duration-700 ease-in-out" />
+                </Button>
+            </div>
+            <Modal
+                backdrop="blur"
+                isOpen={isOpen}
+                onClose={onClose}
+                className="border border-default/75 bg-"
+                radius="sm"
+                motionProps={{
+                    variants: {
+                        enter: {
+                            opacity: 1,
+                            scale: 1,
+                            transition: {
+                                opacity: { duration: 1 },
+                                scale: { duration: 0.4, ease: "easeOut" }
+                            }
+                        },
+                        exit: {
+                            opacity: 0,
+                            scale: 0.8,
+                            transition: {
+                                opacity: { duration: 0.2 },
+                                scale: { duration: 0.2, ease: "easeOut" }
                             }
                         }
-                    }}
-                >
-
-                    <PopoverTrigger>
-                            <Cog className="rotate-0 hover:rotate-180 transition-transform duration-700 ease-in-out" />
-                    </PopoverTrigger>
-                    <PopoverContent className="bg-gradient-to-tl from-zinc-800 to-[#111]">
-                            <div className="px-1 py-2 flex flex-col font-thin gap-2">
-                                <Switch
-                                    isSelected={isRaceControl}
-                                    onValueChange={setIsRaceControl}
-                                    size="sm"
-                                >
-                                    Race Control
-                                </Switch>
-                                <Switch
-                                    isSelected={isTyres}
-                                    onValueChange={setIsTyres}
-                                    size="sm"
-                                >
-                                    Tyres
-                                </Switch>
-                                <Divider />
-                                <Switch
-                                    isSelected={isOutlierDetection}
-                                    onValueChange={setIsOutlierDetection}
-                                    size="sm"
-                                >
-                                    Outlier Detection
-                                </Switch>
-                                {isOutlierDetection && (
-                                    <>
-                                        <Dropdown>
-                                            <DropdownTrigger>
-                                                <Button
-                                                    variant="ghost"
+                    }
+                }}
+            >
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalBody>
+                                <div className="px-1 py-2 flex flex-col font-thin gap-2">
+                                    <Switch
+                                        isSelected={isRaceControl}
+                                        onValueChange={setIsRaceControl}
+                                        size="sm"
+                                    >
+                                        Race Control
+                                    </Switch>
+                                    <Switch
+                                        isSelected={isTyres}
+                                        onValueChange={setIsTyres}
+                                        size="sm"
+                                    >
+                                        Tyres
+                                    </Switch>
+                                    <Divider />
+                                    <Switch
+                                        isSelected={isOutlierDetection}
+                                        onValueChange={setIsOutlierDetection}
+                                        size="sm"
+                                    >
+                                        Outlier Detection
+                                    </Switch>
+                                    {isOutlierDetection && (
+                                        <>
+                                            <Dropdown>
+                                                <DropdownTrigger>
+                                                    <Button
+                                                        variant="ghost"
+                                                        color="primary"
+                                                        className="capitalize rounded-small"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                    >
+                                                        {methods.find(method => method.key === outlierMethod)?.label} <ChevronDown className="ml-auto" />
+                                                    </Button>
+                                                </DropdownTrigger>
+                                                <DropdownMenu
+                                                    aria-label={`Outlier Method Selection`}
+                                                    variant="solid"
                                                     color="primary"
-                                                    className="capitalize rounded-small"
+                                                    selectionMode="single"
+                                                    onAction={(key) => {
+                                                        setOutlierMethod(key.toString());
+                                                    }}
+                                                    selectedKeys={[outlierMethod]}
+                                                    items={methods}
                                                 >
-                                                    {methods.find(method => method.key === outlierMethod)?.label} <ChevronDown className="ml-auto" />
-                                                </Button>
-                                            </DropdownTrigger>
-                                            <DropdownMenu
-                                                aria-label={`Outlier Method Selection`}
-                                                variant="solid"
-                                                color="primary"
-                                                selectionMode="single"
-                                                onAction={(key) => setOutlierMethod(key.toString())}
-                                                items={methods}
-                                            >
-                                                {(item) => (
-                                                    <DropdownItem key={item.key}>{item.label}</DropdownItem>
-                                                )}
-                                            </DropdownMenu>
-                                        </Dropdown>
-                                        <Input
-                                            label="Lower Threshold"
-                                            type="number"
-                                            value={
-                                                customLowerThreshold !== -1
-                                                    ? customLowerThreshold.toString()
-                                                    : defaultThresholds[0].toString()
-                                            }
-                                            onChange={(e) =>
-                                                setCustomLowerThreshold(parseFloat(e.target.value))
-                                            }
-                                            size="sm"
-                                        />
-                                        <Input
-                                            label="Upper Threshold"
-                                            type="number"
-                                            value={
-                                                customUpperThreshold !== -1
-                                                    ? customUpperThreshold.toString()
-                                                    : defaultThresholds[1].toString()
-                                            }
-                                            onChange={(e) =>
-                                                setCustomUpperThreshold(parseFloat(e.target.value))
-                                            }
-                                            size="sm"
-                                        />
-                                        {renderOutlierMethod()}
-                                    </>
-                                )}
-                            </div>
-                    </PopoverContent>
-                </Popover>
-            </motion.div>
+                                                    {(item) => (
+                                                        <DropdownItem key={item.key}>{item.label}</DropdownItem>
+                                                    )}
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                            <Input
+                                                label="Lower Threshold"
+                                                type="number"
+                                                value={
+                                                    customLowerThreshold !== -1
+                                                        ? customLowerThreshold.toString()
+                                                        : defaultThresholds[0].toString()
+                                                }
+                                                isClearable
+                                                onClear={() => setCustomLowerThreshold(-1)}
+                                                onChange={(e) =>
+                                                    setCustomLowerThreshold(parseFloat(e.target.value))
+                                                }
+                                                size="sm"
+                                            />
+                                            <Input
+                                                label="Upper Threshold"
+                                                type="number"
+                                                value={
+                                                    customUpperThreshold !== -1
+                                                        ? customUpperThreshold.toString()
+                                                        : defaultThresholds[1].toString()
+                                                }
+                                                isClearable
+                                                onClear={() => setCustomUpperThreshold(-1)}
+                                                onChange={(e) =>
+                                                    setCustomUpperThreshold(parseFloat(e.target.value))
+                                                }
+                                                size="sm"
+                                            />
+                                            {renderOutlierMethod()}
+                                        </>
+                                    )}
+                                </div>
+                            </ModalBody>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
-    )
+    );
 }
 
 export default LapTimeSettings;

@@ -9,6 +9,7 @@ import { Card, CardBody, Image } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import { Watch } from "react-loader-spinner";
 import Link from 'next/link';
+import { useFooter } from "@/context/FooterContext";
 
 interface CountdownTimerProps {
   weeks: number;
@@ -56,6 +57,12 @@ const CountdownTimer: React.FC<{ timeRemaining: CountdownTimerProps }> = ({ time
 }
 
 const Home: React.FC = () => {
+  const { setFooterVisible } = useFooter();
+  useEffect(() => {
+    setFooterVisible(true);
+    return () => setFooterVisible(false);
+  }, [setFooterVisible]);
+
   const [data, setData] = useState<any>();
   const [currentRace, setCurrentRace] = useState<any>();
   const [nextRaceIndex, setNextRaceIndex] = useState<number>(0);
@@ -195,7 +202,7 @@ const Home: React.FC = () => {
             ))}
           </>
         ) :
-          <p>No news available at the moment.</p>
+          <p>No news available at the moment. Implement new event tracker data</p>
         }
       </div>
     </div >

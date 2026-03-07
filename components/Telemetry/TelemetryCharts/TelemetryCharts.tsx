@@ -6,7 +6,7 @@ import { isValidColor, parseISOTimeFull } from '@/utils/helpers';
 import LapStatsTooltip from './TelemetryChartsTooltip';
 import { Popover, PopoverContent, PopoverTrigger, Switch } from '@nextui-org/react';
 import { Cog } from 'lucide-react';
-import { useTelemetry } from '@/context/TelemetryContext';
+import { useTelemetry } from '@/context/Telemetry/TelemetryContext';
 
 
 const TelemetryCharts: React.FC = () => {

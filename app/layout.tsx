@@ -1,13 +1,11 @@
 import React from "react";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import CustomNavbar from "@/components/Navigation/Navigator";
+import Navigator from "@/components/Navigation/Navigator";
 import { Providers } from "./providers";
 import NetworkStatusClient from "@/components/NetworkStatusClient";
 import { Toaster } from "@/components/ui/sonner";
 import { Metadata } from "next";
-import { Link } from "@nextui-org/react";
-import Sidebar from "@/components/Navigation/Sidebar";
 import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -43,7 +41,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <Providers>
-          <CustomNavbar />
+          <Navigator />
           <div className="sm:ml-16">
             {children}
             <Footer />

@@ -3,12 +3,12 @@
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Info, RotateCcw } from "lucide-react";
 import TelemetryBreadcrumbs from "./TelemetryBreadcrumbs";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { Button, Divider, Image } from "@nextui-org/react";
 import { fetchCountryFlagByName } from "@/services/countryApi";
 import { useState, useEffect } from "react";
 import { useHandleNextStage, useHandlePreviousStage } from "@/hooks/Telemetry/useTelemetryUI";
-import { useTelemetryUI } from "@/context/TelemetryUIContext";
+import { useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext";
 
 const Header: React.FC = () => {
 
@@ -16,11 +16,6 @@ const Header: React.FC = () => {
     const { previousStage, nextStage } = useTelemetryUI();
     const handleNextStage = useHandleNextStage();
     const handlePreviousStage = useHandlePreviousStage();
-
-    useEffect(() => {
-        console.log(previousStage)
-        console.log(nextStage)
-    }, [previousStage, nextStage])
 
     const [flag, setFlag] = useState<any>(null);
 
@@ -67,7 +62,7 @@ const Header: React.FC = () => {
                                 {`${selectedMeeting.location}, ${selectedMeeting.country_name}`}
                             </p>
                             <Image
-                                className="rounded-md"
+                                className="rounded-md border border-default-100"
                                 alt="flag image"
                                 width={40}
                                 src={flag?.png} />

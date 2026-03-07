@@ -7,31 +7,35 @@ import { fetchCircuitByKey } from "@/services/mvApi";
 import { delay } from "@/utils/helpers";
 import { calculateLapTime } from "@/utils/telemetryUtils";
 import { toast } from "sonner";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { DriverChartData } from "@/interfaces/custom";
 
 
 
-export const useFetchYears = () => {
+export const useFetchYears = (paramsProcessed: boolean) => {
     const { setYears } = useTelemetry();
 
     useEffect(() => {
+        if (!paramsProcessed) return;
+
         const currentYear = new Date().getFullYear();
         const availableYears = Array.from(
             { length: currentYear - 2022 },
             (_, index) => (currentYear - index).toString()
         );
         setYears(availableYears);
-    }, []);
+    }, [paramsProcessed, setYears]);
 
 };
 
 
 
-export const useFetchMeetings = () => {
+export const useFetchMeetings = (paramsProcessed: boolean) => {
     const { selectedYear, setMeetings, setSelectedMeetingKey } = useTelemetry();
 
     useEffect(() => {
+        if (!paramsProcessed) return;
+
         if (!selectedYear) {
             setMeetings([]);
             setSelectedMeetingKey(undefined);
@@ -41,7 +45,7 @@ export const useFetchMeetings = () => {
         const fetchData = async () => {
             const params: MeetingParams = { year: selectedYear };
             const fetchedMeetings = await fetchMeeting(params);
-            if (fetchedMeetings.length === 0) throw new Error("No meetings fetched. Checked if year is within the correct range")
+            if (fetchedMeetings.length === 0) throw new Error("No meetings fetched. Check if the year is correct.");
             setMeetings(fetchedMeetings);
         };
 
@@ -52,14 +56,13 @@ export const useFetchMeetings = () => {
             error: (e: any) => `${e.message}`,
         });
 
-    }, [selectedYear]);
-
+    }, [paramsProcessed, selectedYear, setMeetings, setSelectedMeetingKey]);
 };
 
 
 
 
-export const useFetchSessions = () => {
+export const useFetchSessions = (paramsProcessed: boolean) => {
     const {
         meetings,
         selectedMeetingKey,
@@ -69,6 +72,8 @@ export const useFetchSessions = () => {
     } = useTelemetry();
 
     useEffect(() => {
+        if (!paramsProcessed) return;
+
         if (!selectedMeetingKey || !meetings) {
             setSelectedMeeting(undefined);
             setSessions([]);
@@ -91,7 +96,7 @@ export const useFetchSessions = () => {
             success: `Sessions loaded successfully!`,
             error: (e: any) => `${e.message}`,
         });
-    }, [selectedMeetingKey, meetings]);
+    }, [paramsProcessed, selectedMeetingKey, meetings]);
 
 };
 

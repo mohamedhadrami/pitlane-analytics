@@ -12,6 +12,8 @@ interface CircuitMapProps {
 }
 
 interface ScaledPosition {
+  labelX?: string | number | undefined;
+  labelY?: string | number | undefined;
   x: number;
   y: number;
 }

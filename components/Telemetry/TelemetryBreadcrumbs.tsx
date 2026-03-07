@@ -2,12 +2,13 @@
 
 import { Breadcrumbs, BreadcrumbItem, Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Chip } from "@nextui-org/react";
 import BreadcrumbSelector from "./BreadcrumbSelector";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { CalendarDays, ChevronDownIcon, MapPin, Timer } from "lucide-react";
 import { DriverParams } from "@/interfaces/openF1";
 import { useToggleDriverSelect } from "@/hooks/Telemetry/useTelemetryData";
+import { Selection } from "@react-types/shared";
 
 const TelemetryBreadcrumbs: React.FC = () => {
 
@@ -115,12 +116,12 @@ const TelemetryBreadcrumbs: React.FC = () => {
     }, [selectedDrivers]);
 
     const handleChange = (keys: Selection) => {
-        const latestSelection = [...keys].pop();
-        const driver: DriverParams | undefined = drivers.find(d => d.driver_number === parseInt(latestSelection));
+        const latestSelection = Array.from(keys as Set<string>).pop();
+        const driver: DriverParams | undefined = drivers.find(d => d.driver_number === parseInt(latestSelection || ''));
         if (driver) {
-            toggleDriverSelect(driver)
+            toggleDriverSelect(driver);
         }
-    }
+    };
 
     const handleCloseLapSelected = () => {
         if (selectedLap) {
@@ -210,7 +211,11 @@ const TelemetryBreadcrumbs: React.FC = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
                     >
-                        <Chip onClose={handleCloseLapSelected}>
+                        <Chip
+                            variant="light"
+                            color="default"
+                            onClose={handleCloseLapSelected}
+                        >
                             Lap: {selectedLap}
                         </Chip>
                     </motion.div>

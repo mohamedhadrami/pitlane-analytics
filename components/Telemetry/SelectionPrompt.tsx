@@ -1,10 +1,9 @@
 // @/components/Telemetry/SelectionPrompts/SelectionPrompt.tsx
 
 import React from "react";
-import { Listbox, ListboxItem, Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
-import { AnimatePresence, motion } from "framer-motion";
+import { Radio, RadioGroup, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
 import { MeetingParams, SessionParams } from "@/interfaces/openF1";
-import { useTelemetry } from "@/context/TelemetryContext";
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
 
 interface SelectionPromptProps {
     label: string;
@@ -68,21 +67,14 @@ const SelectionPrompt: React.FC<SelectionPromptProps> = ({ label, icon, data }) 
     };
 
     return (
-        <AnimatePresence mode="wait">
-            <motion.div
-                key={label}
-                initial={{ x: 0, y: 300, opacity: 0 }}
-                animate={{ x: 0, y: 0, opacity: 1 }}
-                exit={{ x: 0, y: -300, opacity: 0 }}
-                className="flex flex-col items-center justify-center w-full gap-5"
-            >
-                <div className="flex flex-row items-center gap-3">
-                    <div>{icon}</div>
-                    <div className="font-extralight text-xl">Select a {label}</div>
-                </div>
-                <div className="flex flex-col">{renderDataContent()}</div>
-            </motion.div>
-        </AnimatePresence>
+        <div className="flex flex-col items-center justify-center w-full gap-5">
+            <div className="flex flex-row items-center gap-3">
+                <div>{icon}</div>
+                <div className="font-extralight text-xl">Select a {label}</div>
+            </div>
+            <div className="flex flex-col">{renderDataContent()}</div>
+        </div>
+
     );
 };
 
@@ -94,7 +86,7 @@ interface DataTableProps<T> {
     selectedValue: any;
     data: T[];
     handler: (item: string) => void;
-    itemKey: keyof T;  // The key to use for each row
+    itemKey: keyof T;
 }
 
 const DataTable = <T extends object>({
@@ -114,7 +106,7 @@ const DataTable = <T extends object>({
             selectedKeys={new Set([selectedKeyString])}
         >
             <TableHeader columns={headers}>
-                {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                {(column) => <TableColumn key={String(column.key)}>{column.label}</TableColumn>}
             </TableHeader>
             <TableBody items={data}>
                 {(item: T) => {
@@ -122,8 +114,8 @@ const DataTable = <T extends object>({
                     return (
                         <TableRow key={itemKeyValue} onClick={() => handler(itemKeyValue!)}>
                             {headers.map((header) => (
-                                <TableCell key={header.key}>
-                                    {item[header.key]}
+                                <TableCell key={String(header.key)}>
+                                    {String(item[header.key])}
                                 </TableCell>
                             ))}
                         </TableRow>
@@ -133,6 +125,7 @@ const DataTable = <T extends object>({
         </Table>
     );
 };
+
 
 
 interface YearDataProps {

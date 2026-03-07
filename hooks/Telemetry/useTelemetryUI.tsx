@@ -1,7 +1,7 @@
 // @/hooks/useTelemetryUI.tsx
 
-import { useTelemetry } from "@/context/TelemetryContext";
-import { TelemetryStage, useTelemetryUI } from "@/context/TelemetryUIContext"
+import { useTelemetry } from "@/context/Telemetry/TelemetryContext";
+import { TelemetryStage, useTelemetryUI } from "@/context/Telemetry/TelemetryUIContext"
 import { useEffect } from "react";
 
 
@@ -34,11 +34,14 @@ export const useHandleCurrentStage = () => {
 }
 
 export const useHandleNextStage = () => {
-    const { nextStage, setCurrentStage } = useTelemetryUI();
+    const { nextStage, setCurrentStage, setDirection } = useTelemetryUI();
 
     const nextStep = () => {
         if (nextStage !== undefined) {
-            setCurrentStage(nextStage);
+            setDirection('next');
+            setTimeout(() => {
+                setCurrentStage(nextStage);
+            }, 50);
         }
     };
 
@@ -46,14 +49,16 @@ export const useHandleNextStage = () => {
 }
 
 export const useHandlePreviousStage = () => {
-    const { previousStage, setCurrentStage } = useTelemetryUI();
+    const { previousStage, setCurrentStage, setDirection } = useTelemetryUI();
 
     const previousStep = () => {
         if (previousStage !== undefined) {
-            setCurrentStage(previousStage);
+            setDirection('previous');
+            setTimeout(() => {
+                setCurrentStage(previousStage);
+            }, 50);
         }
     };
 
     return previousStep;
 }
-
